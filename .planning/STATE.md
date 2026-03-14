@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-14T22:14:39.646Z"
-last_activity: 2026-03-14 -- Completed Plan 04-01 (AnalyzerAgent with Claude API evaluation)
+status: in-progress
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-14T22:41:38.000Z"
+last_activity: 2026-03-14 -- Completed Plan 05-01 (TreasuryAgent with balance tracking and SPL transfers)
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
-  percent: 67
+  total_plans: 8
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Autonomous AI agents that coordinate real funding decisions on Solana -- registered on-chain, paying each other for services, and explaining their reasoning to humans.
-**Current focus:** Phase 4: Proposal Analyzer Agent -- COMPLETE
+**Current focus:** Phase 5: Treasury Manager Agent -- Plan 1 of 2 COMPLETE
 
 ## Current Position
 
-Phase: 4 of 9 (Proposal Analyzer Agent) -- COMPLETE
-Plan: 1 of 1 in current phase -- COMPLETE
-Status: Phase 4 Complete
-Last activity: 2026-03-14 -- Completed Plan 04-01 (AnalyzerAgent with Claude API evaluation)
+Phase: 5 of 9 (Treasury Manager Agent)
+Plan: 1 of 2 in current phase -- COMPLETE
+Status: Executing Phase 5
+Last activity: 2026-03-14 -- Completed Plan 05-01 (TreasuryAgent with balance tracking and SPL transfers)
 
-Progress: [██████░░░░] 67%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 7min
-- Total execution time: 0.68 hours
+- Total plans completed: 7
+- Average duration: 6min
+- Total execution time: 0.73 hours
 
 **By Phase:**
 
@@ -47,9 +47,10 @@ Progress: [██████░░░░] 67%
 | 02 | 2 | 10min | 5min |
 | 03 | 1 | 5min | 5min |
 | 04 | 1 | 2min | 2min |
+| 05 | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (4min), 02-02 (6min), 03-01 (5min), 04-01 (2min)
+- Last 5 plans: 02-02 (6min), 03-01 (5min), 04-01 (2min), 05-01 (3min)
 - Trend: accelerating
 
 *Updated after each plan completion*
@@ -59,6 +60,7 @@ Progress: [██████░░░░] 67%
 | Phase 02 P02 | 6min | 2 tasks | 8 files |
 | Phase 03 P01 | 5min | 2 tasks | 9 files |
 | Phase 04 P01 | 2min | 2 tasks | 3 files |
+| Phase 05 P01 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -86,6 +88,9 @@ Recent decisions affecting current work:
 - [04-01]: Followed GovernanceAgent pattern exactly for Claude API: Zod schema -> z.toJSONSchema -> forced tool_choice -> Zod .parse() validation
 - [04-01]: Fallback heuristics based on content length and amount range for deterministic reproducible scores
 - [04-01]: AnalyzerAgent constructor accepts optional Anthropic client for test injection, matching GovernanceAgent pattern
+- [05-01]: SOL price hardcoded at $150 for treasury valuation -- production would use oracle/price feed
+- [05-01]: Recipient for funding transfers defaults to governance agent pubkey as demo -- production would derive from proposal data
+- [05-01]: addresses.json loaded and cached with fs.readFileSync for simplicity -- matching keys.ts pattern
 
 ### Pending Todos
 
@@ -99,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T22:12:12.687Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-14T22:41:38.000Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None

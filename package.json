@@ -17,6 +17,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@metaplex-foundation/mpl-agent-registry": "0.2.0",
     "@metaplex-foundation/mpl-core": "^1.8.0",
     "@metaplex-foundation/mpl-toolbox": "^0.10.0",
@@ -26,7 +27,9 @@
     "@solana/spl-token": "^0.4.14",
     "@solana/web3.js": "^1.98.4",
     "bs58": "^6.0.0",
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.3.1",
+    "zod": "^4.3.6",
+    "zod-to-json-schema": "^3.25.1"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
@@ -35,6 +38,8 @@
     "vitest": "^4.1.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

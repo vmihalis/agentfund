@@ -30,9 +30,9 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Proposal Analyzer
 
-- [ ] **ANLZ-01**: Proposal Analyzer evaluates proposals using Claude API with structured scoring rubric
-- [ ] **ANLZ-02**: Evaluation includes explained reasoning (why fund/reject) visible to humans
-- [ ] **ANLZ-03**: Analyzer scores proposals on: team quality, technical feasibility, impact potential, budget reasonableness
+- [x] **ANLZ-01**: Proposal Analyzer evaluates proposals using Claude API with structured scoring rubric
+- [x] **ANLZ-02**: Evaluation includes explained reasoning (why fund/reject) visible to humans
+- [x] **ANLZ-03**: Analyzer scores proposals on: team quality, technical feasibility, impact potential, budget reasonableness
 - [ ] **ANLZ-04**: Analyzer exposes x402-gated endpoint for paid evaluation services
 
 ### Treasury Manager
@@ -131,9 +131,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCOUT-01 | Phase 3 | Complete |
 | SCOUT-02 | Phase 3 | Complete |
 | SCOUT-03 | Phase 3 | Complete |
-| ANLZ-01 | Phase 4 | Pending |
-| ANLZ-02 | Phase 4 | Pending |
-| ANLZ-03 | Phase 4 | Pending |
+| ANLZ-01 | Phase 4 | Complete |
+| ANLZ-02 | Phase 4 | Complete |
+| ANLZ-03 | Phase 4 | Complete |
 | TREAS-01 | Phase 5 | Pending |
 | TREAS-02 | Phase 5 | Pending |
 | TREAS-03 | Phase 5 | Pending |

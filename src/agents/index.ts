@@ -1,0 +1,11 @@
+/**
+ * Agents module public API.
+ *
+ * Re-exports BaseAgent, all agent interfaces, and all stub implementations.
+ */
+
+export { BaseAgent } from './base-agent.js';
+export type { IScoutAgent, IAnalyzerAgent, ITreasuryAgent } from './types.js';
+export { StubScoutAgent } from './stubs/stub-scout.js';
+export { StubAnalyzerAgent } from './stubs/stub-analyzer.js';
+export { StubTreasuryAgent } from './stubs/stub-treasury.js';

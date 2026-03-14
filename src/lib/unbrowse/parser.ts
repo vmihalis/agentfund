@@ -92,29 +92,36 @@ export function parseUnbrowseResult(raw: unknown): Proposal[] {
 
   const now = Date.now();
 
-  return data
-    .map((item, idx) => {
-      const parsed = UnbrowseProposalSchema.safeParse(item);
-      if (!parsed.success) return null;
+  const results: Proposal[] = [];
 
-      const d = parsed.data;
+  for (let idx = 0; idx < data.length; idx++) {
+    const parsed = UnbrowseProposalSchema.safeParse(data[idx]);
+    if (!parsed.success) continue;
 
-      const title = d.title ?? d.name;
-      if (!title) return null; // Filter items with no title and no name
+    const d = parsed.data;
 
-      const description = d.description ?? d.summary ?? '';
-      const amount = parseAmount(d.amount ?? d.requested_amount ?? d.funding_amount);
-      const teamInfo = d.team ?? d.team_info ?? 'Unknown team';
-      const sourceUrl = d.url ?? d.link;
+    const title = d.title ?? d.name;
+    if (!title) continue; // Filter items with no title and no name
 
-      return {
-        id: `unbrowse-${now}-${idx}`,
-        title,
-        description,
-        requestedAmount: amount,
-        teamInfo,
-        sourceUrl,
-      } satisfies Proposal;
-    })
-    .filter((p): p is Proposal => p !== null);
+    const description = d.description ?? d.summary ?? '';
+    const amount = parseAmount(d.amount ?? d.requested_amount ?? d.funding_amount);
+    const teamInfo = d.team ?? d.team_info ?? 'Unknown team';
+    const sourceUrl = d.url ?? d.link;
+
+    const proposal: Proposal = {
+      id: `unbrowse-${now}-${idx}`,
+      title,
+      description,
+      requestedAmount: amount,
+      teamInfo,
+    };
+
+    if (sourceUrl) {
+      proposal.sourceUrl = sourceUrl;
+    }
+
+    results.push(proposal);
+  }
+
+  return results;
 }

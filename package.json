@@ -1,0 +1,36 @@
+{
+  "name": "agentfund",
+  "version": "1.0.0",
+  "description": "Autonomous AI agents that coordinate real funding decisions on Solana",
+  "type": "module",
+  "scripts": {
+    "generate-keys": "tsx scripts/generate-keys.ts",
+    "test": "vitest run --reporter=verbose",
+    "test:watch": "vitest --reporter=verbose"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.1",
+  "dependencies": {
+    "@metaplex-foundation/mpl-agent-registry": "0.2.0",
+    "@metaplex-foundation/mpl-core": "^1.8.0",
+    "@metaplex-foundation/mpl-toolbox": "^0.10.0",
+    "@metaplex-foundation/umi": "^1.5.1",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.5.1",
+    "@metaplex-foundation/umi-web3js-adapters": "^1.5.1",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "bs58": "^6.0.0",
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.4.5",
+    "vitest": "^4.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

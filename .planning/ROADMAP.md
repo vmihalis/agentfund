@@ -15,8 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Solana Foundation & Agent Identity** - Keypairs, wallets, token accounts, and 4 Metaplex on-chain agent registrations (completed 2026-03-14)
 - [x] **Phase 2: Agent Architecture & Governance Core** - BaseAgent class, event bus, and Governance Agent coordination logic (completed 2026-03-14)
 - [x] **Phase 3: Scout Agent** - Web data discovery via Unbrowse intent resolution (completed 2026-03-14)
-- [ ] **Phase 4: Proposal Analyzer Agent** - Claude-powered proposal evaluation with scored reasoning
-- [ ] **Phase 5: Treasury Manager Agent** - Fund management and Meteora DLMM LP positions
+- [x] **Phase 4: Proposal Analyzer Agent** - Claude-powered proposal evaluation with scored reasoning (completed 2026-03-14)
+- [x] **Phase 5: Treasury Manager Agent** - Fund management and Meteora DLMM LP positions (completed 2026-03-14)
 - [ ] **Phase 6: x402 Agent Payment Economy** - Micropayment flows gating agent service endpoints
 - [ ] **Phase 7: Voice Command Interface** - ElevenLabs conversational AI with agent action triggers
 - [ ] **Phase 8: Frontend Dashboard & Sybil Resistance** - Next.js monitoring dashboard and Human Passport gate
@@ -78,7 +78,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — AnalyzerAgent with Claude API evaluation, fallback scoring, and unit tests
+- [x] 04-01-PLAN.md — AnalyzerAgent with Claude API evaluation, fallback scoring, and unit tests
 
 ### Phase 5: Treasury Manager Agent
 **Goal**: The Treasury Manager holds real funds on Solana devnet, executes token transfers for approved grants, and earns yield via Meteora DLMM
@@ -93,8 +93,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — TreasuryAgent with balance tracking, SPL token transfers, and status reporting
-- [ ] 05-02-PLAN.md — Meteora DLMM LP position creation, removal, and reward claiming
+- [x] 05-01-PLAN.md — TreasuryAgent with balance tracking, SPL token transfers, and status reporting
+- [x] 05-02-PLAN.md — Meteora DLMM LP position creation, removal, and reward claiming
 
 ### Phase 6: x402 Agent Payment Economy
 **Goal**: Agents pay each other for services using x402 micropayments with real on-chain USDC transfers on devnet
@@ -166,8 +166,8 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 1. Solana Foundation & Agent Identity | 2/2 | Complete   | 2026-03-14 |
 | 2. Agent Architecture & Governance Core | 2/2 | Complete   | 2026-03-14 |
 | 3. Scout Agent | 1/1 | Complete   | 2026-03-14 |
-| 4. Proposal Analyzer Agent | 0/1 | Not started | - |
-| 5. Treasury Manager Agent | 0/2 | Not started | - |
+| 4. Proposal Analyzer Agent | 1/1 | Complete   | 2026-03-14 |
+| 5. Treasury Manager Agent | 2/2 | Complete   | 2026-03-14 |
 | 6. x402 Agent Payment Economy | 0/2 | Not started | - |
 | 7. Voice Command Interface | 0/2 | Not started | - |
 | 8. Frontend Dashboard & Sybil Resistance | 0/3 | Not started | - |

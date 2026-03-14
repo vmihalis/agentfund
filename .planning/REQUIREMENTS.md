@@ -39,8 +39,8 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 - [x] **TREAS-01**: Treasury Manager holds and tracks fund balances on Solana devnet
 - [x] **TREAS-02**: Treasury Manager executes SPL token transfers for approved funding decisions
-- [ ] **TREAS-03**: Treasury Manager creates and manages at least one Meteora DLMM LP position for idle treasury yield
-- [ ] **TREAS-04**: Treasury Manager can remove liquidity and claim rewards from DLMM positions
+- [x] **TREAS-03**: Treasury Manager creates and manages at least one Meteora DLMM LP position for idle treasury yield
+- [x] **TREAS-04**: Treasury Manager can remove liquidity and claim rewards from DLMM positions
 - [x] **TREAS-05**: Treasury Manager reports treasury status (balance, LP positions, yield) on request
 
 ### Governance Agent
@@ -136,8 +136,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANLZ-03 | Phase 4 | Complete |
 | TREAS-01 | Phase 5 | Complete |
 | TREAS-02 | Phase 5 | Complete |
-| TREAS-03 | Phase 5 | Pending |
-| TREAS-04 | Phase 5 | Pending |
+| TREAS-03 | Phase 5 | Complete |
+| TREAS-04 | Phase 5 | Complete |
 | TREAS-05 | Phase 5 | Complete |
 | PAY-01 | Phase 6 | Pending |
 | PAY-02 | Phase 6 | Pending |

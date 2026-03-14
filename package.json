@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "generate-keys": "tsx scripts/generate-keys.ts",
+    "fund-wallets": "tsx scripts/fund-wallets.ts",
+    "register-agents": "tsx scripts/register-agents.ts",
+    "verify-agents": "tsx scripts/verify-agents.ts",
+    "setup": "tsx scripts/generate-keys.ts && tsx scripts/fund-wallets.ts && tsx scripts/register-agents.ts",
     "test": "vitest run --reporter=verbose",
     "test:watch": "vitest --reporter=verbose"
   },

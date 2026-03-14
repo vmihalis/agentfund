@@ -15,7 +15,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Re-export AgentRole for convenience
-export { AgentRole } from '../types/agents.js';
+export type { AgentRole } from '../types/agents.js';
 
 /**
  * Load raw keypair bytes from the JSON file for a given role.

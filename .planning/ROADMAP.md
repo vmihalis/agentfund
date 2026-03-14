@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Project init, key management, Metaplex/Solana library modules, test scaffold
-- [ ] 01-02-PLAN.md — Wallet funding, agent registration, verification script, integration tests
+- [x] 01-02-PLAN.md — Wallet funding, agent registration, verification script, integration tests
 
 ### Phase 2: Agent Architecture & Governance Core
 **Goal**: A typed coordination framework exists where the Governance Agent can route tasks to specialist agents and produce decision summaries
@@ -48,11 +48,11 @@ Plans:
   2. The Governance Agent can receive a "fund this project" request and orchestrate the full pipeline: discover proposals, evaluate them, and execute funding
   3. Governance Agent produces a human-readable decision summary with reasoning for each funding action
   4. A typed event bus broadcasts agent events, enabling downstream consumers (dashboard, logs) to observe all agent activity
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Type definitions, TypedEventBus, BaseAgent, agent interfaces, stub implementations
+- [ ] 02-02-PLAN.md — GovernanceAgent with Claude API pipeline orchestration and decision summaries
 
 ### Phase 3: Scout Agent
 **Goal**: The Scout agent discovers real grant proposals from the web and delivers structured data to the Governance Agent

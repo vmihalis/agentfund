@@ -90,11 +90,11 @@ Plans:
   3. Treasury Manager can create at least one Meteora DLMM LP position using idle treasury funds (SpotBalanced strategy)
   4. Treasury Manager can remove liquidity and claim rewards from DLMM positions
   5. All treasury operations (transfers, LP create, LP remove) produce verifiable on-chain transactions
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — TreasuryAgent with balance tracking, SPL token transfers, and status reporting
+- [ ] 05-02-PLAN.md — Meteora DLMM LP position creation, removal, and reward claiming
 
 ### Phase 6: x402 Agent Payment Economy
 **Goal**: Agents pay each other for services using x402 micropayments with real on-chain USDC transfers on devnet

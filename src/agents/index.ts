@@ -9,6 +9,7 @@ export type { IScoutAgent, IAnalyzerAgent, ITreasuryAgent } from './types.js';
 export { GovernanceAgent } from './governance-agent.js';
 export type { FundingRequest } from './governance-agent.js';
 export { AnalyzerAgent } from './analyzer-agent.js';
+export { TreasuryAgent } from './treasury-agent.js';
 export { ScoutAgent } from './scout-agent.js';
 export { StubScoutAgent } from './stubs/stub-scout.js';
 export { StubAnalyzerAgent } from './stubs/stub-analyzer.js';

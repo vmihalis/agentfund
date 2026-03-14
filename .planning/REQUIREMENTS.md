@@ -45,7 +45,7 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Governance Agent
 
-- [ ] **GOV-01**: Governance Agent coordinates the full funding pipeline: Scout discovers -> Analyzer evaluates -> Treasury funds
+- [x] **GOV-01**: Governance Agent coordinates the full funding pipeline: Scout discovers -> Analyzer evaluates -> Treasury funds
 - [ ] **GOV-02**: Governance Agent aggregates agent evaluations and makes final allocation decisions
 - [ ] **GOV-03**: Governance Agent routes voice commands to appropriate specialist agents
 - [ ] **GOV-04**: Governance Agent produces decision summaries with reasoning for each funding action
@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IDENT-02 | Phase 1 | Complete |
 | IDENT-03 | Phase 1 | Complete |
 | IDENT-04 | Phase 1 | Complete |
-| GOV-01 | Phase 2 | Pending |
+| GOV-01 | Phase 2 | Complete |
 | GOV-02 | Phase 2 | Pending |
 | GOV-04 | Phase 2 | Pending |
 | SCOUT-01 | Phase 3 | Pending |

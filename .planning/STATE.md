@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-14T19:59:34Z"
-last_activity: 2026-03-14 -- Completed Plan 01-02 (setup scripts, integration tests) -- Phase 1 complete
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-14T21:08:24Z"
+last_activity: 2026-03-14 -- Completed Plan 02-01 (agent coordination foundation) -- TypedEventBus, BaseAgent, stubs
 progress:
   total_phases: 9
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 11
+  total_plans: 3
+  completed_plans: 3
+  percent: 17
 ---
 
 # Project State
@@ -21,37 +21,39 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Autonomous AI agents that coordinate real funding decisions on Solana -- registered on-chain, paying each other for services, and explaining their reasoning to humans.
-**Current focus:** Phase 1: Solana Foundation & Agent Identity
+**Current focus:** Phase 2: Agent Architecture & Governance Core
 
 ## Current Position
 
-Phase: 1 of 9 (Solana Foundation & Agent Identity) -- COMPLETE
-Plan: 2 of 2 in current phase (phase complete)
+Phase: 2 of 9 (Agent Architecture & Governance Core)
+Plan: 1 of 2 in current phase
 Status: Executing
-Last activity: 2026-03-14 -- Completed Plan 01-02 (setup scripts, integration tests) -- Phase 1 complete
+Last activity: 2026-03-14 -- Completed Plan 02-01 (agent coordination foundation) -- TypedEventBus, BaseAgent, stubs
 
-Progress: [██░░░░░░░░] 11%
+Progress: [██░░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 12min
-- Total execution time: 0.40 hours
+- Total plans completed: 3
+- Average duration: 9min
+- Total execution time: 0.47 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 2 | 24min | 12min |
+| 02 | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7min), 01-02 (17min)
-- Trend: stable
+- Last 5 plans: 01-01 (7min), 01-02 (17min), 02-01 (4min)
+- Trend: accelerating
 
 *Updated after each plan completion*
 | Phase 01 P01 | 7min | 2 tasks | 16 files |
 | Phase 01 P02 | 17min | 2 tasks | 10 files |
+| Phase 02 P01 | 4min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -68,6 +70,8 @@ Recent decisions affecting current work:
 - [01-02]: Integration tests skip gracefully when devnet data is unavailable rather than failing
 - [01-02]: Fund-wallets handles partial state -- saves addresses.json even when faucet rate-limited
 - [01-02]: DEMO_USDC fallback: try official devnet USDC first, fall back to custom mint
+- [02-01]: EventEmitter.removeAllListeners(undefined) does not clear all listeners -- added explicit undefined check in TypedEventBus
+- [02-01]: StubScoutAgent returns 3 mock proposals (not 2) for richer pipeline testing
 
 ### Pending Todos
 
@@ -81,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T19:59:34Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-03-14T21:08:24Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None

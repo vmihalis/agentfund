@@ -16,10 +16,10 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Agent Payments
 
-- [ ] **PAY-01**: x402 micropayment flow between agents using Corbits/Faremeter SDK (402 response -> payment -> content)
+- [x] **PAY-01**: x402 micropayment flow between agents using Corbits/Faremeter SDK (402 response -> payment -> content)
 - [ ] **PAY-02**: At least one agent-to-agent x402 payment with real on-chain USDC transfer on devnet
-- [ ] **PAY-03**: x402 server middleware gating agent service endpoints (returns 402 with payment requirements)
-- [ ] **PAY-04**: x402 client wrapper (wrapFetch) enabling agents to automatically pay for peer services
+- [x] **PAY-03**: x402 server middleware gating agent service endpoints (returns 402 with payment requirements)
+- [x] **PAY-04**: x402 client wrapper (wrapFetch) enabling agents to automatically pay for peer services
 
 ### Scout Agent
 
@@ -139,10 +139,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TREAS-03 | Phase 5 | Complete |
 | TREAS-04 | Phase 5 | Complete |
 | TREAS-05 | Phase 5 | Complete |
-| PAY-01 | Phase 6 | Pending |
+| PAY-01 | Phase 6 | Complete |
 | PAY-02 | Phase 6 | Pending |
-| PAY-03 | Phase 6 | Pending |
-| PAY-04 | Phase 6 | Pending |
+| PAY-03 | Phase 6 | Complete |
+| PAY-04 | Phase 6 | Complete |
 | SCOUT-04 | Phase 6 | Pending |
 | ANLZ-04 | Phase 6 | Pending |
 | VOICE-01 | Phase 7 | Pending |

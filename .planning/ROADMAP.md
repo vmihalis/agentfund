@@ -108,7 +108,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — x402 protocol library: types, Express middleware, wrapFetch client, transaction verification
+- [x] 06-01-PLAN.md — x402 protocol library: types, Express middleware, wrapFetch client, transaction verification
 - [ ] 06-02-PLAN.md — Scout and Analyzer x402-gated HTTP servers, integration test with on-chain payment
 
 ### Phase 7: Voice Command Interface
@@ -168,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 3. Scout Agent | 1/1 | Complete   | 2026-03-14 |
 | 4. Proposal Analyzer Agent | 1/1 | Complete   | 2026-03-14 |
 | 5. Treasury Manager Agent | 2/2 | Complete   | 2026-03-14 |
-| 6. x402 Agent Payment Economy | 0/2 | Not started | - |
+| 6. x402 Agent Payment Economy | 1/2 | In progress | - |
 | 7. Voice Command Interface | 0/2 | Not started | - |
 | 8. Frontend Dashboard & Sybil Resistance | 0/3 | Not started | - |
 | 9. End-to-End Demo Integration | 0/1 | Not started | - |

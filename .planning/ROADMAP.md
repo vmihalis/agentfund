@@ -33,11 +33,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Each agent wallet holds SOL and devnet USDC with pre-created Associated Token Accounts
   3. Any third party can derive a PDA from an agent's public key and verify its AgentIdentityV1 registration on-chain
   4. The Umi layer (Metaplex operations) and web3.js layer (everything else) are isolated in separate modules with adapter bridging
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Project init, key management, Metaplex/Solana library modules, test scaffold
+- [ ] 01-02-PLAN.md — Wallet funding, agent registration, verification script, integration tests
 
 ### Phase 2: Agent Architecture & Governance Core
 **Goal**: A typed coordination framework exists where the Governance Agent can route tasks to specialist agents and produce decision summaries
@@ -163,7 +163,7 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solana Foundation & Agent Identity | 0/2 | Not started | - |
+| 1. Solana Foundation & Agent Identity | 0/2 | Planning complete | - |
 | 2. Agent Architecture & Governance Core | 0/2 | Not started | - |
 | 3. Scout Agent | 0/1 | Not started | - |
 | 4. Proposal Analyzer Agent | 0/1 | Not started | - |

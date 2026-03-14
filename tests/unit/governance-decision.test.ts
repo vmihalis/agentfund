@@ -121,6 +121,29 @@ describe('GovernanceAgent Decision Making (GOV-02)', () => {
     };
 
     agent = new GovernanceAgent(bus, mockScout, mockAnalyzer, mockTreasury, mockAnthropicClient as any);
+
+    // Populate proposal cache so fallback can determine requested amounts
+    agent.proposalCache.set('prop-001', {
+      id: 'prop-001',
+      title: 'DeFi Dashboard',
+      description: 'A real-time analytics dashboard',
+      requestedAmount: 5000,
+      teamInfo: '3 developers',
+    });
+    agent.proposalCache.set('prop-002', {
+      id: 'prop-002',
+      title: 'Bridge Monitor',
+      description: 'Cross-chain bridge monitor',
+      requestedAmount: 8000,
+      teamInfo: '5 developers',
+    });
+    agent.proposalCache.set('prop-003', {
+      id: 'prop-003',
+      title: 'Mobile Wallet SDK',
+      description: 'Open-source mobile wallet SDK',
+      requestedAmount: 12000,
+      teamInfo: '4 mobile developers',
+    });
   });
 
   it('makeDecision calls Claude API with evaluations and budget', async () => {

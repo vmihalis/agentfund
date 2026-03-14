@@ -167,6 +167,22 @@ describe('DecisionSummary Format and Reasoning (GOV-04)', () => {
         },
         failingClient as any,
       );
+
+      // Populate proposal cache so fallback can determine requested amounts
+      fallbackAgent.proposalCache.set('prop-001', {
+        id: 'prop-001',
+        title: 'DeFi Dashboard',
+        description: 'A real-time analytics dashboard',
+        requestedAmount: 5000,
+        teamInfo: '3 developers',
+      });
+      fallbackAgent.proposalCache.set('prop-002', {
+        id: 'prop-002',
+        title: 'Bridge Monitor',
+        description: 'Cross-chain bridge monitor',
+        requestedAmount: 8000,
+        teamInfo: '5 developers',
+      });
     });
 
     it('fallback summary describes the overall automated decision', async () => {

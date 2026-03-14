@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-14T21:08:24Z"
-last_activity: 2026-03-14 -- Completed Plan 02-01 (agent coordination foundation) -- TypedEventBus, BaseAgent, stubs
+stopped_at: Completed 02-02-PLAN.md (Phase 2 complete)
+last_updated: "2026-03-14T21:17:49Z"
+last_activity: 2026-03-14 -- Completed Plan 02-02 (GovernanceAgent pipeline + Claude decisions)
 progress:
   total_phases: 9
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 17
+  total_plans: 4
+  completed_plans: 4
+  percent: 22
 ---
 
 # Project State
@@ -25,35 +25,36 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 
 ## Current Position
 
-Phase: 2 of 9 (Agent Architecture & Governance Core)
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-03-14 -- Completed Plan 02-01 (agent coordination foundation) -- TypedEventBus, BaseAgent, stubs
+Phase: 2 of 9 (Agent Architecture & Governance Core) -- COMPLETE
+Plan: 2 of 2 in current phase -- COMPLETE
+Status: Phase 2 Complete
+Last activity: 2026-03-14 -- Completed Plan 02-02 (GovernanceAgent pipeline + Claude decisions)
 
-Progress: [██░░░░░░░░] 17%
+Progress: [██░░░░░░░░] 22%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 9min
-- Total execution time: 0.47 hours
+- Total execution time: 0.57 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 2 | 24min | 12min |
-| 02 | 1 | 4min | 4min |
+| 02 | 2 | 10min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7min), 01-02 (17min), 02-01 (4min)
+- Last 5 plans: 01-01 (7min), 01-02 (17min), 02-01 (4min), 02-02 (6min)
 - Trend: accelerating
 
 *Updated after each plan completion*
 | Phase 01 P01 | 7min | 2 tasks | 16 files |
 | Phase 01 P02 | 17min | 2 tasks | 10 files |
 | Phase 02 P01 | 4min | 2 tasks | 12 files |
+| Phase 02 P02 | 6min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - [01-02]: DEMO_USDC fallback: try official devnet USDC first, fall back to custom mint
 - [02-01]: EventEmitter.removeAllListeners(undefined) does not clear all listeners -- added explicit undefined check in TypedEventBus
 - [02-01]: StubScoutAgent returns 3 mock proposals (not 2) for richer pipeline testing
+- [02-02]: Used Zod v4 native z.toJSONSchema() instead of zod-to-json-schema -- the package produces empty schemas with Zod v4
+- [02-02]: GovernanceAgent.proposalCache bridges Evaluation (no requestedAmount) and budget-aware fallback decisions
+- [02-02]: Fallback decision threshold: overallScore >= 7, sorted descending, allocated until budget exhausted
 
 ### Pending Todos
 
@@ -85,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T21:08:24Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-14T21:17:49Z
+Stopped at: Completed 02-02-PLAN.md (Phase 2 complete)
 Resume file: None

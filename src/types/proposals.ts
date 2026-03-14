@@ -52,8 +52,18 @@ export interface TransactionResult {
   error?: string;
 }
 
+export interface LPPosition {
+  poolAddress: string;
+  positionAddress: string;
+  tokenX: string;
+  tokenY: string;
+  liquidityShare: number;
+  unclaimedFees: number;
+}
+
 export interface TreasuryBalance {
   solBalance: number;
   usdcBalance: number;
   totalValueUsd: number;
+  lpPositions?: LPPosition[];
 }

@@ -17,7 +17,7 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 ### Agent Payments
 
 - [x] **PAY-01**: x402 micropayment flow between agents using Corbits/Faremeter SDK (402 response -> payment -> content)
-- [ ] **PAY-02**: At least one agent-to-agent x402 payment with real on-chain USDC transfer on devnet
+- [x] **PAY-02**: At least one agent-to-agent x402 payment with real on-chain USDC transfer on devnet
 - [x] **PAY-03**: x402 server middleware gating agent service endpoints (returns 402 with payment requirements)
 - [x] **PAY-04**: x402 client wrapper (wrapFetch) enabling agents to automatically pay for peer services
 
@@ -26,14 +26,14 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 - [x] **SCOUT-01**: Scout agent discovers grant proposals and funding opportunities via Unbrowse intent resolution
 - [x] **SCOUT-02**: Scout calls Unbrowse `/v1/intent/resolve` with natural language intents for grant platform data
 - [x] **SCOUT-03**: Scout returns structured proposal data (title, description, amount, team info) to Governance Agent
-- [ ] **SCOUT-04**: Scout exposes x402-gated endpoint for paid data discovery services
+- [x] **SCOUT-04**: Scout exposes x402-gated endpoint for paid data discovery services
 
 ### Proposal Analyzer
 
 - [x] **ANLZ-01**: Proposal Analyzer evaluates proposals using Claude API with structured scoring rubric
 - [x] **ANLZ-02**: Evaluation includes explained reasoning (why fund/reject) visible to humans
 - [x] **ANLZ-03**: Analyzer scores proposals on: team quality, technical feasibility, impact potential, budget reasonableness
-- [ ] **ANLZ-04**: Analyzer exposes x402-gated endpoint for paid evaluation services
+- [x] **ANLZ-04**: Analyzer exposes x402-gated endpoint for paid evaluation services
 
 ### Treasury Manager
 
@@ -140,11 +140,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TREAS-04 | Phase 5 | Complete |
 | TREAS-05 | Phase 5 | Complete |
 | PAY-01 | Phase 6 | Complete |
-| PAY-02 | Phase 6 | Pending |
+| PAY-02 | Phase 6 | Complete |
 | PAY-03 | Phase 6 | Complete |
 | PAY-04 | Phase 6 | Complete |
-| SCOUT-04 | Phase 6 | Pending |
-| ANLZ-04 | Phase 6 | Pending |
+| SCOUT-04 | Phase 6 | Complete |
+| ANLZ-04 | Phase 6 | Complete |
 | VOICE-01 | Phase 7 | Pending |
 | VOICE-02 | Phase 7 | Pending |
 | VOICE-03 | Phase 7 | Pending |

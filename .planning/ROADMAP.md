@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Scout Agent** - Web data discovery via Unbrowse intent resolution (completed 2026-03-14)
 - [x] **Phase 4: Proposal Analyzer Agent** - Claude-powered proposal evaluation with scored reasoning (completed 2026-03-14)
 - [x] **Phase 5: Treasury Manager Agent** - Fund management and Meteora DLMM LP positions (completed 2026-03-14)
-- [ ] **Phase 6: x402 Agent Payment Economy** - Micropayment flows gating agent service endpoints
+- [x] **Phase 6: x402 Agent Payment Economy** - Micropayment flows gating agent service endpoints (completed 2026-03-14)
 - [ ] **Phase 7: Voice Command Interface** - ElevenLabs conversational AI with agent action triggers
 - [ ] **Phase 8: Frontend Dashboard & Sybil Resistance** - Next.js monitoring dashboard and Human Passport gate
 - [ ] **Phase 9: End-to-End Demo Integration** - Full pipeline verification and demo rehearsal
@@ -109,7 +109,7 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md — x402 protocol library: types, Express middleware, wrapFetch client, transaction verification
-- [ ] 06-02-PLAN.md — Scout and Analyzer x402-gated HTTP servers, integration test with on-chain payment
+- [x] 06-02-PLAN.md — Scout and Analyzer x402-gated HTTP servers, integration test with on-chain payment
 
 ### Phase 7: Voice Command Interface
 **Goal**: Users can speak commands to the system and trigger real on-chain agent actions through ElevenLabs conversational AI

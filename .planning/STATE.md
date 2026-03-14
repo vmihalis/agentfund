@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-14T23:28:21Z"
-last_activity: 2026-03-14 -- Completed Plan 06-01 (x402 protocol library)
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-14T23:38:42Z"
+last_activity: 2026-03-14 -- Completed Phase 6 (x402 agent payment economy)
 progress:
   total_phases: 9
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Autonomous AI agents that coordinate real funding decisions on Solana -- registered on-chain, paying each other for services, and explaining their reasoning to humans.
-**Current focus:** Phase 6 in progress -- x402 Agent Payment Economy (Plan 01 complete, Plan 02 next)
+**Current focus:** Phase 6 complete -- x402 Agent Payment Economy (both plans done)
 
 ## Current Position
 
-Phase: 6 of 9 (x402 Agent Payment Economy)
-Plan: 1 of 2 in current phase -- COMPLETE
-Status: Phase 6 In Progress
-Last activity: 2026-03-14 -- Completed Plan 06-01 (x402 protocol library: types, middleware, client, verification)
+Phase: 6 of 9 (x402 Agent Payment Economy) -- COMPLETE
+Plan: 2 of 2 in current phase -- COMPLETE
+Status: Phase 6 Complete
+Last activity: 2026-03-14 -- Completed Plan 06-02 (x402-gated agent servers: Scout /discover, Analyzer /evaluate, integration test)
 
-Progress: [█████████░] 90%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 6min
-- Total execution time: 0.93 hours
+- Total execution time: 1.03 hours
 
 **By Phase:**
 
@@ -48,10 +48,10 @@ Progress: [█████████░] 90%
 | 03 | 1 | 5min | 5min |
 | 04 | 1 | 2min | 2min |
 | 05 | 2 | 10min | 5min |
-| 06 | 1 | 5min | 5min |
+| 06 | 2 | 11min | 5.5min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (2min), 05-01 (3min), 05-02 (7min), 06-01 (5min)
+- Last 5 plans: 04-01 (2min), 05-01 (3min), 05-02 (7min), 06-01 (5min), 06-02 (6min)
 - Trend: steady
 
 *Updated after each plan completion*
@@ -64,6 +64,7 @@ Progress: [█████████░] 90%
 | Phase 05 P01 | 3min | 2 tasks | 4 files |
 | Phase 05 P02 | 7min | 2 tasks | 6 files |
 | Phase 06 P01 | 5min | 2 tasks | 9 files |
+| Phase 06 P02 | 6min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,10 @@ Recent decisions affecting current work:
 - [06-01]: Native x402 implementation using existing @solana/web3.js v1 stack instead of official @x402/svm SDK (requires @solana/kit v2 conflict)
 - [06-01]: Recipient ATA computed once at middleware creation time (not per-request) for performance
 - [06-01]: Safety cap on wrapFetch is optional but throws immediately if exceeded (fail-fast)
+- [06-02]: Scout priced at 0.001 USDC, Analyzer at 0.002 USDC -- evaluation costs more than discovery
+- [06-02]: Server factory pattern (createXxxServer returns { app, start }) for testability with random port
+- [06-02]: Integration tests use tiered skipIf: 402 shape test needs keys only, payment cycle needs funded ATAs
+- [06-02]: GovernanceAgent x402-aware adapter wiring deferred to Phase 9 (End-to-End Demo Integration)
 
 ### Pending Todos
 
@@ -115,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T23:28:21Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-14T23:38:42Z
+Stopped at: Completed 06-02-PLAN.md (Phase 6 complete)
 Resume file: None

@@ -62,10 +62,10 @@ Plans:
   1. Issuing a "find grant proposals" command to Scout triggers an Unbrowse intent resolution call to localhost:6969 and returns real web data
   2. Scout returns structured proposal objects (title, description, amount, team info) to the Governance Agent via the event bus
   3. Scout handles Unbrowse unavailability gracefully with stub/cached data so the demo pipeline never breaks
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Unbrowse client library, response parser, ScoutAgent with 3-layer fallback
 
 ### Phase 4: Proposal Analyzer Agent
 **Goal**: The Proposal Analyzer evaluates any proposal with Claude and returns a scored, explained assessment visible to humans

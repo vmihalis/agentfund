@@ -13,8 +13,8 @@ AgentFund delivers an autonomous multi-agent AI treasury system on Solana in 9 p
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Solana Foundation & Agent Identity** - Keypairs, wallets, token accounts, and 4 Metaplex on-chain agent registrations (completed 2026-03-14)
-- [ ] **Phase 2: Agent Architecture & Governance Core** - BaseAgent class, event bus, and Governance Agent coordination logic
-- [ ] **Phase 3: Scout Agent** - Web data discovery via Unbrowse intent resolution
+- [x] **Phase 2: Agent Architecture & Governance Core** - BaseAgent class, event bus, and Governance Agent coordination logic (completed 2026-03-14)
+- [x] **Phase 3: Scout Agent** - Web data discovery via Unbrowse intent resolution (completed 2026-03-14)
 - [ ] **Phase 4: Proposal Analyzer Agent** - Claude-powered proposal evaluation with scored reasoning
 - [ ] **Phase 5: Treasury Manager Agent** - Fund management and Meteora DLMM LP positions
 - [ ] **Phase 6: x402 Agent Payment Economy** - Micropayment flows gating agent service endpoints
@@ -51,8 +51,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Type definitions, TypedEventBus, BaseAgent, agent interfaces, stub implementations
-- [ ] 02-02-PLAN.md — GovernanceAgent with Claude API pipeline orchestration and decision summaries
+- [x] 02-01-PLAN.md — Type definitions, TypedEventBus, BaseAgent, agent interfaces, stub implementations
+- [x] 02-02-PLAN.md — GovernanceAgent with Claude API pipeline orchestration and decision summaries
 
 ### Phase 3: Scout Agent
 **Goal**: The Scout agent discovers real grant proposals from the web and delivers structured data to the Governance Agent
@@ -65,7 +65,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 03-01-PLAN.md — Unbrowse client library, response parser, ScoutAgent with 3-layer fallback
+- [x] 03-01-PLAN.md — Unbrowse client library, response parser, ScoutAgent with 3-layer fallback
 
 ### Phase 4: Proposal Analyzer Agent
 **Goal**: The Proposal Analyzer evaluates any proposal with Claude and returns a scored, explained assessment visible to humans
@@ -75,10 +75,10 @@ Plans:
   1. Given a proposal, the Analyzer calls Claude API and returns a structured evaluation with scores for team quality, technical feasibility, impact potential, and budget reasonableness
   2. Every evaluation includes human-readable explained reasoning (why fund or reject) that can be displayed in the dashboard
   3. The Analyzer communicates results back to the Governance Agent via the event bus for aggregation into funding decisions
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — AnalyzerAgent with Claude API evaluation, fallback scoring, and unit tests
 
 ### Phase 5: Treasury Manager Agent
 **Goal**: The Treasury Manager holds real funds on Solana devnet, executes token transfers for approved grants, and earns yield via Meteora DLMM
@@ -164,8 +164,8 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Solana Foundation & Agent Identity | 2/2 | Complete   | 2026-03-14 |
-| 2. Agent Architecture & Governance Core | 0/2 | Not started | - |
-| 3. Scout Agent | 0/1 | Not started | - |
+| 2. Agent Architecture & Governance Core | 2/2 | Complete   | 2026-03-14 |
+| 3. Scout Agent | 1/1 | Complete   | 2026-03-14 |
 | 4. Proposal Analyzer Agent | 0/1 | Not started | - |
 | 5. Treasury Manager Agent | 0/2 | Not started | - |
 | 6. x402 Agent Payment Economy | 0/2 | Not started | - |

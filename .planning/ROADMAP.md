@@ -105,11 +105,11 @@ Plans:
   2. An agent using wrapFetch can call a peer's x402-gated endpoint, automatically pay the required amount, and receive the service response
   3. At least one agent-to-agent x402 payment produces a real on-chain devnet USDC transfer viewable on Solscan
   4. The full x402 cycle is demonstrable: 402 response with price, client pays, server verifies payment, server delivers content
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md — x402 protocol library: types, Express middleware, wrapFetch client, transaction verification
+- [ ] 06-02-PLAN.md — Scout and Analyzer x402-gated HTTP servers, integration test with on-chain payment
 
 ### Phase 7: Voice Command Interface
 **Goal**: Users can speak commands to the system and trigger real on-chain agent actions through ElevenLabs conversational AI

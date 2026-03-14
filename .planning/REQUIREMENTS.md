@@ -125,47 +125,47 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IDENT-02 | Phase 1 | Pending |
 | IDENT-03 | Phase 1 | Pending |
 | IDENT-04 | Phase 1 | Pending |
-| PAY-01 | Phase 4 | Pending |
-| PAY-02 | Phase 4 | Pending |
-| PAY-03 | Phase 4 | Pending |
-| PAY-04 | Phase 4 | Pending |
+| GOV-01 | Phase 2 | Pending |
+| GOV-02 | Phase 2 | Pending |
+| GOV-04 | Phase 2 | Pending |
 | SCOUT-01 | Phase 3 | Pending |
 | SCOUT-02 | Phase 3 | Pending |
 | SCOUT-03 | Phase 3 | Pending |
-| SCOUT-04 | Phase 3 | Pending |
-| ANLZ-01 | Phase 3 | Pending |
-| ANLZ-02 | Phase 3 | Pending |
-| ANLZ-03 | Phase 3 | Pending |
-| ANLZ-04 | Phase 3 | Pending |
-| TREAS-01 | Phase 3 | Pending |
-| TREAS-02 | Phase 3 | Pending |
-| TREAS-03 | Phase 3 | Pending |
-| TREAS-04 | Phase 3 | Pending |
-| TREAS-05 | Phase 3 | Pending |
-| GOV-01 | Phase 2 | Pending |
-| GOV-02 | Phase 2 | Pending |
-| GOV-03 | Phase 5 | Pending |
-| GOV-04 | Phase 2 | Pending |
-| VOICE-01 | Phase 5 | Pending |
-| VOICE-02 | Phase 5 | Pending |
-| VOICE-03 | Phase 5 | Pending |
-| VOICE-04 | Phase 5 | Pending |
-| SYBIL-01 | Phase 5 | Pending |
-| SYBIL-02 | Phase 5 | Pending |
-| DASH-01 | Phase 5 | Pending |
-| DASH-02 | Phase 5 | Pending |
-| DASH-03 | Phase 5 | Pending |
-| DASH-04 | Phase 5 | Pending |
-| DASH-05 | Phase 5 | Pending |
-| DEMO-01 | Phase 6 | Pending |
-| DEMO-02 | Phase 6 | Pending |
-| DEMO-03 | Phase 6 | Pending |
+| ANLZ-01 | Phase 4 | Pending |
+| ANLZ-02 | Phase 4 | Pending |
+| ANLZ-03 | Phase 4 | Pending |
+| TREAS-01 | Phase 5 | Pending |
+| TREAS-02 | Phase 5 | Pending |
+| TREAS-03 | Phase 5 | Pending |
+| TREAS-04 | Phase 5 | Pending |
+| TREAS-05 | Phase 5 | Pending |
+| PAY-01 | Phase 6 | Pending |
+| PAY-02 | Phase 6 | Pending |
+| PAY-03 | Phase 6 | Pending |
+| PAY-04 | Phase 6 | Pending |
+| SCOUT-04 | Phase 6 | Pending |
+| ANLZ-04 | Phase 6 | Pending |
+| VOICE-01 | Phase 7 | Pending |
+| VOICE-02 | Phase 7 | Pending |
+| VOICE-03 | Phase 7 | Pending |
+| VOICE-04 | Phase 7 | Pending |
+| GOV-03 | Phase 7 | Pending |
+| DASH-01 | Phase 8 | Pending |
+| DASH-02 | Phase 8 | Pending |
+| DASH-03 | Phase 8 | Pending |
+| DASH-04 | Phase 8 | Pending |
+| DASH-05 | Phase 8 | Pending |
+| SYBIL-01 | Phase 8 | Pending |
+| SYBIL-02 | Phase 8 | Pending |
+| DEMO-01 | Phase 9 | Pending |
+| DEMO-02 | Phase 9 | Pending |
+| DEMO-03 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 38 total
-- Mapped to phases: 38
-- Unmapped: 0 ✓
+- v1 requirements: 39 total
+- Mapped to phases: 39
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 after roadmap creation (9-phase fine-grained structure)*

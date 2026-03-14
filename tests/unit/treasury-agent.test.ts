@@ -1,10 +1,11 @@
 /**
- * Tests for TreasuryAgent (TREAS-01, TREAS-02, TREAS-05).
+ * Tests for TreasuryAgent (TREAS-01 through TREAS-05).
  *
  * Verifies that getBalance returns real-format SOL and USDC balances,
  * executeFunding produces transaction signatures for "fund" actions,
- * handles errors gracefully, and emits agent:status events.
- * All Solana interactions are mocked -- no real devnet calls.
+ * DLMM LP position management (create, remove, query), and that
+ * getBalance includes LP position data. All Solana and Meteora
+ * interactions are mocked -- no real devnet calls.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -13,6 +14,32 @@ import { TypedEventBus } from '../../src/events/event-bus.js';
 import type { AgentEvents } from '../../src/events/event-types.js';
 import type { ITreasuryAgent } from '../../src/agents/types.js';
 import type { FundingAllocation } from '../../src/types/proposals.js';
+
+// --- Hoisted mocks ---
+
+const {
+  mockGetBalance,
+  mockGetAccount,
+  mockTransfer,
+  mockGetOrCreateATA,
+  mockExistsSync,
+  mockReadFileSync,
+  mockDlmmAddLiquidity,
+  mockDlmmRemoveLiquidity,
+  mockDlmmGetPositions,
+  mockDlmmCreatePool,
+} = vi.hoisted(() => ({
+  mockGetBalance: vi.fn(),
+  mockGetAccount: vi.fn(),
+  mockTransfer: vi.fn(),
+  mockGetOrCreateATA: vi.fn(),
+  mockExistsSync: vi.fn(),
+  mockReadFileSync: vi.fn(),
+  mockDlmmAddLiquidity: vi.fn(),
+  mockDlmmRemoveLiquidity: vi.fn(),
+  mockDlmmGetPositions: vi.fn(),
+  mockDlmmCreatePool: vi.fn(),
+}));
 
 // --- Mocks ---
 
@@ -33,7 +60,6 @@ vi.mock('../../src/lib/keys.js', () => {
 });
 
 // Mock the solana connection module
-const mockGetBalance = vi.fn();
 vi.mock('../../src/lib/solana/index.js', () => ({
   getConnection: () => ({
     rpcEndpoint: 'https://mock.devnet.solana.com',
@@ -43,15 +69,11 @@ vi.mock('../../src/lib/solana/index.js', () => ({
 }));
 
 // Mock @solana/spl-token
-const mockGetAccount = vi.fn();
-const mockTransfer = vi.fn();
-const mockGetOrCreateATA = vi.fn();
-
 vi.mock('@solana/spl-token', () => {
   return {
-    getAccount: mockGetAccount,
-    transfer: mockTransfer,
-    getOrCreateAssociatedTokenAccount: mockGetOrCreateATA,
+    getAccount: (...args: any[]) => mockGetAccount(...args),
+    transfer: (...args: any[]) => mockTransfer(...args),
+    getOrCreateAssociatedTokenAccount: (...args: any[]) => mockGetOrCreateATA(...args),
     getAssociatedTokenAddressSync: vi.fn().mockReturnValue(
       new PublicKey('11111111111111111111111111111111'),
     ),
@@ -64,29 +86,26 @@ vi.mock('@solana/spl-token', () => {
   };
 });
 
-// Mock fs for addresses.json
+// Mock DlmmClient
+vi.mock('../../src/lib/meteora/dlmm-client.js', () => ({
+  DlmmClient: class MockDlmmClient {
+    constructor() {}
+    async createPool(...args: any[]) { return mockDlmmCreatePool(...args); }
+    async addLiquidity(...args: any[]) { return mockDlmmAddLiquidity(...args); }
+    async removeLiquidity(...args: any[]) { return mockDlmmRemoveLiquidity(...args); }
+    async getPositions(...args: any[]) { return mockDlmmGetPositions(...args); }
+  },
+}));
+
+// Mock fs for addresses.json and dlmm-pool.json
 vi.mock('fs', async () => {
   const actual = await vi.importActual<typeof import('fs')>('fs');
   return {
     ...actual,
     default: {
       ...actual,
-      readFileSync: vi.fn((filePath: string, encoding?: string) => {
-        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
-          return JSON.stringify({
-            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
-            agents: {
-              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
-              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
-              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
-              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
-            },
-            usdcMint: null,
-            isDemoUSDC: false,
-          });
-        }
-        return actual.readFileSync(filePath, encoding as any);
-      }),
+      existsSync: (...args: any[]) => mockExistsSync(...args),
+      readFileSync: (...args: any[]) => mockReadFileSync(...args),
     },
   };
 });
@@ -115,9 +134,9 @@ const noAmountAllocation: FundingAllocation = {
   reasoning: 'Missing amount',
 };
 
-describe('TreasuryAgent (TREAS-01, TREAS-02, TREAS-05)', () => {
+describe('TreasuryAgent (TREAS-01 through TREAS-05)', () => {
   let bus: TypedEventBus<AgentEvents>;
-  let agent: ITreasuryAgent & { initialize: () => Promise<void>; shutdown: () => Promise<void>; publicKey: PublicKey };
+  let agent: any;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -141,9 +160,52 @@ describe('TreasuryAgent (TREAS-01, TREAS-02, TREAS-05)', () => {
       address: new PublicKey('11111111111111111111111111111111'),
     });
 
+    // Default mock: no DLMM pool configured
+    mockExistsSync.mockImplementation((filePath: string) => {
+      if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+        return false;
+      }
+      return false;
+    });
+
+    // Default mock: addresses.json
+    mockReadFileSync.mockImplementation((filePath: string, _encoding?: string) => {
+      if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+        return JSON.stringify({
+          deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+          agents: {
+            scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+            analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+            treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+            governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+          },
+          usdcMint: null,
+          isDemoUSDC: false,
+        });
+      }
+      throw new Error(`Unexpected readFileSync call: ${filePath}`);
+    });
+
+    // Default DlmmClient mocks
+    mockDlmmGetPositions.mockResolvedValue([]);
+    mockDlmmAddLiquidity.mockResolvedValue({
+      success: true,
+      data: { positionAddress: Keypair.generate().publicKey.toBase58() },
+      signatures: ['mock-dlmm-sig'],
+    });
+    mockDlmmRemoveLiquidity.mockResolvedValue({
+      success: true,
+      signatures: ['mock-remove-sig'],
+    });
+    mockDlmmCreatePool.mockResolvedValue({
+      success: true,
+      data: { poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' },
+      signatures: ['mock-create-pool-sig'],
+    });
+
     // Dynamic import to get module after mocks are set up
     const { TreasuryAgent } = await import('../../src/agents/treasury-agent.js');
-    agent = new TreasuryAgent(bus) as any;
+    agent = new TreasuryAgent(bus);
     await agent.initialize();
   });
 
@@ -175,7 +237,7 @@ describe('TreasuryAgent (TREAS-01, TREAS-02, TREAS-05)', () => {
     expect(balance.totalValueUsd).toBe(750); // 0 + 5 * 150
   });
 
-  it('getBalance includes lpPositions (empty array)', async () => {
+  it('getBalance includes lpPositions (empty array when no pool)', async () => {
     const balance = await agent.getBalance();
 
     expect(balance.lpPositions).toBeDefined();
@@ -252,6 +314,238 @@ describe('TreasuryAgent (TREAS-01, TREAS-02, TREAS-05)', () => {
       usdcBalance: 10000,
       totalValueUsd: 10750,
       lpPositions: [],
+    });
+  });
+
+  // --- DLMM LP Position Tests (TREAS-03, TREAS-04, TREAS-05) ---
+
+  describe('DLMM LP management', () => {
+    it('createLPPosition creates position and returns signature', async () => {
+      const result = await agent.createLPPosition(1_000_000, 1_000_000);
+
+      expect(result.success).toBe(true);
+      expect(result.signature).toBe('mock-dlmm-sig');
+    });
+
+    it('createLPPosition creates pool first if not found', async () => {
+      // No pool exists
+      mockExistsSync.mockReturnValue(false);
+
+      await agent.createLPPosition(500_000, 500_000);
+
+      expect(mockDlmmCreatePool).toHaveBeenCalled();
+      expect(mockDlmmAddLiquidity).toHaveBeenCalled();
+    });
+
+    it('createLPPosition uses existing pool if configured', async () => {
+      // Pool already exists
+      mockExistsSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return true;
+        }
+        return false;
+      });
+      mockReadFileSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return JSON.stringify({ poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' });
+        }
+        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+          return JSON.stringify({
+            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+            agents: {
+              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+            },
+            usdcMint: null,
+            isDemoUSDC: false,
+          });
+        }
+        throw new Error(`Unexpected readFileSync: ${filePath}`);
+      });
+
+      await agent.createLPPosition(500_000, 500_000);
+
+      expect(mockDlmmCreatePool).not.toHaveBeenCalled();
+      expect(mockDlmmAddLiquidity).toHaveBeenCalled();
+    });
+
+    it('removeLPPosition removes position and returns signature', async () => {
+      // Pool exists
+      mockExistsSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return true;
+        }
+        return false;
+      });
+      mockReadFileSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return JSON.stringify({ poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' });
+        }
+        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+          return JSON.stringify({
+            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+            agents: {
+              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+            },
+            usdcMint: null,
+            isDemoUSDC: false,
+          });
+        }
+        throw new Error(`Unexpected readFileSync: ${filePath}`);
+      });
+
+      const positionKeypair = Keypair.generate();
+      const result = await agent.removeLPPosition(positionKeypair.publicKey.toBase58());
+
+      expect(result.success).toBe(true);
+      expect(result.signature).toBe('mock-remove-sig');
+    });
+
+    it('removeLPPosition returns error when no pool configured', async () => {
+      const tempKeypair = Keypair.generate();
+      const result = await agent.removeLPPosition(tempKeypair.publicKey.toBase58());
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('No DLMM pool configured');
+    });
+
+    it('getLPPositions returns array of LP positions', async () => {
+      // Pool exists
+      mockExistsSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return true;
+        }
+        return false;
+      });
+      mockReadFileSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return JSON.stringify({ poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' });
+        }
+        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+          return JSON.stringify({
+            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+            agents: {
+              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+            },
+            usdcMint: null,
+            isDemoUSDC: false,
+          });
+        }
+        throw new Error(`Unexpected readFileSync: ${filePath}`);
+      });
+
+      mockDlmmGetPositions.mockResolvedValue([
+        {
+          positionAddress: 'pos-1',
+          poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe',
+          binIds: [100, 101],
+          liquidityShares: ['500', '600'],
+        },
+      ]);
+
+      const positions = await agent.getLPPositions();
+
+      expect(positions).toBeInstanceOf(Array);
+      expect(positions.length).toBe(1);
+      expect(positions[0].poolAddress).toBe('DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe');
+      expect(positions[0].positionAddress).toBe('pos-1');
+    });
+
+    it('getLPPositions returns empty when no pool configured', async () => {
+      const positions = await agent.getLPPositions();
+      expect(positions).toEqual([]);
+    });
+
+    it('getBalance includes lpPositions field from DLMM', async () => {
+      // Pool exists
+      mockExistsSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return true;
+        }
+        return false;
+      });
+      mockReadFileSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return JSON.stringify({ poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' });
+        }
+        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+          return JSON.stringify({
+            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+            agents: {
+              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+            },
+            usdcMint: null,
+            isDemoUSDC: false,
+          });
+        }
+        throw new Error(`Unexpected readFileSync: ${filePath}`);
+      });
+
+      mockDlmmGetPositions.mockResolvedValue([
+        {
+          positionAddress: 'pos-1',
+          poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe',
+          binIds: [100],
+          liquidityShares: ['500'],
+        },
+      ]);
+
+      const balance = await agent.getBalance();
+
+      expect(balance.lpPositions).toBeDefined();
+      expect(balance.lpPositions!.length).toBe(1);
+      expect(balance.lpPositions![0].positionAddress).toBe('pos-1');
+    });
+
+    it('DLMM errors degrade gracefully (getBalance still works with empty lpPositions)', async () => {
+      // Pool exists
+      mockExistsSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return true;
+        }
+        return false;
+      });
+      mockReadFileSync.mockImplementation((filePath: string) => {
+        if (typeof filePath === 'string' && filePath.includes('dlmm-pool.json')) {
+          return JSON.stringify({ poolAddress: 'DLMMonGZa4bNWkpjsFqhvwxZ6Pqafyqrza33i8oWHCNe' });
+        }
+        if (typeof filePath === 'string' && filePath.includes('addresses.json')) {
+          return JSON.stringify({
+            deployer: '7GuLR4JgmxsQJAGz3poeCy9Gsp2jUyWntwigZy4iLD8X',
+            agents: {
+              scout: { publicKey: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej', ata: null },
+              analyzer: { publicKey: 'DeUfaAWhauYzPQNetQF8NHDFY8hiQXazE4HYBBAwFMfu', ata: null },
+              treasury: { publicKey: mockTreasuryKeypair.publicKey.toBase58(), ata: null },
+              governance: { publicKey: mockGovernanceKeypair.publicKey.toBase58(), ata: null },
+            },
+            usdcMint: null,
+            isDemoUSDC: false,
+          });
+        }
+        throw new Error(`Unexpected readFileSync: ${filePath}`);
+      });
+
+      // Force DLMM to fail
+      mockDlmmGetPositions.mockRejectedValue(new Error('DLMM SDK crashed'));
+
+      const balance = await agent.getBalance();
+
+      // Should still work -- SOL/USDC balances are present
+      expect(balance.solBalance).toBe(5);
+      expect(balance.usdcBalance).toBe(10000);
+      expect(balance.totalValueUsd).toBe(10750);
+      expect(balance.lpPositions).toEqual([]);
     });
   });
 });

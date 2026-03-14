@@ -2,10 +2,11 @@
  * Real TreasuryAgent for on-chain Solana devnet operations.
  *
  * Replaces StubTreasuryAgent with real balance tracking (SOL + USDC),
- * SPL token transfers for governance-approved grants, and treasury
- * status reporting. Implements ITreasuryAgent interface.
+ * SPL token transfers for governance-approved grants, Meteora DLMM
+ * LP position management, and treasury status reporting.
+ * Implements ITreasuryAgent interface.
  *
- * Phase 5: Treasury Manager Agent (TREAS-01, TREAS-02, TREAS-05).
+ * Phase 5: Treasury Manager Agent (TREAS-01 through TREAS-05).
  */
 
 import fs from 'fs';
@@ -24,9 +25,11 @@ import type {
   FundingAllocation,
   TransactionResult,
   TreasuryBalance,
+  LPPosition,
 } from '../types/proposals.js';
 import type { AgentEventBus } from '../events/event-types.js';
 import { DEVNET_USDC_MINT } from '../lib/solana/index.js';
+import { DlmmClient } from '../lib/meteora/dlmm-client.js';
 
 /** Cached addresses.json data */
 interface AddressesData {
@@ -54,7 +57,14 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
     // Pre-load addresses and USDC mint
     this.loadAddresses();
     this.usdcMintCache = this.getUsdcMint();
-    this.emitStatus('initialized', 'TreasuryAgent ready');
+
+    // Check if DLMM pool is configured
+    const poolConfigured = this.hasDlmmPool();
+    if (poolConfigured) {
+      this.emitStatus('initialized', 'TreasuryAgent ready (DLMM pool configured)');
+    } else {
+      this.emitStatus('initialized', 'TreasuryAgent ready (no DLMM pool)');
+    }
   }
 
   async shutdown(): Promise<void> {
@@ -87,11 +97,20 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
 
     const totalValueUsd = usdcBalance + solBalance * SOL_PRICE_USD;
 
+    // Query LP positions (graceful degradation -- empty on error)
+    let lpPositions: LPPosition[] = [];
+    try {
+      lpPositions = await this.getLPPositions();
+    } catch {
+      // DLMM failure should not break treasury balance reporting
+      lpPositions = [];
+    }
+
     return {
       solBalance,
       usdcBalance,
       totalValueUsd,
-      lpPositions: [],
+      lpPositions,
     };
   }
 
@@ -154,6 +173,141 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
       const message = error instanceof Error ? error.message : String(error);
       this.emitStatus('funding-failed', `${allocation.proposalTitle}: ${message}`);
       return { success: false, error: message };
+    }
+  }
+
+  /**
+   * Create a new DLMM LP position with idle treasury funds.
+   * Creates the pool first if it doesn't exist.
+   */
+  async createLPPosition(
+    xAmount: number,
+    yAmount: number,
+  ): Promise<TransactionResult> {
+    try {
+      const dlmmClient = new DlmmClient(this.connection, 'devnet');
+      let poolAddress = this.loadDlmmPoolAddress();
+
+      // Create pool if not found
+      if (!poolAddress) {
+        const usdcMint = this.getUsdcMint();
+        const solMint = new PublicKey('So11111111111111111111111111111111111111112');
+        const createResult = await dlmmClient.createPool(
+          solMint,
+          usdcMint,
+          this.keypair,
+        );
+        if (!createResult.success || !createResult.data) {
+          return { success: false, error: createResult.error || 'Pool creation failed' };
+        }
+        poolAddress = createResult.data.poolAddress;
+      }
+
+      const result = await dlmmClient.addLiquidity(
+        new PublicKey(poolAddress),
+        this.keypair,
+        xAmount,
+        yAmount,
+      );
+
+      if (!result.success) {
+        return { success: false, error: result.error };
+      }
+
+      return {
+        success: true,
+        signature: result.signatures?.[0],
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { success: false, error: message };
+    }
+  }
+
+  /**
+   * Remove all liquidity from a specific DLMM position.
+   */
+  async removeLPPosition(positionAddress: string): Promise<TransactionResult> {
+    try {
+      const poolAddress = this.loadDlmmPoolAddress();
+      if (!poolAddress) {
+        return { success: false, error: 'No DLMM pool configured' };
+      }
+
+      const dlmmClient = new DlmmClient(this.connection, 'devnet');
+      const result = await dlmmClient.removeLiquidity(
+        new PublicKey(poolAddress),
+        new PublicKey(positionAddress),
+        this.keypair,
+      );
+
+      if (!result.success) {
+        return { success: false, error: result.error };
+      }
+
+      return {
+        success: true,
+        signature: result.signatures?.[0],
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { success: false, error: message };
+    }
+  }
+
+  /**
+   * Get all LP positions for the treasury in the configured DLMM pool.
+   * Returns empty array if no pool is configured or on error.
+   */
+  async getLPPositions(): Promise<LPPosition[]> {
+    try {
+      const poolAddress = this.loadDlmmPoolAddress();
+      if (!poolAddress) {
+        return [];
+      }
+
+      const dlmmClient = new DlmmClient(this.connection, 'devnet');
+      const positions = await dlmmClient.getPositions(
+        new PublicKey(poolAddress),
+        this.publicKey,
+      );
+
+      // Map DlmmPosition to LPPosition
+      return positions.map((pos) => ({
+        poolAddress: pos.poolAddress,
+        positionAddress: pos.positionAddress,
+        tokenX: '', // Would need pool info query for full data
+        tokenY: '',
+        liquidityShare: pos.liquidityShares.length,
+        unclaimedFees: 0, // Would need fee query
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Check if a DLMM pool is configured (keys/dlmm-pool.json exists).
+   */
+  private hasDlmmPool(): boolean {
+    const filePath = path.join(process.cwd(), 'keys', 'dlmm-pool.json');
+    return fs.existsSync(filePath);
+  }
+
+  /**
+   * Load the DLMM pool address from keys/dlmm-pool.json.
+   * Returns null if file doesn't exist.
+   */
+  private loadDlmmPoolAddress(): string | null {
+    try {
+      const filePath = path.join(process.cwd(), 'keys', 'dlmm-pool.json');
+      if (!fs.existsSync(filePath)) {
+        return null;
+      }
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return data.poolAddress || null;
+    } catch {
+      return null;
     }
   }
 

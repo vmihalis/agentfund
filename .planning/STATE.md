@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-14T19:40:38.271Z"
-last_activity: 2026-03-14 -- Completed Plan 01-01 (project init, library modules, test scaffold)
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-14T19:59:34Z"
+last_activity: 2026-03-14 -- Completed Plan 01-02 (setup scripts, integration tests) -- Phase 1 complete
 progress:
   total_phases: 9
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 5
+  completed_plans: 2
+  percent: 11
 ---
 
 # Project State
@@ -25,32 +25,33 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 
 ## Current Position
 
-Phase: 1 of 9 (Solana Foundation & Agent Identity)
-Plan: 1 of 2 in current phase
+Phase: 1 of 9 (Solana Foundation & Agent Identity) -- COMPLETE
+Plan: 2 of 2 in current phase (phase complete)
 Status: Executing
-Last activity: 2026-03-14 -- Completed Plan 01-01 (project init, library modules, test scaffold)
+Last activity: 2026-03-14 -- Completed Plan 01-02 (setup scripts, integration tests) -- Phase 1 complete
 
-Progress: [█░░░░░░░░░] 5%
+Progress: [██░░░░░░░░] 11%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 7min
-- Total execution time: 0.12 hours
+- Total plans completed: 2
+- Average duration: 12min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 1 | 7min | 7min |
+| 01 | 2 | 24min | 12min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7min)
-- Trend: baseline
+- Last 5 plans: 01-01 (7min), 01-02 (17min)
+- Trend: stable
 
 *Updated after each plan completion*
 | Phase 01 P01 | 7min | 2 tasks | 16 files |
+| Phase 01 P02 | 17min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - [Roadmap]: x402-gated endpoints (SCOUT-04, ANLZ-04) assigned to Phase 6 since they depend on payment middleware
 - [01-01]: mpl-agent-registry identity API requires deep import path (dist/src/generated/identity/) -- top-level only exports plugins and program IDs
 - [01-01]: Used pnpm onlyBuiltDependencies for esbuild instead of interactive approve-builds
+- [01-02]: Integration tests skip gracefully when devnet data is unavailable rather than failing
+- [01-02]: Fund-wallets handles partial state -- saves addresses.json even when faucet rate-limited
+- [01-02]: DEMO_USDC fallback: try official devnet USDC first, fall back to custom mint
 
 ### Pending Todos
 
@@ -77,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T19:40:38.269Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-03-14T19:59:34Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None

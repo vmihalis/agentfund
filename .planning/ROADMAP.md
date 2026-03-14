@@ -12,7 +12,7 @@ AgentFund delivers an autonomous multi-agent AI treasury system on Solana in 9 p
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Solana Foundation & Agent Identity** - Keypairs, wallets, token accounts, and 4 Metaplex on-chain agent registrations
+- [x] **Phase 1: Solana Foundation & Agent Identity** - Keypairs, wallets, token accounts, and 4 Metaplex on-chain agent registrations (completed 2026-03-14)
 - [ ] **Phase 2: Agent Architecture & Governance Core** - BaseAgent class, event bus, and Governance Agent coordination logic
 - [ ] **Phase 3: Scout Agent** - Web data discovery via Unbrowse intent resolution
 - [ ] **Phase 4: Proposal Analyzer Agent** - Claude-powered proposal evaluation with scored reasoning
@@ -163,7 +163,7 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solana Foundation & Agent Identity | 1/2 | In Progress | - |
+| 1. Solana Foundation & Agent Identity | 2/2 | Complete   | 2026-03-14 |
 | 2. Agent Architecture & Governance Core | 0/2 | Not started | - |
 | 3. Scout Agent | 0/1 | Not started | - |
 | 4. Proposal Analyzer Agent | 0/1 | Not started | - |

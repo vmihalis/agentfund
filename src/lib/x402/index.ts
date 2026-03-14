@@ -13,3 +13,5 @@ export type {
 } from './types.js';
 
 export { verifyAndSettlePayment } from './verify.js';
+export { x402Middleware } from './middleware.js';
+export { wrapFetchWithPayment } from './client.js';

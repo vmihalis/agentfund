@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project init, key management, Metaplex/Solana library modules, test scaffold
+- [x] 01-01-PLAN.md — Project init, key management, Metaplex/Solana library modules, test scaffold
 - [ ] 01-02-PLAN.md — Wallet funding, agent registration, verification script, integration tests
 
 ### Phase 2: Agent Architecture & Governance Core
@@ -163,7 +163,7 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Solana Foundation & Agent Identity | 0/2 | Planning complete | - |
+| 1. Solana Foundation & Agent Identity | 1/2 | In Progress | - |
 | 2. Agent Architecture & Governance Core | 0/2 | Not started | - |
 | 3. Scout Agent | 0/1 | Not started | - |
 | 4. Proposal Analyzer Agent | 0/1 | Not started | - |

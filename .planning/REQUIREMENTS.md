@@ -10,8 +10,8 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 ### Agent Identity
 
 - [ ] **IDENT-01**: 4 AI agents registered on-chain via Metaplex Agent Registry (MPL Core NFT + AgentIdentityV1 PDA each)
-- [ ] **IDENT-02**: Each agent has its own Solana keypair, funded wallet, and Associated Token Account for devnet USDC
-- [ ] **IDENT-03**: Agent identities verifiable by any third party via PDA derivation and AppData plugin inspection
+- [x] **IDENT-02**: Each agent has its own Solana keypair, funded wallet, and Associated Token Account for devnet USDC
+- [x] **IDENT-03**: Agent identities verifiable by any third party via PDA derivation and AppData plugin inspection
 - [ ] **IDENT-04**: MPL Core NFT collection created for AgentFund agent group
 
 ### Agent Payments
@@ -122,8 +122,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | IDENT-01 | Phase 1 | Pending |
-| IDENT-02 | Phase 1 | Pending |
-| IDENT-03 | Phase 1 | Pending |
+| IDENT-02 | Phase 1 | Complete |
+| IDENT-03 | Phase 1 | Complete |
 | IDENT-04 | Phase 1 | Pending |
 | GOV-01 | Phase 2 | Pending |
 | GOV-02 | Phase 2 | Pending |

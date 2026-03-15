@@ -256,12 +256,13 @@ async function main() {
   const governance = new GovernanceAgent(bus, scoutAdapter, analyzerAdapter, treasury);
   await governance.initialize();
 
-  // Step 10: Create VoiceCommandRouter with x402 adapters
+  // Step 10: Create VoiceCommandRouter with x402 adapters + shared event bus
   const router = new VoiceCommandRouter({
     governance,
     scout: scoutAdapter,
     analyzer: analyzerAdapter,
     treasury,
+    bus,
   });
 
   // Step 11: Create voice server and add /api/activity endpoint

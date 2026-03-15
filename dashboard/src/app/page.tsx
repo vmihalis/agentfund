@@ -1,23 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { fetchAgents, fetchTreasury, fetchPayments } from '@/lib/api';
-import type { AgentInfo, TreasuryData, PaymentRecord } from '@/lib/types';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchAgents, fetchTreasury, fetchPayments, fetchProposals } from '@/lib/api';
+import type { AgentInfo, TreasuryData, PaymentRecord, PipelineProposal } from '@/lib/types';
 import { AgentCard } from '@/components/AgentCard';
 import { TreasuryPanel } from '@/components/TreasuryPanel';
 import { PaymentHistory } from '@/components/PaymentHistory';
+import { VoiceWidget } from '@/components/VoiceWidget';
+import { ProposalPipeline } from '@/components/ProposalPipeline';
 
 export default function Home() {
   const [agents, setAgents] = useState<AgentInfo[]>([]);
   const [treasury, setTreasury] = useState<TreasuryData | undefined>();
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [proposals, setProposals] = useState<PipelineProposal[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const refreshProposals = useCallback(() => {
+    fetchProposals().then(setProposals);
+  }, []);
 
   useEffect(() => {
     Promise.all([
       fetchAgents().then(setAgents),
       fetchTreasury().then(setTreasury),
       fetchPayments().then(setPayments),
+      fetchProposals().then(setProposals),
     ]).finally(() => setLoading(false));
   }, []);
 
@@ -30,6 +38,7 @@ export default function Home() {
         </p>
       </header>
 
+      {/* Agent Identities */}
       <section className="mb-10">
         <h2 className="mb-4 text-xl font-semibold text-gray-200">
           Agent Identities
@@ -52,10 +61,22 @@ export default function Home() {
         )}
       </section>
 
+      {/* Voice Command Center */}
+      <section className="mb-10">
+        <VoiceWidget onCommandSent={refreshProposals} />
+      </section>
+
+      {/* Proposal Pipeline */}
+      <section className="mb-10">
+        <ProposalPipeline proposals={proposals} />
+      </section>
+
+      {/* Treasury Status */}
       <section className="mb-10">
         <TreasuryPanel data={treasury} />
       </section>
 
+      {/* Payment History */}
       <section>
         <PaymentHistory payments={payments} />
       </section>

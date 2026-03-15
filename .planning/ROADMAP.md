@@ -186,7 +186,11 @@ Plans:
   2. X402ScoutAdapter and X402AnalyzerAdapter preserve txSignature from x402 payment responses
   3. Dashboard /api/payments returns live x402 payment data (not just static demo data)
   4. Governance pipeline outcomes update proposals-store stages; mapPipelineStage() is wired and consumed
-**Plans**: 0 plans
+**Plans**: 2 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — VoiceWidget clientTools wiring, x402 adapter txSignature preservation
+- [ ] 11-02-PLAN.md — Live payment endpoint, proposals-store pipeline stage updates, dashboard proxy wiring
 
 ## Progress
 
@@ -205,4 +209,4 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
 | 9. End-to-End Demo Integration | 2/2 | Complete   | 2026-03-15 |
 | 10. Devnet Bootstrap & Missing Verification | 2/2 | Complete    | 2026-03-15 |
-| 11. Live Dashboard Wiring | 0/0 | Pending | - |
+| 11. Live Dashboard Wiring | 0/2 | Pending | - |

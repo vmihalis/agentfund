@@ -51,11 +51,26 @@ export async function createAgentAsset(
     name: args.name,
     uri: args.uri,
     owner: ownerPk,
-  }).sendAndConfirm(umi);
+  }).sendAndConfirm(umi, { commitment: 'confirmed' });
 
-  // Verify the asset was created
-  const asset = await fetchAsset(umi, assetSigner.publicKey);
-  console.log(`Asset created: ${asset.publicKey} | Owner: ${asset.owner} | Name: ${asset.name}`);
+  // Verify the asset was created (retry with delay for devnet propagation)
+  let asset: AssetV1 | null = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      asset = await fetchAsset(umi, assetSigner.publicKey);
+      break;
+    } catch {
+      if (attempt < 4) {
+        console.log(`  Waiting for asset confirmation (attempt ${attempt + 1}/5)...`);
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+    }
+  }
+  if (asset) {
+    console.log(`Asset created: ${asset.publicKey} | Owner: ${asset.owner} | Name: ${asset.name}`);
+  } else {
+    console.log(`Asset created (confirmation pending): ${assetSigner.publicKey}`);
+  }
 
   return assetSigner;
 }

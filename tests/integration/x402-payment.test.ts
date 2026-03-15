@@ -109,14 +109,15 @@ describe.skipIf(shouldSkipAll)('x402 Payment Integration (PAY-02)', () => {
       const { wrapFetchWithPayment } = await import(
         '../../src/lib/x402/client.js'
       );
-      const { DEVNET_USDC_MINT } = await import(
+      const { getActiveUsdcMint } = await import(
         '../../src/lib/solana/token-accounts.js'
       );
 
+      const usdcMint = getActiveUsdcMint();
       const paidFetch = wrapFetchWithPayment(fetch, {
         keypair: govKeypair,
         connection,
-        usdcMint: DEVNET_USDC_MINT,
+        usdcMint,
         maxPaymentUsdc: 10000, // 0.01 USDC safety cap
       });
 
@@ -135,14 +136,15 @@ describe.skipIf(shouldSkipAll)('x402 Payment Integration (PAY-02)', () => {
       const { wrapFetchWithPayment } = await import(
         '../../src/lib/x402/client.js'
       );
-      const { DEVNET_USDC_MINT } = await import(
+      const { getActiveUsdcMint } = await import(
         '../../src/lib/solana/token-accounts.js'
       );
 
+      const usdcMint = getActiveUsdcMint();
       const paidFetch = wrapFetchWithPayment(fetch, {
         keypair: govKeypair,
         connection,
-        usdcMint: DEVNET_USDC_MINT,
+        usdcMint,
         maxPaymentUsdc: 10000,
       });
 

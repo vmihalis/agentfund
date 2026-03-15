@@ -17,7 +17,7 @@ import { TypedEventBus } from '../events/event-bus.js';
 import { x402Middleware } from '../lib/x402/middleware.js';
 import { getWeb3Keypair } from '../lib/keys.js';
 import { getConnection } from '../lib/solana/connection.js';
-import { DEVNET_USDC_MINT } from '../lib/solana/token-accounts.js';
+import { getActiveUsdcMint } from '../lib/solana/token-accounts.js';
 
 /** Options for creating the analyzer server. */
 export interface AnalyzerServerOptions {
@@ -44,9 +44,10 @@ export function createAnalyzerServer(options?: AnalyzerServerOptions) {
   const analyzerKeypair = getWeb3Keypair('analyzer');
   const connection = getConnection();
 
+  const usdcMint = getActiveUsdcMint();
   const paymentMiddleware = x402Middleware({
     recipientWallet: analyzerKeypair.publicKey,
-    usdcMint: DEVNET_USDC_MINT,
+    usdcMint,
     priceUsdc: 2000, // 0.002 USDC
     connection,
     cluster: 'devnet',

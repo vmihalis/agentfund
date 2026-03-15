@@ -55,7 +55,7 @@ export async function registerAgentIdentity(
     asset: assetPk,
     collection: collectionPk,
     agentRegistrationUri: args.agentRegistrationUri,
-  }).sendAndConfirm(umi);
+  }).sendAndConfirm(umi, { commitment: 'confirmed' });
 
   const pda = findAgentIdentityV1Pda(umi, { asset: assetPk });
   console.log(`Identity registered for asset ${assetPk} | PDA: ${pda[0]}`);

@@ -32,7 +32,7 @@ export async function createAgentCollection(umi: Umi): Promise<Signer> {
     collection: collectionSigner,
     name: 'AgentFund Agents',
     uri,
-  }).sendAndConfirm(umi);
+  }).sendAndConfirm(umi, { commitment: 'confirmed' });
 
   console.log('Collection created:', collectionSigner.publicKey);
 

@@ -20,7 +20,7 @@ let _umi: Umi | null = null;
 export function getUmi(): Umi {
   if (!_umi) {
     const rpcUrl = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
-    _umi = createUmi(rpcUrl)
+    _umi = createUmi(rpcUrl, { commitment: 'confirmed' })
       .use(mplCore())
       .use(mplAgentIdentity());
   }

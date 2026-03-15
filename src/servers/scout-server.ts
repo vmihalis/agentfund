@@ -17,7 +17,7 @@ import { TypedEventBus } from '../events/event-bus.js';
 import { x402Middleware } from '../lib/x402/middleware.js';
 import { getWeb3Keypair } from '../lib/keys.js';
 import { getConnection } from '../lib/solana/connection.js';
-import { DEVNET_USDC_MINT } from '../lib/solana/token-accounts.js';
+import { getActiveUsdcMint } from '../lib/solana/token-accounts.js';
 
 /** Options for creating the scout server. */
 export interface ScoutServerOptions {
@@ -44,9 +44,10 @@ export function createScoutServer(options?: ScoutServerOptions) {
   const scoutKeypair = getWeb3Keypair('scout');
   const connection = getConnection();
 
+  const usdcMint = getActiveUsdcMint();
   const paymentMiddleware = x402Middleware({
     recipientWallet: scoutKeypair.publicKey,
-    usdcMint: DEVNET_USDC_MINT,
+    usdcMint,
     priceUsdc: 1000, // 0.001 USDC
     connection,
     cluster: 'devnet',

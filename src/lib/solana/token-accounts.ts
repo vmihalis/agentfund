@@ -14,9 +14,33 @@ import {
   type Account as TokenAccount,
 } from '@solana/spl-token';
 import { Connection, PublicKey, Keypair } from '@solana/web3.js';
+import fs from 'fs';
+import path from 'path';
 
 /** Devnet USDC mint address (Circle-controlled, cannot mint from it) */
 export const DEVNET_USDC_MINT = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU');
+
+/**
+ * Load the active USDC mint from addresses.json (DEMO_USDC or official).
+ *
+ * Falls back to DEVNET_USDC_MINT if addresses.json doesn't exist or
+ * has no usdcMint set. This ensures the server and client use the
+ * same mint that fund-wallets.ts provisioned.
+ */
+export function getActiveUsdcMint(): PublicKey {
+  const addressesPath = path.join(process.cwd(), 'keys', 'addresses.json');
+  if (fs.existsSync(addressesPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(addressesPath, 'utf-8'));
+      if (data.usdcMint) {
+        return new PublicKey(data.usdcMint);
+      }
+    } catch {
+      // Fall through to default
+    }
+  }
+  return DEVNET_USDC_MINT;
+}
 
 /**
  * Create or retrieve an Associated Token Account for an agent.

@@ -10,7 +10,10 @@ import {
   getDemoPayments,
   buildTxUrl,
   isValidPaymentRecord,
+  addLivePayment,
+  getAllPayments,
 } from '../../dashboard/src/lib/payments.js';
+import type { PaymentRecord } from '../../dashboard/src/lib/types.js';
 
 describe('Dashboard Payments API', () => {
   describe('getDemoPayments', () => {
@@ -59,6 +62,59 @@ describe('Dashboard Payments API', () => {
     it('constructs correct Solscan devnet tx URL', () => {
       const url = buildTxUrl('abc123');
       expect(url).toBe('https://solscan.io/tx/abc123?cluster=devnet');
+    });
+  });
+
+  describe('addLivePayment', () => {
+    it('adds a payment record that appears in getAllPayments', () => {
+      const demoCount = getDemoPayments().length;
+      const livePayment: PaymentRecord = {
+        timestamp: '2026-03-15T12:00:00Z',
+        from: 'governance',
+        to: 'scout',
+        amount: 0.001,
+        service: 'Live Discovery',
+        txSignature: 'live-tx-001',
+        txUrl: buildTxUrl('live-tx-001'),
+      };
+      addLivePayment(livePayment);
+      expect(getAllPayments().length).toBe(demoCount + 1);
+    });
+
+    it('accumulates multiple live payments', () => {
+      const beforeCount = getAllPayments().length;
+      const secondPayment: PaymentRecord = {
+        timestamp: '2026-03-15T12:01:00Z',
+        from: 'governance',
+        to: 'analyzer',
+        amount: 0.002,
+        service: 'Live Analysis',
+        txSignature: 'live-tx-002',
+        txUrl: buildTxUrl('live-tx-002'),
+      };
+      addLivePayment(secondPayment);
+      expect(getAllPayments().length).toBe(beforeCount + 1);
+    });
+  });
+
+  describe('getAllPayments', () => {
+    it('returns demo payments when accessed (always includes demos)', () => {
+      const all = getAllPayments();
+      const demos = getDemoPayments();
+      // All demo payments should be at the start of the returned array
+      for (let i = 0; i < demos.length; i++) {
+        expect(all[i].txSignature).toBe(demos[i].txSignature);
+      }
+    });
+
+    it('includes live payments after demo payments', () => {
+      const all = getAllPayments();
+      const demoCount = getDemoPayments().length;
+      // We added 2 live payments in the addLivePayment tests above
+      expect(all.length).toBeGreaterThan(demoCount);
+      // Live payments should appear after demo entries
+      const liveEntries = all.slice(demoCount);
+      expect(liveEntries.some((p) => p.txSignature === 'live-tx-001')).toBe(true);
     });
   });
 

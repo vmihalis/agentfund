@@ -12,21 +12,21 @@ Autonomous AI agents that coordinate real funding decisions on Solana -- registe
 
 ### Validated
 
-(None yet -- ship to validate)
+- ✓ 4 AI agents registered on-chain via Metaplex Agent Registry — Phase 1
+- ✓ Agent-to-agent micropayments via x402/Corbits SDK — Phase 6
+- ✓ Scout agent discovers grant proposals and web data via Unbrowse — Phase 3
+- ✓ Proposal Analyzer evaluates proposals using Claude with explained reasoning — Phase 4
+- ✓ Treasury Manager manages funds on Solana and LP positions on Meteora DLMM — Phase 5
+- ✓ Governance Agent coordinates decisions across all agents — Phase 2
+- ✓ ElevenLabs voice command center interface for conversational interaction — Phases 7, 11
+- ✓ Human Passport Embed for sybil-resistant proposal submission — Phase 8
+- ✓ Frontier Tower deployment context (community RAG, floor treasuries, resource matching) — Phase 8
+- ✓ Next.js frontend dashboard showing agent activity, treasury, and proposals — Phases 8, 11
+- ✓ Working demo with real on-chain actions (not just dashboards) — Phases 9, 10
 
 ### Active
 
-- [ ] 4 AI agents registered on-chain via Metaplex Agent Registry (Scout, Proposal Analyzer, Treasury Manager, Governance)
-- [ ] Agent-to-agent micropayments via x402/Corbits SDK
-- [ ] Scout agent discovers grant proposals and web data via Unbrowse
-- [ ] Proposal Analyzer evaluates proposals using Claude with explained reasoning
-- [ ] Treasury Manager manages funds on Solana and LP positions on Meteora DLMM
-- [ ] Governance Agent coordinates decisions across all agents
-- [ ] ElevenLabs voice command center interface for conversational interaction
-- [ ] Human Passport Embed for sybil-resistant proposal submission
-- [ ] Frontier Tower deployment context (community RAG, floor treasuries, resource matching)
-- [ ] Next.js frontend dashboard showing agent activity, treasury, and proposals
-- [ ] Working demo with real on-chain actions (not just dashboards)
+(All requirements validated)
 
 ### Out of Scope
 
@@ -91,13 +91,13 @@ Autonomous AI agents that coordinate real funding decisions on Solana -- registe
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| TypeScript over Python | All SDKs have TS support; Next.js frontend; Solana Agent Kit TS is primary | -- Pending |
-| Solana devnet | Hackathon demo, no real funds needed, faucets available | -- Pending |
-| Corbits SDK for x402 | Most mature Solana x402 implementation, wrapped fetch pattern | -- Pending |
-| ElevenLabs Agents Platform (not raw TTS) | Judges want agentic depth, not just TTS wrappers; full conversation orchestration | -- Pending |
-| Passport Embed (not full WaaP) | 15-min integration vs 45-min; sybil resistance is the requirement | -- Pending |
-| Coarse parallelization (2-3 parallel agents per phase) | Solo dev managing multiple Claude Code sessions; too many = integration hell | -- Pending |
-| DLMM focus for Meteora (not DBC) | DLMM is better documented, LP management is the core ask; DBC is stretch | -- Pending |
+| TypeScript over Python | All SDKs have TS support; Next.js frontend; Solana Agent Kit TS is primary | ✓ Validated |
+| Solana devnet | Hackathon demo, no real funds needed, faucets available | ✓ Validated |
+| Corbits SDK for x402 | Most mature Solana x402 implementation, wrapped fetch pattern | ✓ Native implementation used (SDK v2 conflict) |
+| ElevenLabs Agents Platform (not raw TTS) | Judges want agentic depth, not just TTS wrappers; full conversation orchestration | ✓ Validated — clientTools wired |
+| Passport Embed (not full WaaP) | 15-min integration vs 45-min; sybil resistance is the requirement | ✓ Validated |
+| Coarse parallelization (2-3 parallel agents per phase) | Solo dev managing multiple Claude Code sessions; too many = integration hell | ✓ Validated — 21 plans across 11 phases |
+| DLMM focus for Meteora (not DBC) | DLMM is better documented, LP management is the core ask; DBC is stretch | ✓ Validated |
 
 ---
-*Last updated: 2026-03-14 after initialization*
+*Last updated: 2026-03-15 after Phase 11 — all v1.0 phases complete*

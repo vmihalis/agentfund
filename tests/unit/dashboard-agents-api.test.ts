@@ -12,6 +12,7 @@ import {
   buildSolscanUrl,
   AGENT_ROLES,
   type AddressesFile,
+  type RegistrationFile,
 } from '../../dashboard/src/lib/agents.js';
 
 const MOCK_ADDRESSES: AddressesFile = {
@@ -67,6 +68,36 @@ describe('Dashboard Agents API', () => {
       const agents = mapAgentInfos(MOCK_ADDRESSES);
       const scout = agents.find((a) => a.role === 'scout');
       expect(scout?.publicKey).toBe('EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej');
+    });
+
+    it('includes Metaplex identity when registration data provided', () => {
+      const registration: RegistrationFile = {
+        collection: 'GiFvKqVPgErAVq33pEahede6HNvSPhpU4bRGWYAj5UTT',
+        agents: {
+          scout: {
+            wallet: 'EMKvtgEGf91t4voCE7bF4MgCYU46ubJiRjJn9jmRRcej',
+            asset: '5pnXE29npUpdz1eHKGGHiWkqxF4TnSWsBLDHQ1ErCBDt',
+            pda: 'GFrGJiHtadUWVu3Vzt7cNwkCGAuLwRZiTGsg2wcfTe9r',
+            verified: true,
+          },
+        },
+      };
+      const agents = mapAgentInfos(MOCK_ADDRESSES, registration);
+      const scout = agents.find((a) => a.role === 'scout');
+      expect(scout?.metaplex).toBeDefined();
+      expect(scout?.metaplex?.verified).toBe(true);
+      expect(scout?.metaplex?.assetAddress).toBe('5pnXE29npUpdz1eHKGGHiWkqxF4TnSWsBLDHQ1ErCBDt');
+      expect(scout?.metaplex?.pdaAddress).toBe('GFrGJiHtadUWVu3Vzt7cNwkCGAuLwRZiTGsg2wcfTe9r');
+      expect(scout?.metaplex?.collectionAddress).toBe('GiFvKqVPgErAVq33pEahede6HNvSPhpU4bRGWYAj5UTT');
+      expect(scout?.metaplex?.assetUrl).toContain('solscan.io');
+      expect(scout?.metaplex?.pdaUrl).toContain('solscan.io');
+    });
+
+    it('returns undefined metaplex when no registration provided', () => {
+      const agents = mapAgentInfos(MOCK_ADDRESSES);
+      for (const agent of agents) {
+        expect(agent.metaplex).toBeUndefined();
+      }
     });
   });
 

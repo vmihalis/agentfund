@@ -12,7 +12,8 @@ export type VoiceIntent =
   | 'findProposals'
   | 'analyzeProposal'
   | 'fundProject'
-  | 'checkTreasury';
+  | 'checkTreasury'
+  | 'chat';
 
 /** Parsed voice/text command ready for routing. */
 export interface VoiceCommand {

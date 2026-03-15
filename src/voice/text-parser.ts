@@ -1,125 +1,122 @@
 /**
- * Text command parser -- maps natural language text to VoiceCommand.
+ * LLM-powered text command parser.
  *
- * Uses keyword-based intent matching (case-insensitive) to extract
- * the user's intent and parameters from free-form text input.
- * This provides the text fallback path that produces the same
- * VoiceCommand format as the ElevenLabs voice path.
+ * Uses Claude to understand natural language and extract intent + params.
+ * Falls back to keyword matching if Claude is unavailable.
  *
  * @module voice/text-parser
  */
 
-import type { VoiceCommand } from './voice-types.js';
+import Anthropic from '@anthropic-ai/sdk';
+import type { VoiceCommand, VoiceIntent } from './voice-types.js';
 
-/**
- * Parse a natural language text command into a VoiceCommand.
- *
- * Intent matching rules (first match wins):
- * - "fund" | "approve" => fundProject
- * - "analyze" | "evaluate" => analyzeProposal
- * - "treasury" | "balance" | "check" => checkTreasury
- * - "find" + ("proposal" | "grant") | "search" => findProposals
- * - Default: findProposals with query = text
- *
- * @param text - Raw user text input
- * @returns Parsed VoiceCommand with intent and extracted params
- */
-export function parseTextCommand(text: string): VoiceCommand {
-  const lower = text.toLowerCase().trim();
+const VALID_INTENTS: VoiceIntent[] = ['findProposals', 'analyzeProposal', 'fundProject', 'checkTreasury'];
 
-  // Fund / approve intent
-  if (/\b(fund|approve)\b/.test(lower)) {
-    return {
-      intent: 'fundProject',
-      params: {
-        proposalId: extractId(text),
-        amount: extractAmount(text),
-      },
-    };
+let client: Anthropic | null = null;
+
+function getClient(): Anthropic | null {
+  if (!client && process.env.ANTHROPIC_API_KEY) {
+    client = new Anthropic();
   }
-
-  // Analyze / evaluate intent
-  if (/\b(analyze|evaluate)\b/.test(lower)) {
-    return {
-      intent: 'analyzeProposal',
-      params: {
-        proposalId: extractId(text),
-      },
-    };
-  }
-
-  // Treasury / balance / check intent
-  if (/\b(treasury|balance|check)\b/.test(lower)) {
-    return {
-      intent: 'checkTreasury',
-      params: {},
-    };
-  }
-
-  // Find proposals / search intent
-  if (/\b(find|search|discover)\b/.test(lower) || /\b(proposal|grant)\b/.test(lower)) {
-    return {
-      intent: 'findProposals',
-      params: { query: text },
-    };
-  }
-
-  // Default: findProposals with query = original text
-  return {
-    intent: 'findProposals',
-    params: { query: text },
-  };
+  return client;
 }
 
 /**
- * Extract an ID from text.
- *
- * Looks for the word after keywords like "proposal", "project", or "analyze".
- * Falls back to the last capitalized/alphanumeric token.
+ * Parse user text into a VoiceCommand using Claude.
+ * Falls back to keyword matching if Claude is unavailable.
  */
-function extractId(text: string): string {
-  const skipWords = /^(the|a|an|with|for|about|this|that|of|in|on|to|proposal|project|analyze|evaluate|approve|fund|new|our|my)$/i;
+export async function parseTextCommand(text: string): Promise<VoiceCommand> {
+  const anthropic = getClient();
+  if (anthropic) {
+    try {
+      return await parseWithClaude(anthropic, text);
+    } catch {
+      // Fall back to keyword parser
+    }
+  }
+  return parseWithKeywords(text);
+}
 
-  // Split into tokens and find the first non-keyword, non-skip-word token
-  // that appears after an intent/object keyword
+async function parseWithClaude(anthropic: Anthropic, text: string): Promise<VoiceCommand> {
+  const response = await anthropic.messages.create({
+    model: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514',
+    max_tokens: 200,
+    system: `You route user messages to the right agent in an autonomous AI treasury system.
+Reply with ONLY a JSON object: {"intent": "...", "params": {...}}
+
+Available intents:
+- "checkTreasury" — user asks about balance, money, funds, holdings, how much they have. params: {}
+- "findProposals" — user wants to discover/search for grant proposals or projects. params: {"query": "what they want to find"}
+- "analyzeProposal" — user wants to evaluate/score/review a specific proposal. params: {"proposalId": "name or id if mentioned"}
+- "fundProject" — user wants to send money/fund/approve/pay a project. params: {"amount": "number if mentioned", "proposalId": "the EXACT project name the user wants to fund, if they specified one"}
+- "chat" — user is chatting, greeting, asking questions, or anything else. params: {"text": "their message"}
+
+Reply with raw JSON only. No markdown, no explanation.`,
+    messages: [{ role: 'user', content: text }],
+  });
+
+  const raw = response.content[0].type === 'text' ? response.content[0].text : '';
+  const cleaned = raw.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+  const parsed = JSON.parse(cleaned) as { intent: string; params: Record<string, string> };
+
+  // Validate intent
+  if (VALID_INTENTS.includes(parsed.intent as VoiceIntent)) {
+    return { intent: parsed.intent as VoiceIntent, params: parsed.params ?? {} };
+  }
+
+  // "chat" intent — return as-is, router will handle it
+  return { intent: parsed.intent as any, params: parsed.params ?? {} };
+}
+
+/**
+ * Fallback keyword-based parser when Claude is unavailable.
+ */
+function parseWithKeywords(text: string): VoiceCommand {
+  const lower = text.toLowerCase().trim();
+
+  if (/\b(treasury|balance|money|wallet|how much|funds|holdings)\b/.test(lower)) {
+    return { intent: 'checkTreasury', params: {} };
+  }
+
+  if (/\b(fund|approve|send|pay|allocate|distribute)\b/.test(lower)) {
+    return {
+      intent: 'fundProject',
+      params: { proposalId: extractId(text), amount: extractAmount(text) },
+    };
+  }
+
+  if (/\b(analyze|evaluate|score|review|assess)\b/.test(lower)) {
+    return { intent: 'analyzeProposal', params: { proposalId: extractId(text) } };
+  }
+
+  if (/\b(find|search|discover|look|browse|proposal|grant)\b/.test(lower)) {
+    return { intent: 'findProposals', params: { query: text } };
+  }
+
+  return { intent: 'chat' as any, params: { text } };
+}
+
+function extractId(text: string): string {
+  const skipWords = /^(the|a|an|with|for|about|this|that|of|in|on|to|proposal|project|fund|send|pay|new|our|my|best|top|one|ones|it|them|all|dollars?|usd|usdc)$/i;
   const tokens = text.split(/\s+/);
   let seenKeyword = false;
-
   for (const token of tokens) {
     const clean = token.replace(/[.,!?;:]+$/, '');
-    if (/^(proposal|project|analyze|evaluate|approve|fund)$/i.test(clean)) {
-      seenKeyword = true;
-      continue;
-    }
+    if (/^(proposal|project|fund|send|pay)$/i.test(clean)) { seenKeyword = true; continue; }
     if (seenKeyword && !skipWords.test(clean) && clean.length > 0) {
-      // Skip pure numbers (those are amounts, not IDs)
       if (/^\d+$/.test(clean)) continue;
       return clean;
     }
   }
-
-  // Fallback: look for any uppercase or alphanumeric token that looks like an ID
-  const idLike = tokens.find(
-    (t) => /^[A-Z][A-Za-z0-9-]+$/.test(t) || /^[a-z]+-\d+$/.test(t),
-  );
-  if (idLike) return idLike;
-
   return '';
 }
 
-/**
- * Extract a monetary amount from text.
- *
- * Looks for dollar amounts ($N) or plain numbers.
- */
 function extractAmount(text: string): string {
-  // Match $N or $N,NNN patterns
   const dollar = text.match(/\$([0-9,]+(?:\.\d+)?)/);
   if (dollar) return dollar[1].replace(/,/g, '');
-
-  // Match standalone numbers (not part of an ID)
+  const wordAmount = text.match(/\b(\d+(?:\.\d+)?)\s*(?:dollars?|usd|usdc)\b/i);
+  if (wordAmount) return wordAmount[1];
   const numbers = text.match(/\b(\d{2,}(?:\.\d+)?)\b/);
   if (numbers) return numbers[1];
-
   return '';
 }

@@ -13,6 +13,8 @@
 
 import 'dotenv/config';
 import type { Server } from 'http';
+import fs from 'fs';
+import path from 'path';
 import { createScoutServer } from '../src/servers/scout-server.js';
 import { createAnalyzerServer } from '../src/servers/analyzer-server.js';
 import { TypedEventBus } from '../src/events/event-bus.js';
@@ -28,6 +30,11 @@ import { wrapFetchWithPayment } from '../src/lib/x402/client.js';
 import { getWeb3Keypair } from '../src/lib/keys.js';
 import { getConnection } from '../src/lib/solana/connection.js';
 import { getActiveUsdcMint } from '../src/lib/solana/token-accounts.js';
+import { getUmi, setUmiIdentity } from '../src/lib/metaplex/umi.js';
+import { verifyAgentIdentity } from '../src/lib/metaplex/identity.js';
+import { getUmiSigner } from '../src/lib/keys.js';
+import { publicKey } from '@metaplex-foundation/umi';
+import { AGENT_ROLES } from '../src/types/agents.js';
 
 const SCOUT_PORT = 4001;
 const ANALYZER_PORT = 4002;
@@ -54,6 +61,40 @@ async function waitForHealth(url: string, label: string): Promise<void> {
 
 async function main() {
   console.log('=== AgentFund Demo Startup ===\n');
+
+  // Step 0: Verify Metaplex on-chain identities
+  console.log('Verifying Metaplex on-chain agent identities...');
+  const regPath = path.join(process.cwd(), 'keys', 'registration.json');
+  try {
+    const regData = JSON.parse(fs.readFileSync(regPath, 'utf-8'));
+    const umi = getUmi();
+    const deployerSigner = getUmiSigner('governance'); // any signer for read-only verification
+    setUmiIdentity(deployerSigner);
+
+    let allVerified = true;
+    for (const role of AGENT_ROLES) {
+      const entry = regData.agents[role];
+      if (!entry?.asset) {
+        console.log(`  [!] ${role}: no registration found`);
+        allVerified = false;
+        continue;
+      }
+      try {
+        const result = await verifyAgentIdentity(umi, publicKey(entry.asset));
+        const status = result.verified ? '✓' : '✗';
+        console.log(`  [${status}] ${role}: PDA ${entry.pda.slice(0, 8)}... | Asset ${entry.asset.slice(0, 8)}... | Verified: ${result.verified}`);
+        if (!result.verified) allVerified = false;
+      } catch (err) {
+        console.log(`  [!] ${role}: verification failed (${err instanceof Error ? err.message : 'unknown error'})`);
+        allVerified = false;
+      }
+    }
+    console.log(allVerified
+      ? '  All agents verified on Metaplex Agent Registry ✓\n'
+      : '  Some agents not verified — run: pnpm register-agents\n');
+  } catch {
+    console.log('  [skip] No registration.json found — run: pnpm setup\n');
+  }
 
   // Step 1: Start Scout server
   console.log('Starting Scout server (:4001)...');
@@ -240,6 +281,17 @@ async function main() {
   // Add live proposals endpoint -- returns current pipeline proposal state
   voiceServer.app.get('/api/proposals/live', (_req, res) => {
     res.json(liveProposals);
+  });
+
+  // Add agent identity endpoint with Metaplex registration data
+  voiceServer.app.get('/api/agents/identity', (_req, res) => {
+    try {
+      const regPath2 = path.join(process.cwd(), 'keys', 'registration.json');
+      const regData = JSON.parse(fs.readFileSync(regPath2, 'utf-8'));
+      res.json(regData);
+    } catch {
+      res.json({ collection: null, agents: {} });
+    }
   });
 
   // Step 12: Start voice server

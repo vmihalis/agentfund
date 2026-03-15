@@ -5,12 +5,22 @@
  * module resolution. Next.js has its own tsconfig and module system.
  */
 
+export interface MetaplexIdentity {
+  assetAddress: string;
+  pdaAddress: string;
+  verified: boolean;
+  assetUrl: string;
+  pdaUrl: string;
+  collectionAddress: string;
+}
+
 export interface AgentInfo {
   role: string;
   name: string;
   description: string;
   publicKey: string;
   solscanUrl: string;
+  metaplex?: MetaplexIdentity;
 }
 
 export interface LPPositionData {

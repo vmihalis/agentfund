@@ -6,7 +6,7 @@
  * needing the Next.js runtime.
  */
 
-import type { AgentInfo } from './types';
+import type { AgentInfo, MetaplexIdentity } from './types';
 
 /** Agent configuration matching src/types/agents.ts AGENT_CONFIGS exactly. */
 export const AGENT_CONFIGS = {
@@ -44,6 +44,17 @@ export interface AddressesFile {
   isDemoUSDC: boolean;
 }
 
+/** Shape of the registration.json file. */
+export interface RegistrationFile {
+  collection: string;
+  agents: Record<string, {
+    wallet: string;
+    asset: string;
+    pda: string;
+    verified: boolean;
+  }>;
+}
+
 /**
  * Build a Solscan devnet URL for an address.
  */
@@ -55,13 +66,27 @@ export function buildSolscanUrl(publicKey: string): string {
  * Map addresses.json data into AgentInfo array.
  *
  * @param addresses - Parsed addresses.json content
- * @returns Array of AgentInfo with Solscan links
+ * @param registration - Optional parsed registration.json content
+ * @returns Array of AgentInfo with Solscan links and Metaplex identity
  */
-export function mapAgentInfos(addresses: AddressesFile): AgentInfo[] {
+export function mapAgentInfos(addresses: AddressesFile, registration?: RegistrationFile | null): AgentInfo[] {
   return AGENT_ROLES.map((role) => {
     const config = AGENT_CONFIGS[role];
     const agentEntry = addresses.agents[role];
     const publicKey = agentEntry?.publicKey ?? 'unknown';
+
+    let metaplex: MetaplexIdentity | undefined;
+    const regEntry = registration?.agents?.[role];
+    if (regEntry) {
+      metaplex = {
+        assetAddress: regEntry.asset,
+        pdaAddress: regEntry.pda,
+        verified: regEntry.verified,
+        assetUrl: buildSolscanUrl(regEntry.asset),
+        pdaUrl: buildSolscanUrl(regEntry.pda),
+        collectionAddress: registration!.collection,
+      };
+    }
 
     return {
       role: config.role,
@@ -69,6 +94,7 @@ export function mapAgentInfos(addresses: AddressesFile): AgentInfo[] {
       description: config.description,
       publicKey,
       solscanUrl: buildSolscanUrl(publicKey),
+      metaplex,
     };
   });
 }

@@ -242,9 +242,10 @@ export class GovernanceAgent extends BaseAgent {
   async makeDecision(
     evaluations: Evaluation[],
     budget: number,
+    userInstruction?: string,
   ): Promise<DecisionSummary> {
     try {
-      return await this.makeClaudeDecision(evaluations, budget);
+      return await this.makeClaudeDecision(evaluations, budget, userInstruction);
     } catch {
       return this.makeFallbackDecision(evaluations, budget);
     }
@@ -256,6 +257,7 @@ export class GovernanceAgent extends BaseAgent {
   private async makeClaudeDecision(
     evaluations: Evaluation[],
     budget: number,
+    userInstruction?: string,
   ): Promise<DecisionSummary> {
     const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514';
 
@@ -269,6 +271,8 @@ export class GovernanceAgent extends BaseAgent {
       )
       .join('\n');
 
+    const instruction = userInstruction || 'Fund the best proposals based on scores.';
+
     // Convert Zod schema to JSON Schema using Zod v4 native method
     const jsonSchema = z.toJSONSchema(FundingDecisionSchema, {
       target: 'draft-07',
@@ -278,19 +282,23 @@ export class GovernanceAgent extends BaseAgent {
       model,
       max_tokens: 2048,
       system:
-        'You are a funding governance agent. Analyze proposal evaluations and make allocation decisions. ' +
-        'Fund proposals that demonstrate strong teams, technical feasibility, and high impact. ' +
-        'Reject proposals that do not meet quality thresholds. ' +
-        'Always provide detailed reasoning for each decision.',
+        'You are a funding governance agent managing a USDC treasury on Solana devnet. ' +
+        'You execute the user\'s exact funding instructions.\n' +
+        'CRITICAL RULES:\n' +
+        '1. Do EXACTLY what the user says. If they name a specific project, fund ONLY that project.\n' +
+        '2. The budget is the EXACT amount of USDC to spend. Do not exceed it.\n' +
+        '3. If the user names a project, give it the full budget. Reject all others.\n' +
+        '4. If the user says "best" or doesn\'t name a project, pick the highest-scored one.\n' +
+        '5. Each amount field must be a number in USDC.\n' +
+        '6. Do NOT split money across projects unless the user explicitly asks you to.',
       messages: [
         {
           role: 'user',
           content:
-            `Available budget: $${budget}\n\n` +
+            `User instruction: ${instruction}\n\n` +
+            `Budget: $${budget} USDC\n\n` +
             `Proposal evaluations:\n${evaluationSummary}\n\n` +
-            `Make funding allocation decisions for these proposals. ` +
-            `Do not allocate more than the available budget. ` +
-            `Provide detailed reasoning for each decision.`,
+            `Follow my instructions exactly. Total funded must be <= $${budget}.`,
         },
       ],
       tools: [
@@ -373,62 +381,53 @@ export class GovernanceAgent extends BaseAgent {
       (a, b) => b.overallScore - a.overallScore,
     );
 
-    let remaining = budget;
+    // Fund proposals scoring >= 7, distribute budget proportionally by score
+    const fundable = sorted.filter((e) => e.overallScore >= 7);
+    const rejected = sorted.filter((e) => e.overallScore < 7);
+
     const allocations: FundingAllocation[] = [];
-    let fundedCount = 0;
 
-    for (const evaluation of sorted) {
-      if (evaluation.overallScore >= 7) {
-        // Look up requested amount from the proposal cache
-        const proposal = this.proposalCache.get(evaluation.proposalId);
-        const requestedAmount = proposal?.requestedAmount ?? 0;
+    if (fundable.length > 0) {
+      const totalScore = fundable.reduce((sum, e) => sum + e.overallScore, 0);
+      let remaining = budget;
 
-        if (requestedAmount > 0 && requestedAmount <= remaining) {
-          remaining -= requestedAmount;
-          fundedCount++;
-          allocations.push({
-            proposalId: evaluation.proposalId,
-            proposalTitle: evaluation.proposalTitle,
-            action: 'fund',
-            amount: requestedAmount,
-            reasoning: `Auto-approved: score ${evaluation.overallScore}/10 exceeds threshold (Claude API unavailable)`,
-          });
-        } else if (requestedAmount > remaining) {
-          allocations.push({
-            proposalId: evaluation.proposalId,
-            proposalTitle: evaluation.proposalTitle,
-            action: 'defer',
-            reasoning: `Auto-deferred: score ${evaluation.overallScore}/10 qualifies but exceeds remaining budget of $${remaining} (Claude API unavailable)`,
-          });
-        } else {
-          // No amount known (direct call without pipeline) -- fund with zero
-          fundedCount++;
-          allocations.push({
-            proposalId: evaluation.proposalId,
-            proposalTitle: evaluation.proposalTitle,
-            action: 'fund',
-            amount: 0,
-            reasoning: `Auto-approved: score ${evaluation.overallScore}/10 exceeds threshold (Claude API unavailable)`,
-          });
-        }
-      } else {
+      for (let i = 0; i < fundable.length; i++) {
+        const evaluation = fundable[i];
+        // Last one gets whatever remains to avoid rounding issues
+        const amount = i === fundable.length - 1
+          ? Math.round(remaining * 100) / 100
+          : Math.round((budget * evaluation.overallScore / totalScore) * 100) / 100;
+        remaining -= amount;
+
         allocations.push({
           proposalId: evaluation.proposalId,
           proposalTitle: evaluation.proposalTitle,
-          action: 'reject',
-          reasoning: `Auto-rejected: score ${evaluation.overallScore}/10 below threshold (Claude API unavailable)`,
+          action: 'fund',
+          amount,
+          reasoning: `Auto-approved: score ${evaluation.overallScore}/10, allocated $${amount} USDC`,
         });
       }
     }
 
-    const totalAllocated = budget - remaining;
+    for (const evaluation of rejected) {
+      allocations.push({
+        proposalId: evaluation.proposalId,
+        proposalTitle: evaluation.proposalTitle,
+        action: 'reject',
+        reasoning: `Auto-rejected: score ${evaluation.overallScore}/10 below threshold`,
+      });
+    }
+
+    const totalAllocated = allocations
+      .filter((a) => a.action === 'fund')
+      .reduce((sum, a) => sum + (a.amount ?? 0), 0);
 
     return {
       timestamp,
-      summary: `Automated decision (Claude API unavailable): funded ${fundedCount} of ${evaluations.length} proposals based on score threshold`,
+      summary: `Funded ${fundable.length} of ${evaluations.length} proposals, distributed $${totalAllocated} USDC by score`,
       allocations,
       totalAllocated,
-      remainingBudget: remaining,
+      remainingBudget: budget - totalAllocated,
     };
   }
 }

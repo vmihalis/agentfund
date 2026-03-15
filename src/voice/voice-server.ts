@@ -54,7 +54,7 @@ export function createVoiceServer(options: VoiceServerOptions) {
         return;
       }
 
-      const command = parseTextCommand(text);
+      const command = await parseTextCommand(text);
       const result = await router.execute(command);
       res.json(result);
     } catch (err) {

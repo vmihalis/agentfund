@@ -6,6 +6,25 @@
 
 import type { PaymentRecord } from './types';
 
+/** Module-level storage for live payment records from x402 transactions. */
+const livePayments: PaymentRecord[] = [];
+
+/**
+ * Add a live payment record to the in-memory log.
+ * Called when x402 payment events arrive from the voice server.
+ */
+export function addLivePayment(payment: PaymentRecord): void {
+  livePayments.push(payment);
+}
+
+/**
+ * Get all payments: demo data plus any live payments.
+ * Demo payments appear first, followed by live payments in order received.
+ */
+export function getAllPayments(): PaymentRecord[] {
+  return [...getDemoPayments(), ...livePayments];
+}
+
 /**
  * Build a Solscan devnet transaction URL.
  */

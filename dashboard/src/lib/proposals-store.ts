@@ -6,7 +6,8 @@
  * import from here so that submissions are visible in the pipeline.
  */
 
-import type { PipelineProposal } from './types';
+import type { PipelineProposal, PipelineStage } from './types';
+import { mapPipelineStage } from './pipeline';
 
 /** Mutable array holding all proposals -- seeded with demo data. */
 export const proposals: PipelineProposal[] = [
@@ -49,3 +50,25 @@ export function addProposal(proposal: PipelineProposal): void {
 export function getProposals(): PipelineProposal[] {
   return proposals;
 }
+
+/**
+ * Update an existing proposal's stage and optionally its evaluation.
+ *
+ * No-op if the proposal ID is not found (does not throw).
+ * Always updates the updatedAt timestamp when a match is found.
+ */
+export function updateProposalStage(
+  id: string,
+  stage: PipelineStage,
+  evaluation?: PipelineProposal['evaluation'],
+): void {
+  const proposal = proposals.find((p) => p.id === id);
+  if (proposal) {
+    proposal.stage = stage;
+    proposal.updatedAt = Date.now();
+    if (evaluation) proposal.evaluation = evaluation;
+  }
+}
+
+/** Re-export mapPipelineStage for convenience -- wires pipeline.ts into store consumers. */
+export { mapPipelineStage } from './pipeline';

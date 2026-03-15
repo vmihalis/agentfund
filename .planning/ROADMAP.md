@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Voice Command Interface** - ElevenLabs conversational AI with agent action triggers
 - [x] **Phase 8: Frontend Dashboard & Sybil Resistance** - Next.js monitoring dashboard and Human Passport gate (completed 2026-03-15)
 - [x] **Phase 9: End-to-End Demo Integration** - Full pipeline verification and demo rehearsal (completed 2026-03-15)
-- [ ] **Phase 10: Devnet Bootstrap & Missing Verification** - Fund deployer, execute on-chain scripts, verify Scout Agent
+- [x] **Phase 10: Devnet Bootstrap & Missing Verification** - Fund deployer, execute on-chain scripts, verify Scout Agent (completed 2026-03-15)
 - [ ] **Phase 11: Live Dashboard Wiring** - Wire voice clientTools, x402 payment signatures, and live proposal pipeline
 
 ## Phase Details
@@ -204,5 +204,5 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
 | 9. End-to-End Demo Integration | 2/2 | Complete   | 2026-03-15 |
-| 10. Devnet Bootstrap & Missing Verification | 1/2 | In Progress|  |
+| 10. Devnet Bootstrap & Missing Verification | 2/2 | Complete   | 2026-03-15 |
 | 11. Live Dashboard Wiring | 0/0 | Pending | - |

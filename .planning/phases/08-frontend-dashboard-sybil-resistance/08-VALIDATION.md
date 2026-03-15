@@ -40,9 +40,9 @@ created: 2026-03-14
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 08-01-01 | 01 | 1 | DASH-01 | unit | `pnpm vitest run tests/unit/dashboard-agents-api.test.ts -x` | ❌ W0 | ⬜ pending |
 | 08-01-02 | 01 | 1 | DASH-02 | unit | `pnpm vitest run tests/unit/dashboard-treasury-api.test.ts -x` | ❌ W0 | ⬜ pending |
-| 08-01-03 | 01 | 1 | DASH-03 | unit | `pnpm vitest run tests/unit/dashboard-proposals.test.ts -x` | ❌ W0 | ⬜ pending |
-| 08-02-01 | 02 | 1 | DASH-04 | manual-only | Manual: start voice server, open dashboard, click Start Voice | N/A | ⬜ pending |
-| 08-02-02 | 02 | 1 | DASH-05 | unit | `pnpm vitest run tests/unit/dashboard-payments.test.ts -x` | ❌ W0 | ⬜ pending |
+| 08-02-01 | 02 | 2 | DASH-03 | unit | `pnpm vitest run tests/unit/dashboard-proposals.test.ts -x` | ❌ W0 | ⬜ pending |
+| 08-02-02 | 02 | 2 | DASH-04 | manual-only | Manual: start voice server, open dashboard, click Start Voice | N/A | ⬜ pending |
+| 08-01-03 | 01 | 1 | DASH-05 | unit | `pnpm vitest run tests/unit/dashboard-payments.test.ts -x` | ❌ W0 | ⬜ pending |
 | 08-03-01 | 03 | 2 | SYBIL-01 | manual-only | Manual: load /submit, verify widget renders | N/A | ⬜ pending |
 | 08-03-02 | 03 | 2 | SYBIL-02 | unit | `pnpm vitest run tests/unit/passport-gate.test.ts -x` | ❌ W0 | ⬜ pending |
 

@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-03-15T15:07:00.383Z"
+stopped_at: Completed 11-02-PLAN.md (Phase 11 fully complete)
+last_updated: "2026-03-15T15:07:07.761Z"
 last_activity: 2026-03-15 -- Completed Plan 11-02 (Live Payment + Proposal Wiring)
 progress:
   total_phases: 11
@@ -151,6 +151,9 @@ Recent decisions affecting current work:
 - [10-02]: Documented parser return [] as legitimate empty-result handling, not anti-pattern stubs
 - [Phase 11]: [11-01]: Extracted createBrowserClientTools to dashboard/src/lib/voice-client-tools.ts (pure TS) for root vitest testability -- JSX files not parseable in Node environment
 - [Phase 11]: [11-01]: clientTools wrapped in useMemo with empty deps to prevent useConversation re-initialization on re-render
+- [Phase 11]: Synthetic tx signatures for x402 discovery/evaluation payments since adapters don't expose lastTxSignature
+- [Phase 11]: VOICE_SERVER_URL env var + localhost:4003 fallback for both payment and proposal proxy routes
+- [Phase 11]: Live proposal tracking uses pipeline:step, pipeline:decision, and pipeline:funded events combined
 
 ### Pending Todos
 
@@ -164,6 +167,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:06:34.324Z
-Stopped at: Completed 11-01-PLAN.md
+Last session: 2026-03-15T15:07:07.758Z
+Stopped at: Completed 11-02-PLAN.md (Phase 11 fully complete)
 Resume file: None

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { fetchAgents, fetchTreasury, fetchPayments, fetchProposals } from '@/lib/api';
 import type { AgentInfo, TreasuryData, PaymentRecord, PipelineProposal } from '@/lib/types';
 import { AgentCard } from '@/components/AgentCard';
@@ -31,11 +32,19 @@ export default function Home() {
 
   return (
     <main className="mx-auto min-h-screen max-w-6xl bg-gray-950 p-6 md:p-10">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold text-white">AgentFund Dashboard</h1>
-        <p className="mt-1 text-gray-400">
-          Autonomous AI Treasury Management
-        </p>
+      <header className="mb-10 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">AgentFund Dashboard</h1>
+          <p className="mt-1 text-gray-400">
+            Autonomous AI Treasury Management
+          </p>
+        </div>
+        <Link
+          href="/submit"
+          className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cyan-500"
+        >
+          Submit Proposal
+        </Link>
       </header>
 
       {/* Agent Identities */}

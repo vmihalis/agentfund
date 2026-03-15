@@ -62,3 +62,11 @@ export interface VoiceResult {
   message: string;
   data?: unknown;
 }
+
+/** Data submitted when creating a new funding proposal. */
+export interface ProposalSubmission {
+  title: string;
+  description: string;
+  requestedAmount: number;
+  teamInfo: string;
+}

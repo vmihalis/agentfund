@@ -9,12 +9,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@elevenlabs/react": "^0.14.2",
+    "@human.tech/passport-embed": "^0.3.4",
+    "@tailwindcss/postcss": "^4.1.8",
     "next": "^15.3.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.8",
-    "@tailwindcss/postcss": "^4.1.8",
-    "@elevenlabs/react": "^0.14.2"
+    "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

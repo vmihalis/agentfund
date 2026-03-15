@@ -256,7 +256,7 @@ async function main() {
   const governance = new GovernanceAgent(bus, scoutAdapter, analyzerAdapter, treasury);
   await governance.initialize();
 
-  // Step 10: Create VoiceCommandRouter
+  // Step 10: Create VoiceCommandRouter with x402 adapters
   const router = new VoiceCommandRouter({
     governance,
     scout: scoutAdapter,

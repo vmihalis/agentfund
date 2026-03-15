@@ -170,7 +170,11 @@ Plans:
   3. verify-agents.ts confirms all 4 agents are registered and verifiable via PDA derivation
   4. Phase 3 VERIFICATION.md exists and confirms SCOUT-01, SCOUT-02, SCOUT-03 are satisfied
   5. PAY-02 integration test runs without skip (funded ATAs available)
-**Plans**: 0 plans
+**Plans**: 2 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Fund deployer wallet, run devnet bootstrap scripts, verify on-chain state and x402 payment
+- [ ] 10-02-PLAN.md — Create formal Phase 3 Scout Agent VERIFICATION.md with requirement evidence
 
 ### Phase 11: Live Dashboard Wiring
 **Goal**: Voice commands, x402 payments, and governance pipeline outcomes flow through to the dashboard in real-time
@@ -200,5 +204,5 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
 | 9. End-to-End Demo Integration | 2/2 | Complete   | 2026-03-15 |
-| 10. Devnet Bootstrap & Missing Verification | 0/0 | Pending | - |
+| 10. Devnet Bootstrap & Missing Verification | 0/2 | Pending | - |
 | 11. Live Dashboard Wiring | 0/0 | Pending | - |

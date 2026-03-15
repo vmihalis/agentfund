@@ -123,7 +123,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — VoiceCommandRouter core, text parser, Express voice server with text fallback and signed-URL endpoints
+- [x] 07-01-PLAN.md — VoiceCommandRouter core, text parser, Express voice server with text fallback and signed-URL endpoints
 - [ ] 07-02-PLAN.md — ElevenLabs client tools integration, voice session helper, full pipeline integration test
 
 ### Phase 8: Frontend Dashboard & Sybil Resistance
@@ -169,6 +169,6 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 4. Proposal Analyzer Agent | 1/1 | Complete   | 2026-03-14 |
 | 5. Treasury Manager Agent | 2/2 | Complete   | 2026-03-14 |
 | 6. x402 Agent Payment Economy | 2/2 | Complete   | 2026-03-14 |
-| 7. Voice Command Interface | 0/2 | Not started | - |
+| 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 0/3 | Not started | - |
 | 9. End-to-End Demo Integration | 0/1 | Not started | - |

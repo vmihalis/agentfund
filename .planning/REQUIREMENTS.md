@@ -47,15 +47,15 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 - [x] **GOV-01**: Governance Agent coordinates the full funding pipeline: Scout discovers -> Analyzer evaluates -> Treasury funds
 - [x] **GOV-02**: Governance Agent aggregates agent evaluations and makes final allocation decisions
-- [ ] **GOV-03**: Governance Agent routes voice commands to appropriate specialist agents
+- [x] **GOV-03**: Governance Agent routes voice commands to appropriate specialist agents
 - [x] **GOV-04**: Governance Agent produces decision summaries with reasoning for each funding action
 
 ### Voice Interface
 
 - [ ] **VOICE-01**: ElevenLabs Conversational AI agent configured with custom system prompt for treasury command center
-- [ ] **VOICE-02**: Client tools map voice commands to agent actions (findProposals, analyzeProposal, fundProject, checkTreasury)
+- [x] **VOICE-02**: Client tools map voice commands to agent actions (findProposals, analyzeProposal, fundProject, checkTreasury)
 - [ ] **VOICE-03**: Voice interactions trigger real on-chain agent actions (not just text responses)
-- [ ] **VOICE-04**: Text-input fallback for all voice commands (protects demo if audio fails)
+- [x] **VOICE-04**: Text-input fallback for all voice commands (protects demo if audio fails)
 
 ### Sybil Resistance
 
@@ -146,10 +146,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCOUT-04 | Phase 6 | Complete |
 | ANLZ-04 | Phase 6 | Complete |
 | VOICE-01 | Phase 7 | Pending |
-| VOICE-02 | Phase 7 | Pending |
+| VOICE-02 | Phase 7 | Complete |
 | VOICE-03 | Phase 7 | Pending |
-| VOICE-04 | Phase 7 | Pending |
-| GOV-03 | Phase 7 | Pending |
+| VOICE-04 | Phase 7 | Complete |
+| GOV-03 | Phase 7 | Complete |
 | DASH-01 | Phase 8 | Pending |
 | DASH-02 | Phase 8 | Pending |
 | DASH-03 | Phase 8 | Pending |

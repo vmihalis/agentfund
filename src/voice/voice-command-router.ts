@@ -82,7 +82,7 @@ export class VoiceCommandRouter {
   ): Promise<VoiceResult> {
     const query = params.query || 'new grant proposals';
     const decision: DecisionSummary =
-      await this.governance.executeFundingPipeline({ query, budget: 10000 });
+      await this.governance.executeFundingPipeline({ query, budget: 100 });
 
     const count = decision.allocations.length;
     const message = `Found ${count} proposals. ${decision.summary}`;
@@ -142,7 +142,7 @@ export class VoiceCommandRouter {
     params: Record<string, string>,
   ): Promise<VoiceResult> {
     const query = params.proposalId || 'fund project';
-    const budget = Number(params.amount) || 10000;
+    const budget = Number(params.amount) || 100;
 
     const decision: DecisionSummary =
       await this.governance.executeFundingPipeline({ query, budget });

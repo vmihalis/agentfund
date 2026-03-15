@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import type { VoiceResult } from '@/lib/types';
 import { fetchSignedUrl, sendCommand } from '@/lib/api';
+import { fetchActivity, type ActivityEntry } from '@/lib/activity';
 import { createBrowserClientTools } from '@/lib/voice-client-tools';
 
 type Tab = 'voice' | 'text';
@@ -12,6 +13,70 @@ interface Message {
   id: string;
   source: 'user' | 'agent';
   text: string;
+}
+
+/** Pipeline step shown during live execution */
+interface PipelineStep {
+  id: string;
+  icon: string;
+  label: string;
+  detail?: string;
+  timestamp: number;
+}
+
+/** Map activity entries to human-readable pipeline steps */
+function activityToStep(entry: ActivityEntry): PipelineStep | null {
+  const map: Record<string, { icon: string; label: string }> = {
+    'status:initialized': { icon: '⚡', label: 'Agent initialized' },
+    'status:funding': { icon: '💰', label: 'Executing transfer' },
+    'status:funded': { icon: '✅', label: 'Transfer complete' },
+  };
+
+  // Pipeline steps
+  if (entry.type === 'step') {
+    const step = entry.detail?.step as string;
+    const status = entry.detail?.status as string;
+    if (step === 'discover' && status === 'started')
+      return { id: entry.id, icon: '🔍', label: 'Scout discovering proposals...', detail: 'Paying Scout via x402', timestamp: entry.timestamp };
+    if (step === 'discover' && status === 'completed')
+      return { id: entry.id, icon: '✅', label: 'Proposals discovered', detail: `${(entry.detail?.count as number) || ''} found`, timestamp: entry.timestamp };
+    if (step === 'evaluate' && status === 'started')
+      return { id: entry.id, icon: '🧠', label: 'Analyzer evaluating proposal...', detail: 'Paying Analyzer via x402', timestamp: entry.timestamp };
+    if (step === 'evaluate' && status === 'completed')
+      return { id: entry.id, icon: '✅', label: 'Evaluation complete', timestamp: entry.timestamp };
+    if (step === 'decide' && status === 'started')
+      return { id: entry.id, icon: '⚖️', label: 'Governance making decision...', detail: 'Claude AI reasoning', timestamp: entry.timestamp };
+    if (step === 'decide' && status === 'completed')
+      return { id: entry.id, icon: '✅', label: 'Decision made', timestamp: entry.timestamp };
+    if (step === 'fund' && status === 'started')
+      return { id: entry.id, icon: '💸', label: 'Treasury funding project...', detail: 'SPL token transfer on Solana', timestamp: entry.timestamp };
+    if (step === 'fund' && status === 'completed')
+      return { id: entry.id, icon: '✅', label: 'Funding complete', detail: entry.detail?.signature as string, timestamp: entry.timestamp };
+  }
+
+  // Decision events
+  if (entry.type === 'decision') {
+    return { id: entry.id, icon: '📋', label: 'Funding decision published', detail: entry.message, timestamp: entry.timestamp };
+  }
+
+  // Funded events
+  if (entry.type === 'funded') {
+    return { id: entry.id, icon: '🎉', label: 'Project funded on-chain', detail: entry.txSignature ? `tx: ${entry.txSignature.slice(0, 8)}...` : undefined, timestamp: entry.timestamp };
+  }
+
+  // Status events
+  const key = `${entry.type}:${entry.message?.split(' ')[0]?.toLowerCase()}`;
+  const mapped = map[key];
+  if (mapped) {
+    return { id: entry.id, icon: mapped.icon, label: mapped.label, detail: entry.message, timestamp: entry.timestamp };
+  }
+
+  // Generic status
+  if (entry.type === 'status' && entry.agent) {
+    return { id: entry.id, icon: '⚙️', label: `${entry.agent}: ${entry.message}`, timestamp: entry.timestamp };
+  }
+
+  return null;
 }
 
 export function VoiceWidget({
@@ -24,7 +89,11 @@ export function VoiceWidget({
   const [messages, setMessages] = useState<Message[]>([]);
   const [sending, setSending] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const activitySinceRef = useRef(0);
 
   const clientTools = useMemo(() => createBrowserClientTools(sendCommand), []);
 
@@ -49,6 +118,39 @@ export function VoiceWidget({
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages]);
+
+  useEffect(() => {
+    stepsRef.current?.scrollTo({ top: stepsRef.current.scrollHeight });
+  }, [pipelineSteps]);
+
+  // Start polling activity when sending
+  const startActivityPoll = useCallback(() => {
+    activitySinceRef.current = Date.now();
+    setPipelineSteps([]);
+
+    pollRef.current = setInterval(async () => {
+      const entries = await fetchActivity(activitySinceRef.current);
+      if (entries.length > 0) {
+        const maxTs = Math.max(...entries.map((e) => e.timestamp));
+        activitySinceRef.current = maxTs;
+
+        const newSteps = entries
+          .map(activityToStep)
+          .filter((s): s is PipelineStep => s !== null);
+
+        if (newSteps.length > 0) {
+          setPipelineSteps((prev) => [...prev, ...newSteps]);
+        }
+      }
+    }, 500);
+  }, []);
+
+  const stopActivityPoll = useCallback(() => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
 
   const startVoice = useCallback(async () => {
     try {
@@ -81,15 +183,30 @@ export function VoiceWidget({
       ]);
       setTextInput('');
       setSending(true);
+      startActivityPoll();
 
       try {
         const result: VoiceResult = await sendCommand(text);
+        stopActivityPoll();
+
+        // Add a "complete" step
+        setPipelineSteps((prev) => [
+          ...prev,
+          {
+            id: 'done-' + Date.now(),
+            icon: result.success ? '🎯' : '❌',
+            label: result.success ? 'Pipeline complete' : 'Pipeline failed',
+            timestamp: Date.now(),
+          },
+        ]);
+
         setMessages((prev) => [
           ...prev,
           { id: crypto.randomUUID(), source: 'agent', text: result.message },
         ]);
         onCommandSent?.();
       } catch {
+        stopActivityPoll();
         setMessages((prev) => [
           ...prev,
           {
@@ -102,7 +219,7 @@ export function VoiceWidget({
         setSending(false);
       }
     },
-    [textInput, sending, onCommandSent],
+    [textInput, sending, onCommandSent, startActivityPoll, stopActivityPoll],
   );
 
   const statusColor =
@@ -153,6 +270,49 @@ export function VoiceWidget({
       {voiceError && (
         <div className="mb-4 rounded border border-red-900/50 bg-red-950/30 px-3 py-2 text-sm text-red-400">
           {voiceError}
+        </div>
+      )}
+
+      {/* Live Pipeline Steps - shown during command execution */}
+      {(sending || pipelineSteps.length > 0) && (
+        <div
+          ref={stepsRef}
+          className="mb-4 max-h-48 overflow-y-auto rounded-md border border-gray-700 bg-gray-950 p-3"
+        >
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Pipeline Activity
+            </span>
+            {sending && (
+              <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-500" />
+            )}
+          </div>
+          {pipelineSteps.length === 0 && sending ? (
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="animate-spin">⏳</span>
+              Connecting to agents...
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {pipelineSteps.map((step) => (
+                <div key={step.id} className="flex items-start gap-2 text-sm">
+                  <span className="shrink-0">{step.icon}</span>
+                  <span className="text-gray-300">{step.label}</span>
+                  {step.detail && (
+                    <span className="truncate text-gray-600 text-xs mt-0.5">
+                      {step.detail}
+                    </span>
+                  )}
+                </div>
+              ))}
+              {sending && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span className="animate-spin">⏳</span>
+                  Processing...
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -228,7 +388,7 @@ export function VoiceWidget({
             disabled={sending || !textInput.trim()}
             className="rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? 'Running...' : 'Send'}
           </button>
         </form>
       )}

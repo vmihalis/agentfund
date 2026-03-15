@@ -18,7 +18,9 @@ export default function Home() {
   const [proposals, setProposals] = useState<PipelineProposal[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const refreshProposals = useCallback(() => {
+  const refreshAll = useCallback(() => {
+    fetchTreasury().then(setTreasury);
+    fetchPayments().then(setPayments);
     fetchProposals().then(setProposals);
   }, []);
 
@@ -29,6 +31,14 @@ export default function Home() {
       fetchPayments().then(setPayments),
       fetchProposals().then(setProposals),
     ]).finally(() => setLoading(false));
+  }, []);
+
+  // Auto-refresh payments every 5 seconds for live x402 data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPayments().then(setPayments);
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -73,7 +83,7 @@ export default function Home() {
 
       {/* Voice Command Center */}
       <section className="mb-10">
-        <VoiceWidget onCommandSent={refreshProposals} />
+        <VoiceWidget onCommandSent={refreshAll} />
       </section>
 
       {/* Activity Feed */}

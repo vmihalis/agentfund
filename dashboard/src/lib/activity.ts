@@ -9,11 +9,15 @@
 export interface ActivityEntry {
   id: string;
   timestamp: number;
-  type: 'status' | 'step' | 'decision' | 'funded' | 'error';
+  type: 'status' | 'step' | 'decision' | 'funded' | 'error' | 'thinking' | 'question' | 'answer' | 'confidence';
   agent?: string;
   message: string;
   detail?: Record<string, unknown>;
   txSignature?: string;
+  targetAgent?: string;
+  confidence?: number;
+  correlationId?: string;
+  phase?: 'considering' | 'weighing' | 'concluding';
 }
 
 /**

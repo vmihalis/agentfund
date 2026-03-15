@@ -43,6 +43,27 @@ export abstract class BaseAgent {
     });
   }
 
+  /** Emit a thinking event showing agent reasoning. */
+  protected emitThinking(phase: 'considering' | 'weighing' | 'concluding', thought: string): void {
+    this.bus.emit('agent:thinking', {
+      agent: this.role,
+      phase,
+      thought,
+      timestamp: Date.now(),
+    });
+  }
+
+  /** Emit a confidence event about a subject. */
+  protected emitConfidence(subject: string, confidence: number, reasoning: string): void {
+    this.bus.emit('agent:confidence', {
+      agent: this.role,
+      subject,
+      confidence,
+      reasoning,
+      timestamp: Date.now(),
+    });
+  }
+
   /** Initialize agent (connect, verify identity, etc.) */
   abstract initialize(): Promise<void>;
 

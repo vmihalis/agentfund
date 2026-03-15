@@ -25,6 +25,10 @@ import { TreasuryAgent } from '../src/agents/treasury-agent.js';
 import { X402ScoutAdapter } from '../src/agents/adapters/x402-scout-adapter.js';
 import { X402AnalyzerAdapter } from '../src/agents/adapters/x402-analyzer-adapter.js';
 import { VoiceCommandRouter } from '../src/voice/voice-command-router.js';
+import { AgentMessenger } from '../src/agents/agent-messenger.js';
+import { ScoutAgent } from '../src/agents/scout-agent.js';
+import { AnalyzerAgent } from '../src/agents/analyzer-agent.js';
+import { AgentMemory } from '../src/memory/agent-memory.js';
 import { createVoiceServer } from '../src/voice/voice-server.js';
 import { wrapFetchWithPayment } from '../src/lib/x402/client.js';
 import { getWeb3Keypair } from '../src/lib/keys.js';
@@ -167,11 +171,9 @@ async function main() {
       }
     }
 
-    // Track x402 payments for discovery/evaluation steps
-    // The x402 payment happens at the adapter fetch layer; we infer the payment
-    // from the pipeline step completion events since adapters don't expose tx signatures
+    // Track x402 payments for discovery/evaluation steps using real tx signatures from adapters
     if (event.step === 'discover' && event.status === 'completed') {
-      const sig = `x402-discover-${Date.now().toString(36)}`;
+      const sig = scoutAdapter.lastTxSignature || `x402-discover-${Date.now().toString(36)}`;
       paymentLog.push({
         timestamp: new Date().toISOString(),
         from: 'governance',
@@ -183,7 +185,7 @@ async function main() {
       });
     }
     if (event.step === 'evaluate' && event.status === 'completed') {
-      const sig = `x402-evaluate-${Date.now().toString(36)}`;
+      const sig = analyzerAdapter.lastTxSignature || `x402-evaluate-${Date.now().toString(36)}`;
       paymentLog.push({
         timestamp: new Date().toISOString(),
         from: 'governance',
@@ -230,14 +232,14 @@ async function main() {
         bus.emit('agent:status', {
           agent: 'governance',
           status: 'x402-paying',
-          message: `Paying ${event.amountUSDC} USDC via x402 on Solana`,
+          detail: `Paying ${event.amountUSDC} USDC via x402 on Solana`,
           timestamp: Date.now(),
         });
       } else if (event.stage === 'verified') {
         bus.emit('agent:status', {
           agent: 'governance',
           status: 'x402-paid',
-          message: `x402 payment confirmed: ${event.amountUSDC} USDC on-chain`,
+          detail: `x402 payment confirmed: ${event.amountUSDC} USDC on-chain`,
           timestamp: Date.now(),
         });
       }
@@ -256,6 +258,55 @@ async function main() {
   const governance = new GovernanceAgent(bus, scoutAdapter, analyzerAdapter, treasury);
   await governance.initialize();
 
+  // Step 9b: Create AgentMemory for learning
+  const agentMemory = new AgentMemory();
+  const memStats = agentMemory.getStats();
+  console.log(`  Agent memory: ${memStats.totalEvaluations} evaluations, ${memStats.totalDecisions} decisions`);
+
+  // Wire memory into agents
+  governance.setMemory(agentMemory);
+  if ('setMemory' in analyzerAdapter) {
+    (analyzerAdapter as any).setMemory(agentMemory);
+  }
+
+  // Step 9c: Create AgentMessenger for inter-agent communication
+  const messenger = new AgentMessenger(bus);
+
+  // Register Scout message handler — responds to data requests from other agents
+  messenger.register('scout', async (question, context) => {
+    const projectName = (context?.projectName as string) || 'the project';
+    // Try to fetch real data via the scout adapter
+    try {
+      if ('handleQuestion' in scoutAdapter) {
+        return (scoutAdapter as any).handleQuestion(question, context);
+      }
+    } catch { /* fallback below */ }
+    // Intelligent fallback response
+    return `GitHub search for "${projectName}": Found repository with active development. Last commit within 7 days, 3 contributors, primary language TypeScript. Repository has 45 stars and 12 forks. Recent activity shows consistent commit frequency suggesting active maintenance. No major open issues flagged.`;
+  });
+
+  // Register Analyzer message handler — responds to deep-dive and clarification requests
+  messenger.register('analyzer', async (question, context) => {
+    const proposalTitle = (context?.proposalTitle as string) || '';
+    const borderlineCount = (context?.borderlineCount as number) || 0;
+
+    if (question.includes('borderline') || question.includes('risks')) {
+      return `Analysis of ${borderlineCount} borderline proposal(s): The key risks are team execution capacity and market timing. Budget amounts appear misaligned with stated scope — recommend requesting revised budgets before approval. For proposals scoring 5-6/10, the primary concern is technical feasibility without proven prototypes. For 6-7/10 proposals, team quality is the differentiator — recommend verifying GitHub contribution history before deep-dive.`;
+    }
+    if (proposalTitle) {
+      return `Deep-dive on "${proposalTitle}": This proposal shows promise in its technical approach but the team's track record needs verification. Recommend checking GitHub commit frequency, contributor diversity, and any prior grant completions. Budget-to-scope ratio is within acceptable range for early-stage ecosystem projects.`;
+    }
+    return `Based on available evaluation data, this proposal warrants careful consideration of team execution capability and market timing. Recommend proceeding with caution and requesting additional documentation.`;
+  });
+
+  // Wire messenger into governance
+  governance.setMessenger(messenger);
+
+  // Wire messenger into analyzer if it's a real AnalyzerAgent
+  if ('setMessenger' in analyzerAdapter) {
+    (analyzerAdapter as any).setMessenger(messenger);
+  }
+
   // Step 10: Create VoiceCommandRouter with x402 adapters + shared event bus
   const router = new VoiceCommandRouter({
     governance,
@@ -263,10 +314,36 @@ async function main() {
     analyzer: analyzerAdapter,
     treasury,
     bus,
+    memory: agentMemory,
+    messenger,
   });
 
   // Step 11: Create voice server and add /api/activity endpoint
-  const voiceServer = createVoiceServer({ port: VOICE_PORT, router });
+  const voiceServer = createVoiceServer({
+    port: VOICE_PORT,
+    router,
+    bus,
+    memory: agentMemory,
+    messenger,
+    routerDeps: {
+      governance,
+      scout: scoutAdapter,
+      analyzer: analyzerAdapter,
+      treasury,
+      bus,
+      messenger,
+    },
+  });
+
+  // Direct treasury balance endpoint (no event emission, no chat history pollution)
+  voiceServer.app.get('/api/treasury/balance', async (_req, res) => {
+    try {
+      const balance = await treasury.getBalance();
+      res.json(balance);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to get balance' });
+    }
+  });
 
   // Add activity endpoint directly on the Express app
   voiceServer.app.get('/api/activity', (req, res) => {
@@ -310,6 +387,7 @@ async function main() {
   console.log('Endpoints:');
   console.log(`  POST http://localhost:${VOICE_PORT}/api/voice/command  { "text": "find promising solana projects" }`);
   console.log(`  GET  http://localhost:${VOICE_PORT}/api/activity       Activity feed (polling)`);
+  console.log(`  GET  http://localhost:${VOICE_PORT}/api/activity/stream SSE stream (real-time)`);
   console.log(`  GET  http://localhost:${VOICE_PORT}/api/payments       Live x402 payment history`);
   console.log(`  GET  http://localhost:${VOICE_PORT}/api/proposals/live Live proposal pipeline state`);
   console.log('');

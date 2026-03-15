@@ -7,6 +7,10 @@
 export { TypedEventBus } from './event-bus.js';
 export type {
   AgentStatusEvent,
+  AgentThinkingEvent,
+  AgentQuestionEvent,
+  AgentAnswerEvent,
+  AgentConfidenceEvent,
   PipelineStepEvent,
   PipelineDecisionEvent,
   AgentEvents,

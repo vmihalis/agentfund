@@ -62,7 +62,15 @@ export interface PipelineProposal {
     overallScore: number;
     recommendation: string;
     reasoning: string;
+    scores?: {
+      teamQuality: number;
+      technicalFeasibility: number;
+      impactPotential: number;
+      budgetReasonableness: number;
+    };
+    confidence?: number;
   };
+  deliberationStatus?: string;
 }
 
 /** Result from a voice/text command. */

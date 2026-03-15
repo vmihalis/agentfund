@@ -29,15 +29,15 @@ export interface GrantTarget {
 /** Default grant platform targets for Solana ecosystem discovery. */
 export const GRANT_TARGETS: GrantTarget[] = [
   {
-    url: 'https://earn.superteam.fun',
-    intent: 'list available grants with titles, descriptions, and amounts',
+    url: 'https://github.com/search?q=solana+grant&type=repositories&s=updated&o=desc',
+    intent: 'search repositories for solana grants with names descriptions and star counts',
   },
   {
-    url: 'https://solana.org/grants',
-    intent: 'find active Solana Foundation grant programs and funded projects',
+    url: 'https://github.com/search?q=solana+defi+OR+solana+infrastructure&type=repositories&s=stars&o=desc',
+    intent: 'search repositories for solana defi and infrastructure projects sorted by stars',
   },
   {
-    url: 'https://dorahacks.io/grant/solana-1/buidl',
-    intent: 'find funded projects from Solana DoraHacks grants',
+    url: 'https://github.com/trending/typescript?since=weekly',
+    intent: 'get trending repositories with names descriptions and star counts',
   },
 ];

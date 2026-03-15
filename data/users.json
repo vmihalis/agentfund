@@ -1,0 +1,9 @@
+[
+  {
+    "id": "3c2a2126-673b-4f8b-9a48-6ed22d5711cb",
+    "email": "demo@agentfund.ai",
+    "passwordHash": "b98943f397131e6df8170a73e230f739d28e0bb130cb8669a11315ca6066e43c527b9f8f6c0f0e3a56380790bc09ca2a3dad3ac71d8b7af87a447de2f459efb0",
+    "salt": "beb9fe48f92c70c8521cd3aa6fd5993a",
+    "createdAt": 1773610449870
+  }
+]

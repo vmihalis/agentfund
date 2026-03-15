@@ -45,6 +45,34 @@ function StageProgress({ current }: { current: PipelineStage }) {
   );
 }
 
+/** Small horizontal score bar for a single dimension. */
+function DimensionBar({ label, value }: { label: string; value: number }) {
+  const pct = (value / 10) * 100;
+  const color = pct >= 70 ? 'bg-green-500' : pct >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[9px] text-gray-500 w-10 shrink-0 uppercase">{label}</span>
+      <div className="h-1 flex-1 rounded-full bg-gray-700 overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      <span className="text-[9px] text-gray-500 w-4 text-right">{value}</span>
+    </div>
+  );
+}
+
+/** Confidence badge. */
+function ConfidenceBadge({ value }: { value: number }) {
+  const pct = Math.round(value * 100);
+  const color = pct >= 70 ? 'text-green-400 bg-green-900/20 border-green-800/50'
+    : pct >= 40 ? 'text-yellow-400 bg-yellow-900/20 border-yellow-800/50'
+    : 'text-red-400 bg-red-900/20 border-red-800/50';
+  return (
+    <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-medium border ${color}`}>
+      {pct}%
+    </span>
+  );
+}
+
 function formatTime(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
   if (seconds < 60) return `${seconds}s ago`;
@@ -115,6 +143,14 @@ export function ProposalPipeline({
                       {proposal.title}
                     </h3>
                     <StageBadge stage={proposal.stage} />
+                    {proposal.evaluation?.confidence !== undefined && (
+                      <ConfidenceBadge value={proposal.evaluation.confidence} />
+                    )}
+                    {proposal.deliberationStatus && (
+                      <span className="text-[9px] text-amber-400 bg-amber-900/20 border border-amber-800/50 rounded-full px-1.5 py-0.5">
+                        {proposal.deliberationStatus}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <StageProgress current={proposal.stage} />
@@ -123,6 +159,17 @@ export function ProposalPipeline({
                     </span>
                   </div>
                 </div>
+
+                {/* Dimension score bars */}
+                {proposal.evaluation?.scores && (
+                  <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5">
+                    <DimensionBar label="Team" value={proposal.evaluation.scores.teamQuality} />
+                    <DimensionBar label="Tech" value={proposal.evaluation.scores.technicalFeasibility} />
+                    <DimensionBar label="Impact" value={proposal.evaluation.scores.impactPotential} />
+                    <DimensionBar label="Budget" value={proposal.evaluation.scores.budgetReasonableness} />
+                  </div>
+                )}
+
                 {proposal.evaluation && (
                   <div className="mt-1.5 flex items-center gap-2 text-xs text-gray-400">
                     <span>

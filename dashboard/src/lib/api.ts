@@ -1,11 +1,12 @@
 /**
  * Fetch helpers for dashboard API routes.
  *
- * Each function fetches from a relative API URL and returns
- * typed data with error handling (returns empty/default on failure).
+ * All authenticated endpoints use authFetch which attaches
+ * the Bearer token automatically from localStorage.
  */
 
 import type { AgentInfo, TreasuryData, PaymentRecord, PipelineProposal, VoiceResult } from './types';
+import { authFetch } from './auth';
 
 /**
  * Fetch all agent identities with public keys and Solscan links.
@@ -53,25 +54,24 @@ export async function fetchPayments(): Promise<PaymentRecord[]> {
 }
 
 /**
- * Fetch ElevenLabs signed URL for voice conversation.
- */
-export async function fetchSignedUrl(): Promise<{ signedUrl: string }> {
-  const res = await fetch('/api/voice/signed-url');
-  if (!res.ok) throw new Error('Voice server unavailable');
-  return (await res.json()) as { signedUrl: string };
-}
-
-/**
- * Send a text command to the voice server.
+ * Send a text command to the voice server (auth required).
  */
 export async function sendCommand(text: string): Promise<VoiceResult> {
-  const res = await fetch('/api/voice/command', {
+  const res = await authFetch('/api/voice/command', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
   });
+  if (res.status === 401) throw new Error('Session expired. Please login again.');
   if (!res.ok) throw new Error('Voice server unavailable');
   return (await res.json()) as VoiceResult;
+}
+
+/**
+ * Clear server-side conversation history and caches (auth required).
+ */
+export async function clearChatHistory(): Promise<void> {
+  await authFetch('/api/voice/clear', { method: 'POST' });
 }
 
 /**

@@ -1,7 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { AgentInfo } from '@/lib/types';
+
+interface MemoryStats {
+  totalEvaluations: number;
+  totalDecisions: number;
+  avgScore: number;
+}
 
 const ROLE_CONFIG: Record<string, { icon: string; dot: string; badge: string }> = {
   scout: { icon: '🔍', dot: 'bg-green-500', badge: 'bg-green-900/40 text-green-400 border-green-800/50' },
@@ -18,6 +24,24 @@ function truncateKey(key: string): string {
 export function AgentStatusBar({ agents }: { agents: AgentInfo[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [memoryStats, setMemoryStats] = useState<MemoryStats | null>(null);
+
+  useEffect(() => {
+    async function fetchMemory() {
+      try {
+        const res = await fetch('/api/memory');
+        if (res.ok) {
+          const stats = await res.json();
+          if (stats.totalEvaluations > 0 || stats.totalDecisions > 0) {
+            setMemoryStats(stats);
+          }
+        }
+      } catch { /* ignore */ }
+    }
+    fetchMemory();
+    const interval = setInterval(fetchMemory, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopy = async (key: string) => {
     try {
@@ -35,6 +59,16 @@ export function AgentStatusBar({ agents }: { agents: AgentInfo[] }) {
         <span className="text-xs font-medium uppercase tracking-wider text-gray-500 mr-1">
           Agents
         </span>
+        {memoryStats && (memoryStats.totalEvaluations > 0 || memoryStats.totalDecisions > 0) && (
+          <span
+            className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium bg-indigo-900/30 text-indigo-400 border-indigo-800/50"
+            title={`${memoryStats.totalEvaluations} evaluations, ${memoryStats.totalDecisions} decisions, avg score: ${memoryStats.avgScore}/10`}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
+            Learning from {memoryStats.totalEvaluations + memoryStats.totalDecisions} past decisions
+            {memoryStats.avgScore > 0 && ` (avg: ${memoryStats.avgScore}/10)`}
+          </span>
+        )}
         {agents.map((agent) => {
           const config = ROLE_CONFIG[agent.role] ?? {
             icon: '🤖',

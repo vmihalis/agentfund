@@ -9,7 +9,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@elevenlabs/react": "^0.14.2",
     "@human.tech/passport-embed": "^0.3.4",
     "@tailwindcss/postcss": "^4.1.8",
     "next": "^15.3.3",

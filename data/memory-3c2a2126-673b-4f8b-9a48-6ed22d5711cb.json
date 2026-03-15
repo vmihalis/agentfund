@@ -1,0 +1,327 @@
+[
+  {
+    "id": "44d45b04-464e-4fc1-bf4f-058c0f0bbcae",
+    "timestamp": 1773610613671,
+    "type": "evaluation",
+    "proposalId": "scout-1773610569926-0",
+    "proposalTitle": "Solana-ZH Mini Grant Program",
+    "data": {
+      "overallScore": 6,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 8,
+        "impactPotential": 7,
+        "budgetReasonableness": 3
+      },
+      "recommendation": "defer",
+      "reasoning": "The Solana-ZH organization appears to have established community presence in the Chinese developer ecosystem, which is valuable for localized outreach. The technical feasibility is high since this is a grant distribution program rather than complex technical development. The impact potential is strong given China's large developer market and the strategic importance of Asian ecosystem expansion for Solana. However, the budget of only $43 is concerningly low for a meaningful grant program - this amount would barely cover administrative costs, let alone provide substantial grants to multiple developers, raising questions about the program's actual scope and sustainability."
+    }
+  },
+  {
+    "id": "d05b9dd1-74a9-443d-88f7-1d9bc4c02a03",
+    "timestamp": 1773610613673,
+    "type": "evaluation",
+    "proposalId": "scout-1773610569926-1",
+    "proposalTitle": "Urani Trade - Solana MEV Research Hub",
+    "data": {
+      "overallScore": 3.75,
+      "scores": {
+        "teamQuality": 3,
+        "technicalFeasibility": 6,
+        "impactPotential": 4,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "reject",
+      "reasoning": "This proposal lacks critical details about the team's qualifications, specific deliverables, and methodology despite claiming to be from a \"specialized\" organization. While MEV research is valuable to the Solana ecosystem, the proposal provides no concrete timeline, research objectives, or measurable outcomes. The extremely low budget of $26 raises serious questions about the scope and quality of work that can be delivered - comprehensive research initiatives typically require significant resources for proper execution. The GitHub data appears unrelated to the proposal content, further indicating poor preparation and organization."
+    }
+  },
+  {
+    "id": "54f29178-d2f2-49c5-8d62-22b1c301332b",
+    "timestamp": 1773610613674,
+    "type": "evaluation",
+    "proposalId": "scout-1773610569926-2",
+    "proposalTitle": "ClaimFund - Decentralized Fundraising Platform",
+    "data": {
+      "overallScore": 7.5,
+      "scores": {
+        "teamQuality": 7,
+        "technicalFeasibility": 8,
+        "impactPotential": 6,
+        "budgetReasonableness": 9
+      },
+      "recommendation": "fund",
+      "reasoning": "The Sololabs-io team demonstrates credibility with existing Solana Foundation backing and active participation in the Renaissance Hackathon, though specific individual credentials are unclear. The technical feasibility is strong given their existing development progress and the straightforward nature of a fundraising platform on Solana's established infrastructure. While fundraising platforms address a real need, the impact potential is moderate due to existing competition in the crowdfunding space and limited differentiation details provided. The $61 budget request is exceptionally reasonable and well-justified for what appears to be a hackathon-stage project seeking minimal funding to continue development."
+    }
+  },
+  {
+    "id": "4f204388-5564-49b9-967b-f30a6a60459c",
+    "timestamp": 1773610613674,
+    "type": "evaluation",
+    "proposalId": "scout-1773610569926-3",
+    "proposalTitle": "Solana Developers Community Grant Platform",
+    "data": {
+      "overallScore": 7.75,
+      "scores": {
+        "teamQuality": 8,
+        "technicalFeasibility": 7,
+        "impactPotential": 6,
+        "budgetReasonableness": 10
+      },
+      "recommendation": "fund",
+      "reasoning": "The Solana-developers official organization has a strong established track record in ecosystem development, earning high team quality marks. The technical feasibility is good as grant management platforms are well-understood technology, though the GitHub data appears corrupted and doesn't provide clear technical details. The impact potential is moderate - while infrastructure supporting other projects has value, the specific benefits to the broader Solana ecosystem aren't clearly articulated beyond streamlining processes. The budget of $70 is exceptionally reasonable for any infrastructure project, making this highly cost-effective if executed properly."
+    }
+  },
+  {
+    "id": "4aa80318-95ae-44c3-a9cc-b8a331991b44",
+    "timestamp": 1773610676908,
+    "type": "decision",
+    "proposalId": "scout-1773610569926-3",
+    "proposalTitle": "Solana Developers Community Grant Platform",
+    "data": {
+      "action": "fund",
+      "amount": 5,
+      "reasoning": "This proposal has the highest overall score (7.75/10) among all submissions, making it the 'best one' as requested by the user. The Solana-developers organization has strong credibility, the technical feasibility is good, and the budget is reasonable. Following user instruction to fund only this specific project with the full $5 budget."
+    }
+  },
+  {
+    "id": "74ebee59-c8da-43fd-b933-5ca98b9f92f0",
+    "timestamp": 1773610676909,
+    "type": "decision",
+    "proposalId": "scout-1773610569926-0",
+    "proposalTitle": "Solana-ZH Mini Grant Program",
+    "data": {
+      "action": "reject",
+      "amount": 0,
+      "reasoning": "User specifically instructed to fund only the 'best ones' project. This proposal scored lower (6/10) than the selected project."
+    }
+  },
+  {
+    "id": "9a58e0b9-30c0-4304-a140-75455a5130b8",
+    "timestamp": 1773610676909,
+    "type": "decision",
+    "proposalId": "scout-1773610569926-1",
+    "proposalTitle": "Urani Trade - Solana MEV Research Hub",
+    "data": {
+      "action": "reject",
+      "amount": 0,
+      "reasoning": "User specifically instructed to fund only the 'best ones' project. This proposal scored lower (3.75/10) than the selected project."
+    }
+  },
+  {
+    "id": "e2cca291-4a68-4a0f-a376-efe9538364d3",
+    "timestamp": 1773610676910,
+    "type": "decision",
+    "proposalId": "scout-1773610569926-2",
+    "proposalTitle": "ClaimFund - Decentralized Fundraising Platform",
+    "data": {
+      "action": "reject",
+      "amount": 0,
+      "reasoning": "User specifically instructed to fund only the 'best ones' project. While this proposal scored well (7.5/10), it scored lower than the selected project (7.75/10)."
+    }
+  },
+  {
+    "id": "b7d1a621-aa7f-456b-bd5b-a7af6b2a146f",
+    "timestamp": 1773611352008,
+    "type": "evaluation",
+    "proposalId": "scout-1773611277933-0",
+    "proposalTitle": "JamBrain - Ludum Dare Game Jam Platform",
+    "data": {
+      "overallScore": 6.25,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 7,
+        "impactPotential": 4,
+        "budgetReasonableness": 8
+      },
+      "recommendation": "defer",
+      "reasoning": "The JamBrain Organization appears to have an established codebase supporting major game jam events, indicating solid technical capabilities, though specific team credentials are limited. The technical feasibility is reasonable as they're building on existing infrastructure and proposing standard blockchain integrations (NFTs, tokens). However, the impact potential for Solana ecosystem is questionable - while game jams create community engagement, the direct value to Solana's DeFi/Web3 ecosystem is unclear, and Ludum Dare already has established processes. The $37 budget request is remarkably modest and well-justified for exploratory integration work, making this a low-risk proposition despite limited ecosystem impact."
+    }
+  },
+  {
+    "id": "fbbb020f-36dc-4b15-a470-6ab992d0f7c3",
+    "timestamp": 1773611352010,
+    "type": "evaluation",
+    "proposalId": "scout-1773611277933-1",
+    "proposalTitle": "Godot Engine Solana Integration",
+    "data": {
+      "overallScore": 8.25,
+      "scores": {
+        "teamQuality": 8,
+        "technicalFeasibility": 7,
+        "impactPotential": 8,
+        "budgetReasonableness": 10
+      },
+      "recommendation": "fund",
+      "reasoning": "The Godot Engine organization has exceptional credentials with 90K+ GitHub stars and massive community support, indicating strong team quality and proven track record in game engine development. The technical feasibility is solid as Godot is already a mature, extensible platform and blockchain integration is well-established in gaming. The impact potential is high given Godot's large developer base could bring significant Web3 adoption to Solana gaming ecosystem. The $67 budget is remarkably reasonable - almost suspiciously low for such ambitious scope, but if genuine represents extraordinary value for the ecosystem."
+    }
+  },
+  {
+    "id": "c48938f0-f009-4e89-b930-7ca41b32c223",
+    "timestamp": 1773611352011,
+    "type": "evaluation",
+    "proposalId": "scout-1773611277933-2",
+    "proposalTitle": "Solana Gaming SDK & Developer Tools",
+    "data": {
+      "overallScore": 6,
+      "scores": {
+        "teamQuality": 7,
+        "technicalFeasibility": 8,
+        "impactPotential": 8,
+        "budgetReasonableness": 1
+      },
+      "recommendation": "defer",
+      "reasoning": "The Solana-ZH Organization has credibility as an official Solana community organization with experience in ecosystem building, giving them strong credentials for this developer-focused initiative. The technical scope of creating an SDK and tooling suite for game developers is realistic and achievable, especially for a team with their background. The potential impact is significant as gaming is a major growth area for Web3 and lowering barriers for traditional developers could accelerate adoption meaningfully. However, the requested amount of $52 is absurdly low for developing a comprehensive SDK, documentation, templates, and integration examples - this appears to be either a typo or severely underscoped for the ambitious deliverables described."
+    }
+  },
+  {
+    "id": "97786b62-9521-4db8-8461-eb42bda397c6",
+    "timestamp": 1773611352011,
+    "type": "evaluation",
+    "proposalId": "scout-1773611277933-3",
+    "proposalTitle": "Cross-Platform Web3 Game Development Framework",
+    "data": {
+      "overallScore": 5.25,
+      "scores": {
+        "teamQuality": 3,
+        "technicalFeasibility": 4,
+        "impactPotential": 6,
+        "budgetReasonableness": 8
+      },
+      "recommendation": "defer",
+      "reasoning": "While the proposal addresses a valuable need for Web3 gaming infrastructure on Solana, several concerns limit its fundability. The team description is vague, claiming \"independent developers\" with high-traction TypeScript projects but providing no verifiable team member identities or specific credentials. The technical approach lacks concrete details about implementation strategy, architecture, or differentiation from existing solutions. However, the extremely low budget request of $44 suggests this may be an initial proof-of-concept or planning phase, making the budget reasonable but raising questions about the scope and deliverables possible at this funding level."
+    }
+  },
+  {
+    "id": "7d7e6a31-de84-401d-baca-b17b2d22e6a3",
+    "timestamp": 1773611451598,
+    "type": "decision",
+    "proposalId": "scout-1773611277933-1",
+    "proposalTitle": "Godot Engine Solana Integration",
+    "data": {
+      "action": "fund",
+      "amount": 5,
+      "reasoning": "This is the highest-scored proposal at 8.25/10 with exceptional team credentials (90K+ GitHub stars), solid technical feasibility, and high impact potential for Solana gaming ecosystem. Funded as the 'best one' per user instructions."
+    }
+  },
+  {
+    "id": "e89bfd70-3c19-4dbd-8dff-e89815bb45e5",
+    "timestamp": 1773611451600,
+    "type": "decision",
+    "proposalId": "scout-1773611277933-0",
+    "proposalTitle": "JamBrain - Ludum Dare Game Jam Platform",
+    "data": {
+      "action": "reject",
+      "reasoning": "Not the highest-scored proposal (6.25/10). User specifically requested to fund only the 'best one'."
+    }
+  },
+  {
+    "id": "b73d8a76-c776-4449-bc2c-c811e556f179",
+    "timestamp": 1773611451601,
+    "type": "decision",
+    "proposalId": "scout-1773611277933-2",
+    "proposalTitle": "Solana Gaming SDK & Developer Tools",
+    "data": {
+      "action": "reject",
+      "reasoning": "Not the highest-scored proposal (6/10). User specifically requested to fund only the 'best one'."
+    }
+  },
+  {
+    "id": "edc07d42-c97c-4374-865d-3b99e25c8f7a",
+    "timestamp": 1773611451602,
+    "type": "decision",
+    "proposalId": "scout-1773611277933-3",
+    "proposalTitle": "Cross-Platform Web3 Game Development Framework",
+    "data": {
+      "action": "reject",
+      "reasoning": "Not the highest-scored proposal (5.25/10). User specifically requested to fund only the 'best one'."
+    }
+  },
+  {
+    "id": "0dfb9046-b881-4aef-892c-7682bfeb57db",
+    "timestamp": 1773612530403,
+    "type": "evaluation",
+    "proposalId": "scout-1773612492031-0",
+    "proposalTitle": "Solana MEV Research Initiative",
+    "data": {
+      "overallScore": 7.75,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 8,
+        "impactPotential": 7,
+        "budgetReasonableness": 10
+      },
+      "recommendation": "fund",
+      "reasoning": "The urani-trade organization demonstrates research expertise in MEV/DeFi, but lacks specific track record details or team composition information. The literature curation and research approach is highly feasible and addresses a genuine knowledge gap in understanding Solana's unique MEV dynamics versus Ethereum. The research could provide valuable insights for the ecosystem, though impact is limited to knowledge creation rather than direct tooling or infrastructure. At only $63, the budget is exceptionally reasonable for research work, though this raises questions about scope and depth of deliverables."
+    }
+  },
+  {
+    "id": "0a88810f-f052-408d-853d-9ae6f81e2b09",
+    "timestamp": 1773612530405,
+    "type": "evaluation",
+    "proposalId": "scout-1773612492031-1",
+    "proposalTitle": "Solana-ZH Mini-Grant Program",
+    "data": {
+      "overallScore": 7,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 8,
+        "impactPotential": 5,
+        "budgetReasonableness": 9
+      },
+      "recommendation": "defer",
+      "reasoning": "The Solana-ZH organization appears to be an established community group with regional focus, though specific team credentials and track record details are limited. The technical approach of creating a mini-grant distribution program is straightforward and highly feasible with minimal technical risk. While expanding into the Chinese market has potential value, the impact scope seems modest given the small scale and lack of specific metrics or innovative technical contributions. The $100 budget is exceptionally reasonable for a pilot program, though it raises questions about meaningful impact delivery at this funding level."
+    }
+  },
+  {
+    "id": "2115dd7f-77d4-4559-a7f1-893e1f20a737",
+    "timestamp": 1773612530405,
+    "type": "evaluation",
+    "proposalId": "scout-1773612492031-2",
+    "proposalTitle": "Consensus 2023 Web3athon Project",
+    "data": {
+      "overallScore": 1.75,
+      "scores": {
+        "teamQuality": 2,
+        "technicalFeasibility": 3,
+        "impactPotential": 1,
+        "budgetReasonableness": 1
+      },
+      "recommendation": "reject",
+      "reasoning": "This proposal lacks substance and appears to be requesting funding for a past hackathon project rather than future development. The requested amount of $38 is suspiciously low and raises questions about the seriousness of the proposal. While LamsyA claims hackathon experience, there's no concrete evidence of technical capabilities or deliverables, and the GitHub data appears corrupted or irrelevant. The proposal provides no clear roadmap, specific Solana integration plans, or measurable outcomes for the ecosystem."
+    }
+  },
+  {
+    "id": "9185456f-b9bc-44cd-932b-fda9db57f1f3",
+    "timestamp": 1773613011108,
+    "type": "decision",
+    "proposalId": "scout-1773612492031-2",
+    "proposalTitle": "Consensus 2023 Web3athon Project",
+    "data": {
+      "action": "fund",
+      "amount": 10,
+      "reasoning": "This is the riskiest project based on its extremely low overall score of 1.75/10, lack of substance, and questionable proposal quality. User specifically requested funding for the 'riskiest project' with $10 USDC."
+    }
+  },
+  {
+    "id": "0d022636-3c38-4774-b12f-d4285cdbd535",
+    "timestamp": 1773613011110,
+    "type": "decision",
+    "proposalId": "scout-1773612492031-0",
+    "proposalTitle": "Solana MEV Research Initiative",
+    "data": {
+      "action": "reject",
+      "reasoning": "User specifically requested only the riskiest project be funded. This project is being rejected despite its higher quality score."
+    }
+  },
+  {
+    "id": "b030d435-09d3-4524-8b1f-3e58ef7861c7",
+    "timestamp": 1773613011111,
+    "type": "decision",
+    "proposalId": "scout-1773612492031-1",
+    "proposalTitle": "Solana-ZH Mini-Grant Program",
+    "data": {
+      "action": "reject",
+      "reasoning": "User specifically requested only the riskiest project be funded. This project is being rejected despite its moderate quality score."
+    }
+  }
+]

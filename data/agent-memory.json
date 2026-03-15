@@ -1,0 +1,252 @@
+[
+  {
+    "id": "111dc1f4-11b2-4891-9a7c-94897c42143d",
+    "timestamp": 1773609138274,
+    "type": "evaluation",
+    "proposalId": "scout-1773609084252-0",
+    "proposalTitle": "Solana Build Mini-Grant Program",
+    "data": {
+      "overallScore": 5,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 8,
+        "impactPotential": 4,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "reject",
+      "reasoning": "While Solana-ZH appears to be an established community organization with grant management experience, the extremely low funding request of $34 raises serious concerns about the scope and impact of this \"mini-grant program.\" The technical feasibility is high given the straightforward nature of grant distribution, but the minimal budget suggests this would fund only trivial projects with negligible ecosystem impact. The budget amount appears unreasonable - either insufficient for meaningful grant distribution or potentially a data entry error, making it difficult to assess the true value proposition of this proposal."
+    }
+  },
+  {
+    "id": "55690607-9a3e-4d63-9e17-2fdbb106ad9f",
+    "timestamp": 1773609138276,
+    "type": "evaluation",
+    "proposalId": "scout-1773609084252-1",
+    "proposalTitle": "Solana MEV Research Literature Hub",
+    "data": {
+      "overallScore": 4.75,
+      "scores": {
+        "teamQuality": 4,
+        "technicalFeasibility": 8,
+        "impactPotential": 5,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "reject",
+      "reasoning": "While the concept of a MEV research literature hub has merit for the Solana ecosystem, this proposal raises several concerns. The team description lacks specific credentials or prior work examples, making it difficult to assess their expertise in MEV research. The extremely low budget of $21 is concerning as it suggests either a severely underscoped project or a misunderstanding of the resources required to create a comprehensive research repository. The technical feasibility is reasonable as literature curation is straightforward, but the impact potential is moderate given the proliferation of existing research platforms and repositories."
+    }
+  },
+  {
+    "id": "15d41299-e710-413a-9a30-07709ca76d01",
+    "timestamp": 1773609138276,
+    "type": "evaluation",
+    "proposalId": "scout-1773609084252-2",
+    "proposalTitle": "Jito Foundation MEV Client",
+    "data": {
+      "overallScore": 6.5,
+      "scores": {
+        "teamQuality": 9,
+        "technicalFeasibility": 8,
+        "impactPotential": 7,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "defer",
+      "reasoning": "The Jito Foundation has an excellent track record as a leading organization in Solana MEV infrastructure, with established expertise and proven delivery capability, earning a strong team score. The technical approach of building a specialized Solana client for MEV optimization is technically sound and feasible given their existing jito-solana repository and domain expertise. The impact potential is solid as MEV infrastructure improvements benefit validators and searchers in the ecosystem, though the specific value-add over existing solutions isn't clearly articulated. However, the $55 budget request is suspiciously low for what appears to be a substantial infrastructure project - this seems like either a typo or placeholder amount that doesn't reflect the true scope and resource requirements."
+    }
+  },
+  {
+    "id": "6c542d1f-54e4-44ae-8b7a-62af789c74a1",
+    "timestamp": 1773609138277,
+    "type": "evaluation",
+    "proposalId": "scout-1773609084252-3",
+    "proposalTitle": "Solana DeFi Hackathon Platform",
+    "data": {
+      "overallScore": 2.5,
+      "scores": {
+        "teamQuality": 2,
+        "technicalFeasibility": 4,
+        "impactPotential": 3,
+        "budgetReasonableness": 1
+      },
+      "recommendation": "reject",
+      "reasoning": "This proposal contains significant inconsistencies and red flags. While claiming to be from \"Solana Labs - core development team,\" the GitHub data shows the project is owned by individual user \"Edgadafi\" and describes a prediction market platform rather than a hackathon platform. The requested amount of $41 is suspiciously low for any meaningful platform development and raises concerns about the legitimacy of this proposal. The mismatch between the stated team credentials and actual GitHub ownership, combined with the contradiction between described deliverables, suggests this may not be a genuine Solana Labs initiative."
+    }
+  },
+  {
+    "id": "2b04ab7e-8277-47c2-9d77-1176ef103999",
+    "timestamp": 1773609138277,
+    "type": "evaluation",
+    "proposalId": "scout-1773609084252-4",
+    "proposalTitle": "Wormhole Cross-Chain Hackathon Initiative",
+    "data": {
+      "overallScore": 6.5,
+      "scores": {
+        "teamQuality": 9,
+        "technicalFeasibility": 8,
+        "impactPotential": 7,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "defer",
+      "reasoning": "Solana Labs is an exceptionally strong team with proven expertise in cross-chain infrastructure and developer events, earning high marks for team quality. The technical approach using Wormhole bridge technology is well-established and feasible for hackathon implementation. The impact potential is solid as cross-chain interoperability initiatives can drive meaningful ecosystem growth and developer adoption. However, the requested amount of only $48 is unrealistically low for any meaningful hackathon initiative involving Solana Labs - this appears to be either a data entry error or placeholder value, as legitimate hackathon costs would typically require thousands of dollars for prizes, infrastructure, and operational expenses."
+    }
+  },
+  {
+    "id": "ed868736-fc1c-4220-8d87-d57f2ceaeed4",
+    "timestamp": 1773609475760,
+    "type": "evaluation",
+    "proposalId": "scout-1773609430800-0",
+    "proposalTitle": "Solana Build Mini-Grant Program",
+    "data": {
+      "overallScore": 7.5,
+      "scores": {
+        "teamQuality": 7,
+        "technicalFeasibility": 8,
+        "impactPotential": 6,
+        "budgetReasonableness": 9
+      },
+      "recommendation": "defer",
+      "reasoning": "The Solana-ZH organization has established credibility as the official Chinese community arm, suggesting solid team quality and track record. The technical feasibility is high since this is a community grant distribution program rather than complex technical development. However, the impact potential is moderate - while supporting Chinese developers is valuable, the proposal lacks specific details about how grants will be distributed, selection criteria, or measurable outcomes. The $37 budget is exceptionally reasonable for a mini-grant program, though it raises questions about the actual scope and sustainability of the initiative."
+    }
+  },
+  {
+    "id": "06583e5a-32fa-4f31-951e-4c579016768f",
+    "timestamp": 1773609475762,
+    "type": "evaluation",
+    "proposalId": "scout-1773609430800-1",
+    "proposalTitle": "Solana MEV Research & Literature Curation",
+    "data": {
+      "overallScore": 4.25,
+      "scores": {
+        "teamQuality": 3,
+        "technicalFeasibility": 8,
+        "impactPotential": 4,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "reject",
+      "reasoning": "While MEV research is valuable for the Solana ecosystem, this proposal has significant concerns. The extremely low budget of $22 is unrealistic for comprehensive research and literature curation by a specialized trading organization, suggesting either inadequate scope or lack of serious commitment. The team credentials are vaguely described without specific expertise or track record details. The technical feasibility is high since literature curation is straightforward, but the impact potential is limited as educational resources alone don't drive substantial ecosystem value without implementation or novel insights."
+    }
+  },
+  {
+    "id": "9136af26-0625-4c47-b96c-f7d4f696d5c8",
+    "timestamp": 1773609475762,
+    "type": "evaluation",
+    "proposalId": "scout-1773609430800-2",
+    "proposalTitle": "Metaplex Foundation Core Development",
+    "data": {
+      "overallScore": 7,
+      "scores": {
+        "teamQuality": 9,
+        "technicalFeasibility": 8,
+        "impactPotential": 9,
+        "budgetReasonableness": 2
+      },
+      "recommendation": "defer",
+      "reasoning": "The Metaplex Foundation is a highly respected organization with an excellent track record in Solana NFT infrastructure, justifying strong scores for team quality and impact potential. Their role as a central hub for NFT tools and protocols that serve thousands of projects demonstrates significant ecosystem value. However, the requested amount of $74 is suspiciously low for any meaningful development work from an established foundation, raising serious questions about budget justification or potential data entry errors. The GitHub data provided appears corrupted and doesn't offer useful technical insights for feasibility assessment."
+    }
+  },
+  {
+    "id": "b127d66b-70b8-445a-991a-099918c95d80",
+    "timestamp": 1773609475762,
+    "type": "evaluation",
+    "proposalId": "scout-1773609430800-3",
+    "proposalTitle": "Solana Core Protocol Enhancement",
+    "data": {
+      "overallScore": 2,
+      "scores": {
+        "teamQuality": 2,
+        "technicalFeasibility": 3,
+        "impactPotential": 2,
+        "budgetReasonableness": 1
+      },
+      "recommendation": "reject",
+      "reasoning": "This proposal raises significant red flags and appears to be fraudulent or misrepresented. While claiming to be from \"Solana Labs - core development team,\" the GitHub data shows this is actually from \"LumAIrepo\" working on a wallet application, not core protocol improvements. The extremely low budget request of $67 for \"core blockchain infrastructure improvements\" is completely unrealistic and inconsistent with the scope claimed. The mismatch between the proposal description (core protocol work) and the actual GitHub project (wallet development) suggests this is either a scam or severely misrepresented proposal."
+    }
+  },
+  {
+    "id": "8f68f914-8683-4838-b1e4-2c25586f5a45",
+    "timestamp": 1773609921534,
+    "type": "evaluation",
+    "proposalId": "scout-1773609883930-0",
+    "proposalTitle": "Solana Build Mini-Grant Program",
+    "data": {
+      "overallScore": 7.5,
+      "scores": {
+        "teamQuality": 7,
+        "technicalFeasibility": 8,
+        "impactPotential": 6,
+        "budgetReasonableness": 9
+      },
+      "recommendation": "fund",
+      "reasoning": "The Solana-ZH organization appears to be a legitimate official Solana community organization with established presence in the Chinese developer ecosystem, providing credible team backing. The proposal is technically straightforward as it involves distributing mini-grants rather than developing complex technology, making it highly feasible. While supporting continuous building has value, the impact description is quite general without specific metrics or targeted outcomes for ecosystem growth. The $56 requested amount is exceptionally reasonable for a mini-grant program, though the low amount raises questions about meaningful impact scale."
+    }
+  },
+  {
+    "id": "857ce0b5-318d-4c4e-a82a-76f728441f42",
+    "timestamp": 1773609921536,
+    "type": "evaluation",
+    "proposalId": "scout-1773609883930-1",
+    "proposalTitle": "Solana MEV Research & Literature Hub",
+    "data": {
+      "overallScore": 7.75,
+      "scores": {
+        "teamQuality": 6,
+        "technicalFeasibility": 8,
+        "impactPotential": 7,
+        "budgetReasonableness": 10
+      },
+      "recommendation": "fund",
+      "reasoning": "The urani-trade organization demonstrates specialized expertise in MEV research and trading, which is highly relevant for this project. The technical feasibility is strong since creating a literature hub is achievable and straightforward to execute. The impact potential is solid as comprehensive MEV research documentation would benefit Solana developers and researchers, addressing genuine knowledge gaps in the ecosystem. The requested $33 budget is exceptionally reasonable and almost trivially justified for the scope of work involved in curating and organizing research publications."
+    }
+  },
+  {
+    "id": "4d89a052-dd1b-42b7-90d8-ddc44f5b230e",
+    "timestamp": 1773609921537,
+    "type": "evaluation",
+    "proposalId": "scout-1773609883930-2",
+    "proposalTitle": "Solana Season Developer Program",
+    "data": {
+      "overallScore": 9.25,
+      "scores": {
+        "teamQuality": 10,
+        "technicalFeasibility": 9,
+        "impactPotential": 8,
+        "budgetReasonableness": 10
+      },
+      "recommendation": "fund",
+      "reasoning": "This proposal from Solana Labs represents the highest quality team possible - the core development team and foundation behind Solana itself. The technical feasibility is excellent as they have proven experience running developer programs and hackathons. The impact potential is strong as official developer engagement programs directly benefit ecosystem growth, though the scope appears modest for a $111 request. The budget is exceptionally reasonable - $111 for hackathon funding from the official team is almost surprisingly low and highly cost-effective."
+    }
+  },
+  {
+    "id": "8cfde4a6-367c-4e09-9642-e2f09a60edf0",
+    "timestamp": 1773609945009,
+    "type": "decision",
+    "proposalId": "scout-1773609883930-2",
+    "proposalTitle": "Solana Season Developer Program",
+    "data": {
+      "action": "fund",
+      "amount": 5,
+      "reasoning": "This is the highest-scored proposal (9.25/10) with exceptional team quality (Solana Labs), excellent technical feasibility, and strong impact potential. User requested to fund the 'best one' with $5 USDC, and this proposal has the highest overall score."
+    }
+  },
+  {
+    "id": "e493b134-4452-4718-8475-257b6f901e67",
+    "timestamp": 1773609945010,
+    "type": "decision",
+    "proposalId": "scout-1773609883930-0",
+    "proposalTitle": "Solana Build Mini-Grant Program",
+    "data": {
+      "action": "reject",
+      "reasoning": "User specifically instructed to fund only the best project. This proposal scored 7.5/10, which is lower than the selected project."
+    }
+  },
+  {
+    "id": "e11bc69a-529d-45ef-925b-1b6deb75cd6c",
+    "timestamp": 1773609945011,
+    "type": "decision",
+    "proposalId": "scout-1773609883930-1",
+    "proposalTitle": "Solana MEV Research & Literature Hub",
+    "data": {
+      "action": "reject",
+      "reasoning": "User specifically instructed to fund only the best project. This proposal scored 7.75/10, which is lower than the selected project."
+    }
+  }
+]

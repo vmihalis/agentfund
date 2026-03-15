@@ -13,6 +13,43 @@ export interface AgentStatusEvent {
   status: string;
   detail?: string;
   timestamp: number;
+  metadata?: {
+    confidence?: number;
+    reasoning?: string;
+    duration_ms?: number;
+  };
+}
+
+export interface AgentThinkingEvent {
+  agent: AgentRole;
+  phase: 'considering' | 'weighing' | 'concluding';
+  thought: string;
+  timestamp: number;
+}
+
+export interface AgentQuestionEvent {
+  from: AgentRole;
+  to: AgentRole;
+  question: string;
+  context?: Record<string, unknown>;
+  correlationId: string;
+  timestamp: number;
+}
+
+export interface AgentAnswerEvent {
+  from: AgentRole;
+  to: AgentRole;
+  answer: string;
+  correlationId: string;
+  timestamp: number;
+}
+
+export interface AgentConfidenceEvent {
+  agent: AgentRole;
+  subject: string;
+  confidence: number;
+  reasoning: string;
+  timestamp: number;
 }
 
 export interface PipelineStepEvent {
@@ -33,6 +70,10 @@ export interface PipelineDecisionEvent {
 export type AgentEvents = {
   'agent:status': [AgentStatusEvent];
   'agent:error': [{ agent: AgentRole; error: string; timestamp: number }];
+  'agent:thinking': [AgentThinkingEvent];
+  'agent:question': [AgentQuestionEvent];
+  'agent:answer': [AgentAnswerEvent];
+  'agent:confidence': [AgentConfidenceEvent];
   'pipeline:step': [PipelineStepEvent];
   'pipeline:decision': [PipelineDecisionEvent];
   'pipeline:funded': [{ proposalTitle: string; amount: number; txSignature: string }];

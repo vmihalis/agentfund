@@ -16,6 +16,9 @@ import { BaseAgent } from './base-agent.js';
 import type { IAnalyzerAgent } from './types.js';
 import type { Proposal, Evaluation } from '../types/proposals.js';
 import type { AgentEventBus } from '../events/event-types.js';
+import { UnbrowseClient } from '../lib/unbrowse/client.js';
+import type { AgentMessenger } from './agent-messenger.js';
+import type { AgentMemory } from '../memory/agent-memory.js';
 
 /**
  * Zod schema for the structured evaluation output from Claude API.
@@ -61,10 +64,27 @@ function formatProposalForEvaluation(proposal: Proposal): string {
 
 export class AnalyzerAgent extends BaseAgent implements IAnalyzerAgent {
   private readonly client: Anthropic;
+  private readonly unbrowseClient: UnbrowseClient;
+  private unbrowseAvailable = false;
+  private messenger: AgentMessenger | null = null;
+  private memory: AgentMemory | null = null;
 
-  constructor(bus: AgentEventBus, client?: Anthropic) {
+  constructor(bus: AgentEventBus, client?: Anthropic, unbrowseClient?: UnbrowseClient) {
     super('analyzer', bus);
     this.client = client ?? new Anthropic();
+    this.unbrowseClient =
+      unbrowseClient ??
+      new UnbrowseClient(process.env.UNBROWSE_URL ?? 'http://localhost:6969');
+  }
+
+  /** Set the messenger for inter-agent communication. */
+  setMessenger(messenger: AgentMessenger): void {
+    this.messenger = messenger;
+  }
+
+  /** Set the memory store for calibration. */
+  setMemory(memory: AgentMemory): void {
+    this.memory = memory;
   }
 
   async initialize(): Promise<void> {
@@ -74,6 +94,7 @@ export class AnalyzerAgent extends BaseAgent implements IAnalyzerAgent {
         '[AnalyzerAgent] ANTHROPIC_API_KEY not set -- will use fallback evaluation',
       );
     }
+    this.unbrowseAvailable = await this.unbrowseClient.healthCheck();
     this.emitStatus('initialized', 'AnalyzerAgent ready');
   }
 
@@ -90,17 +111,89 @@ export class AnalyzerAgent extends BaseAgent implements IAnalyzerAgent {
   async evaluateProposal(proposal: Proposal): Promise<Evaluation> {
     this.emitStatus('evaluating', `Analyzing: ${proposal.title}`);
 
-    try {
-      return await this.evaluateWithClaude(proposal);
-    } catch {
-      return this.evaluateWithFallback(proposal);
+    // Enrich proposal with real project data from Unbrowse if available
+    let enrichedContext = '';
+    if (this.unbrowseAvailable) {
+      this.emitThinking('considering', `Have GitHub enrichment available — will fetch real project data for "${proposal.title}"`);
+      enrichedContext = await this.enrichWithUnbrowse(proposal);
+    } else {
+      this.emitThinking('considering', `Evaluating "${proposal.title}" from proposal text only — no GitHub data available`);
     }
+
+    // Add calibration context from memory if available
+    let calibrationContext = '';
+    if (this.memory) {
+      const dist = this.memory.getScoreDistribution();
+      if (dist.count > 0) {
+        const similar = this.memory.getSimilarDecisions(proposal.title, proposal.description);
+        calibrationContext = `\n\nHistorical calibration: Average score: ${dist.mean}/10 (stddev: ${dist.stddev}, ${dist.count} past evaluations).`;
+        if (similar.length > 0) {
+          const similarStr = similar.map(s => `"${s.proposalTitle}" scored ${s.data.overallScore}/10`).join(', ');
+          calibrationContext += ` Similar past proposals: ${similarStr}.`;
+        }
+        this.emitThinking('considering', `Calibrating against ${dist.count} past evaluations (avg: ${dist.mean}/10)`);
+      }
+    }
+
+    try {
+      let evaluation = await this.evaluateWithClaude(proposal, enrichedContext + calibrationContext);
+
+      // If score is borderline (5-7) and we have a messenger, ask Scout for more data
+      if (evaluation.overallScore >= 5 && evaluation.overallScore <= 7 && this.messenger) {
+        this.emitThinking('weighing', `Borderline score ${evaluation.overallScore}/10 for "${proposal.title}" — requesting more data from Scout`);
+        try {
+          const extraData = await this.messenger.ask('analyzer', 'scout',
+            `Find GitHub data for ${proposal.title}`,
+            { projectName: proposal.title });
+          if (extraData && extraData.length > 50) {
+            this.emitThinking('weighing', `Got additional data from Scout (${extraData.length} chars) — re-evaluating`);
+            const reEnriched = enrichedContext + `\n\nAdditional data from Scout agent:\n${extraData}`;
+            evaluation = await this.evaluateWithClaude(proposal, reEnriched);
+          }
+        } catch {
+          // Scout couldn't help — keep original evaluation
+        }
+      }
+
+      this.emitConfidence(proposal.title, evaluation.overallScore / 10,
+        `Scored ${evaluation.overallScore}/10 — ${evaluation.recommendation}`);
+      return evaluation;
+    } catch {
+      this.emitThinking('concluding', `Claude API unavailable, using heuristic evaluation for "${proposal.title}"`);
+      const evaluation = this.evaluateWithFallback(proposal);
+      this.emitConfidence(proposal.title, evaluation.overallScore / 10,
+        `Heuristic score ${evaluation.overallScore}/10 — ${evaluation.recommendation}`);
+      return evaluation;
+    }
+  }
+
+  /**
+   * Use Unbrowse to fetch real project data (GitHub repos, activity, etc.)
+   * to enrich the evaluation with concrete signals.
+   */
+  private async enrichWithUnbrowse(proposal: Proposal): Promise<string> {
+    try {
+      // Search GitHub for the project
+      const searchQuery = proposal.title.replace(/[^a-zA-Z0-9 ]/g, ' ').trim();
+      const raw = await this.unbrowseClient.resolveIntent(
+        `search repositories for ${searchQuery} with descriptions stars and languages`,
+        `https://github.com/search?q=${encodeURIComponent(searchQuery)}&type=repositories&s=stars&o=desc`,
+      );
+      const text = JSON.stringify(raw).slice(0, 2000);
+      if (text.length > 50) {
+        console.log(`[Analyzer] Unbrowse: enriched ${proposal.title} with ${text.length} chars of GitHub data`);
+        return `\n\nAdditional project data from GitHub:\n${text}`;
+      }
+    } catch (err) {
+      console.log(`[Analyzer] Unbrowse enrichment skipped: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    return '';
   }
 
   /**
    * Call Claude API with forced tool_use to produce a structured evaluation.
    */
-  private async evaluateWithClaude(proposal: Proposal): Promise<Evaluation> {
+  private async evaluateWithClaude(proposal: Proposal, enrichedContext = ''): Promise<Evaluation> {
     const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514';
 
     // Convert Zod schema to JSON Schema using Zod v4 native method
@@ -115,7 +208,7 @@ export class AnalyzerAgent extends BaseAgent implements IAnalyzerAgent {
       messages: [
         {
           role: 'user',
-          content: formatProposalForEvaluation(proposal),
+          content: formatProposalForEvaluation(proposal) + enrichedContext,
         },
       ],
       tools: [

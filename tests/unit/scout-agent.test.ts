@@ -49,6 +49,24 @@ function createMockUnbrowseClient() {
   };
 }
 
+// --- Mock Anthropic client ---
+
+function createMockAnthropicClient() {
+  return {
+    messages: {
+      create: vi.fn().mockResolvedValue({
+        content: [{
+          type: 'text',
+          text: JSON.stringify([
+            { title: 'Real Grant Alpha', description: 'A real discovered grant', requestedAmount: 15000, teamInfo: 'Alpha Team' },
+            { title: 'Real Grant Beta', description: 'Another discovered grant', requestedAmount: 25000, teamInfo: 'Beta Team' },
+          ]),
+        }],
+      }),
+    },
+  };
+}
+
 // Sample Unbrowse response data for testing
 const sampleUnbrowseResponse = {
   result: [
@@ -72,12 +90,16 @@ const sampleUnbrowseResponse = {
 describe('ScoutAgent', () => {
   let bus: TypedEventBus<AgentEvents>;
   let mockClient: ReturnType<typeof createMockUnbrowseClient>;
+  let mockAnthropicClient: ReturnType<typeof createMockAnthropicClient>;
   let agent: InstanceType<typeof ScoutAgent>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     bus = new TypedEventBus<AgentEvents>();
     mockClient = createMockUnbrowseClient();
-    agent = new ScoutAgent(bus, mockClient as any);
+    mockAnthropicClient = createMockAnthropicClient();
+    agent = new ScoutAgent(bus, mockClient as any, mockAnthropicClient as any);
+    // Initialize to run health check (mock returns true) so Unbrowse layer is active
+    await agent.initialize();
   });
 
   describe('discoverProposals', () => {
@@ -87,11 +109,10 @@ describe('ScoutAgent', () => {
       const proposals = await agent.discoverProposals('solana grants');
 
       expect(mockClient.resolveIntent).toHaveBeenCalled();
-      // Should have proposals from the Unbrowse response
+      // Should have proposals from Unbrowse data structured by Claude
       expect(proposals.length).toBeGreaterThan(0);
       expect(proposals[0].title).toBe('Real Grant Alpha');
       expect(proposals[0].requestedAmount).toBe(15000);
-      expect(proposals[0].sourceUrl).toBe('https://solana.org/grants/alpha');
     });
 
     it('falls back to cached proposals when Unbrowse returns error', async () => {
@@ -108,8 +129,9 @@ describe('ScoutAgent', () => {
       expect(secondCall[0].title).toBe('Real Grant Alpha');
     });
 
-    it('falls back to STUB_PROPOSALS when both live and cache are empty', async () => {
+    it('falls back to STUB_PROPOSALS when both live and Claude are unavailable', async () => {
       mockClient.resolveIntent.mockRejectedValue(new Error('Connection refused'));
+      mockAnthropicClient.messages.create.mockRejectedValue(new Error('API unavailable'));
 
       const proposals = await agent.discoverProposals('solana grants');
 
@@ -120,12 +142,13 @@ describe('ScoutAgent', () => {
     });
 
     it('always returns at least the stub proposals (pipeline never gets empty array from fallback)', async () => {
-      // Unbrowse returns empty result
+      // Unbrowse returns empty result, Claude also fails
       mockClient.resolveIntent.mockResolvedValue({ result: [] });
+      mockAnthropicClient.messages.create.mockRejectedValue(new Error('API unavailable'));
 
       const proposals = await agent.discoverProposals('no results query');
 
-      // Even with empty Unbrowse results, should fall back to stubs
+      // Even with both failing, should fall back to stubs
       expect(proposals.length).toBeGreaterThanOrEqual(STUB_PROPOSALS.length);
     });
 
@@ -185,6 +208,7 @@ describe('ScoutAgent', () => {
 
     it('emits using-stub when falling back to stubs', async () => {
       mockClient.resolveIntent.mockRejectedValue(new Error('Connection refused'));
+      mockAnthropicClient.messages.create.mockRejectedValue(new Error('API unavailable'));
 
       const events: Array<{ status: string }> = [];
       bus.on('agent:status', (e) => {
@@ -200,22 +224,22 @@ describe('ScoutAgent', () => {
 
   describe('lifecycle', () => {
     it('initialize calls healthCheck', async () => {
-      mockClient.healthCheck.mockResolvedValue(true);
-
-      await agent.initialize();
-
+      // healthCheck already called in beforeEach; verify it was invoked
       expect(mockClient.healthCheck).toHaveBeenCalled();
     });
 
     it('initialize emits status about Unbrowse availability', async () => {
-      mockClient.healthCheck.mockResolvedValue(false);
+      // Create a fresh agent with healthCheck returning false
+      const freshClient = createMockUnbrowseClient();
+      freshClient.healthCheck.mockResolvedValue(false);
+      const freshAgent = new ScoutAgent(bus, freshClient as any);
 
       const events: Array<{ status: string; detail?: string }> = [];
       bus.on('agent:status', (e) => {
         if (e.agent === 'scout') events.push({ status: e.status, detail: e.detail });
       });
 
-      await agent.initialize();
+      await freshAgent.initialize();
 
       const statuses = events.map((e) => e.status);
       expect(statuses).toContain('initialized');

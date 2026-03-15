@@ -1,8 +1,8 @@
 /**
  * POST /api/voice/command
  *
- * Accepts { text: string } and proxies to the Express voice server
- * at localhost:4003. Returns the VoiceResult JSON.
+ * Accepts { text: string } and proxies to the Express voice server.
+ * Forwards Authorization header for per-user session isolation.
  */
 
 import { NextResponse } from 'next/server';
@@ -20,11 +20,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Forward auth header for per-user session isolation
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const authHeader = request.headers.get('authorization');
+    if (authHeader) headers['Authorization'] = authHeader;
+
     const res = await fetch(
       `http://localhost:${VOICE_SERVER_PORT}/api/voice/command`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ text: body.text }),
       },
     );
@@ -33,7 +38,7 @@ export async function POST(request: Request) {
       const text = await res.text();
       return NextResponse.json(
         { error: `Voice server error: ${res.status} ${text}` },
-        { status: 503 },
+        { status: res.status },
       );
     }
 

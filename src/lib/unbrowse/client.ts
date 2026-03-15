@@ -44,7 +44,9 @@ export class UnbrowseClient {
         headers,
         body: JSON.stringify({
           intent,
-          context: cleanUrl ? { url: cleanUrl } : undefined,
+          ...(cleanUrl
+            ? { params: { url: cleanUrl }, context: { url: cleanUrl } }
+            : {}),
         }),
         signal: controller.signal,
       });

@@ -2,8 +2,8 @@
  * Unbrowse response parser with Zod validation.
  *
  * Normalizes varying Unbrowse response shapes into typed Proposal[] objects.
- * Handles multiple field name conventions, nested response structures,
- * and string/number amount formats.
+ * Handles multiple field name conventions (including GitHub API format),
+ * nested response structures, and string/number amount formats.
  */
 
 import { z } from 'zod';
@@ -11,9 +11,10 @@ import type { Proposal } from '../../types/proposals.js';
 
 /**
  * Flexible Zod schema accepting multiple field name variations
- * from Unbrowse response data.
+ * from Unbrowse response data (including GitHub API fields).
  */
 const UnbrowseProposalSchema = z.object({
+  // Standard fields
   title: z.string().optional(),
   name: z.string().optional(),
   description: z.string().optional(),
@@ -25,6 +26,16 @@ const UnbrowseProposalSchema = z.object({
   team_info: z.string().optional(),
   url: z.string().optional(),
   link: z.string().optional(),
+  // GitHub API fields
+  full_name: z.string().optional(),
+  html_url: z.string().optional(),
+  stargazers_count: z.number().optional(),
+  stars: z.union([z.number(), z.string()]).optional(),
+  language: z.string().optional(),
+  topics: z.array(z.string()).optional(),
+  owner: z.object({ login: z.string() }).passthrough().optional(),
+  open_issues_count: z.number().optional(),
+  forks_count: z.number().optional(),
 }).passthrough();
 
 /**
@@ -100,13 +111,28 @@ export function parseUnbrowseResult(raw: unknown): Proposal[] {
 
     const d = parsed.data;
 
-    const title = d.title ?? d.name;
+    // Support GitHub API format (full_name, html_url, stargazers_count, etc.)
+    const isGitHubRepo = !!(d.full_name || d.html_url || d.stargazers_count !== undefined);
+
+    const title = d.title ?? d.name ?? d.full_name;
     if (!title) continue; // Filter items with no title and no name
 
-    const description = d.description ?? d.summary ?? '';
+    let description = d.description ?? d.summary ?? '';
+    if (isGitHubRepo) {
+      const parts: string[] = [];
+      if (d.description) parts.push(d.description);
+      if (d.language) parts.push(`Language: ${d.language}`);
+      const stars = d.stargazers_count ?? parseAmount(d.stars);
+      if (stars) parts.push(`Stars: ${stars}`);
+      if (d.topics?.length) parts.push(`Topics: ${d.topics.join(', ')}`);
+      if (d.forks_count) parts.push(`Forks: ${d.forks_count}`);
+      description = parts.join('. ');
+    }
+
     const amount = parseAmount(d.amount ?? d.requested_amount ?? d.funding_amount);
-    const teamInfo = d.team ?? d.team_info ?? 'Unknown team';
-    const sourceUrl = d.url ?? d.link;
+    const teamInfo =
+      d.team ?? d.team_info ?? (d.owner?.login ? `GitHub org: ${d.owner.login}` : 'Unknown team');
+    const sourceUrl = d.html_url ?? d.url ?? d.link;
 
     const proposal: Proposal = {
       id: `unbrowse-${now}-${idx}`,

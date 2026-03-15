@@ -14,11 +14,15 @@ const MAX_ENTRIES = 100;
 export interface ActivityEntry {
   id: string;
   timestamp: number;
-  type: 'status' | 'step' | 'decision' | 'funded' | 'error';
+  type: 'status' | 'step' | 'decision' | 'funded' | 'error' | 'thinking' | 'question' | 'answer' | 'confidence';
   agent?: string;
   message: string;
   detail?: Record<string, unknown>;
   txSignature?: string;
+  targetAgent?: string;
+  confidence?: number;
+  correlationId?: string;
+  phase?: 'considering' | 'weighing' | 'concluding';
 }
 
 /**
@@ -56,6 +60,57 @@ export function createActivityLog(bus: AgentEventBus) {
       type: 'error',
       agent: event.agent,
       message: event.error,
+    });
+  });
+
+  // Subscribe to agent:thinking
+  bus.on('agent:thinking', (event) => {
+    push({
+      id: randomUUID(),
+      timestamp: event.timestamp,
+      type: 'thinking',
+      agent: event.agent,
+      message: event.thought,
+      phase: event.phase,
+    });
+  });
+
+  // Subscribe to agent:question
+  bus.on('agent:question', (event) => {
+    push({
+      id: randomUUID(),
+      timestamp: event.timestamp,
+      type: 'question',
+      agent: event.from,
+      targetAgent: event.to,
+      message: event.question,
+      correlationId: event.correlationId,
+      detail: event.context,
+    });
+  });
+
+  // Subscribe to agent:answer
+  bus.on('agent:answer', (event) => {
+    push({
+      id: randomUUID(),
+      timestamp: event.timestamp,
+      type: 'answer',
+      agent: event.from,
+      targetAgent: event.to,
+      message: event.answer,
+      correlationId: event.correlationId,
+    });
+  });
+
+  // Subscribe to agent:confidence
+  bus.on('agent:confidence', (event) => {
+    push({
+      id: randomUUID(),
+      timestamp: event.timestamp,
+      type: 'confidence',
+      agent: event.agent,
+      message: `${event.subject}: ${event.reasoning}`,
+      confidence: event.confidence,
     });
   });
 

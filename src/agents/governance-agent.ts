@@ -20,6 +20,8 @@ import type {
   FundingAllocation,
 } from '../types/proposals.js';
 import type { AgentEventBus } from '../events/event-types.js';
+import type { AgentMessenger } from './agent-messenger.js';
+import type { AgentMemory } from '../memory/agent-memory.js';
 
 /**
  * Zod schema for the structured decision output from Claude API.
@@ -43,6 +45,16 @@ const FundingDecisionSchema = z.object({
   remainingBudget: z.number(),
 });
 
+/** Triage schema for round 1 of multi-round deliberation. */
+const TriageSchema = z.object({
+  categorizations: z.array(z.object({
+    proposalId: z.string(),
+    proposalTitle: z.string(),
+    category: z.enum(['clear_fund', 'clear_reject', 'needs_deep_dive']),
+    reasoning: z.string(),
+  })),
+});
+
 /** Request shape for executeFundingPipeline. */
 export interface FundingRequest {
   query: string;
@@ -54,6 +66,8 @@ export class GovernanceAgent extends BaseAgent {
   private readonly analyzer: IAnalyzerAgent;
   private readonly treasury: ITreasuryAgent;
   private readonly client: Anthropic;
+  private messenger: AgentMessenger | null = null;
+  private memory: AgentMemory | null = null;
 
   /**
    * Cache of proposals discovered during pipeline execution.
@@ -74,6 +88,16 @@ export class GovernanceAgent extends BaseAgent {
     this.analyzer = analyzer;
     this.treasury = treasury;
     this.client = client ?? new Anthropic();
+  }
+
+  /** Set the messenger for inter-agent communication. */
+  setMessenger(messenger: AgentMessenger): void {
+    this.messenger = messenger;
+  }
+
+  /** Set the memory store for historical awareness. */
+  setMemory(memory: AgentMemory): void {
+    this.memory = memory;
   }
 
   async initialize(): Promise<void> {
@@ -109,7 +133,7 @@ export class GovernanceAgent extends BaseAgent {
     this.bus.emit('agent:status', {
       agent: 'scout',
       status: 'discovering',
-      message: `Scraping web data via Unbrowse + structuring with Claude AI`,
+      detail: `Scraping web data via Unbrowse + structuring with Claude AI`,
       timestamp: Date.now(),
     });
 
@@ -118,7 +142,7 @@ export class GovernanceAgent extends BaseAgent {
     this.bus.emit('agent:status', {
       agent: 'scout',
       status: 'discovered',
-      message: `Found ${proposals.length} proposals from live web data`,
+      detail: `Found ${proposals.length} proposals from live web data`,
       timestamp: Date.now(),
     });
 
@@ -149,45 +173,33 @@ export class GovernanceAgent extends BaseAgent {
       return emptySummary;
     }
 
-    // Step 2: Evaluate each proposal
-    const evaluations: Evaluation[] = [];
-    for (let i = 0; i < proposals.length; i++) {
-      const proposal = proposals[i];
-      this.bus.emit('pipeline:step', {
-        step: 'evaluate',
-        status: 'started',
-        detail: { proposal: proposal.title },
-      });
+    // Step 2: Evaluate proposals in parallel (concurrency=3 for API rate limits)
+    this.bus.emit('pipeline:step', {
+      step: 'evaluate',
+      status: 'started',
+      detail: { count: proposals.length },
+    });
 
-      this.bus.emit('agent:status', {
-        agent: 'analyzer',
-        status: 'evaluating',
-        message: `Evaluating "${proposal.title}" with Claude AI (${i + 1}/${proposals.length})`,
-        timestamp: Date.now(),
-      });
+    this.bus.emit('agent:status', {
+      agent: 'analyzer',
+      status: 'evaluating',
+      detail: `Evaluating ${proposals.length} proposals in parallel`,
+      timestamp: Date.now(),
+    });
 
-      const evaluation = await this.analyzer.evaluateProposal(proposal);
-      evaluations.push(evaluation);
+    const evaluations = await this.evaluateParallel(proposals, 3);
 
-      this.bus.emit('agent:status', {
-        agent: 'analyzer',
-        status: 'evaluated',
-        message: `"${proposal.title}" scored ${evaluation.overallScore}/10`,
-        timestamp: Date.now(),
-      });
-
-      this.bus.emit('pipeline:step', {
-        step: 'evaluate',
-        status: 'completed',
-        detail: { proposal: proposal.title, score: evaluation.overallScore },
-      });
-    }
+    this.bus.emit('pipeline:step', {
+      step: 'evaluate',
+      status: 'completed',
+      detail: { count: evaluations.length },
+    });
 
     // Step 3: Make funding decision (Claude API or fallback)
     this.bus.emit('agent:status', {
       agent: 'governance',
       status: 'deciding',
-      message: `Claude AI deciding funding allocations for ${evaluations.length} evaluated proposals`,
+      detail: `Claude AI deciding funding allocations for ${evaluations.length} evaluated proposals`,
       timestamp: Date.now(),
     });
 
@@ -239,20 +251,72 @@ export class GovernanceAgent extends BaseAgent {
    * Falls back to a score-threshold heuristic if the Claude API call fails
    * for any reason (rate limit, network error, parsing failure).
    */
+  /**
+   * Evaluate proposals in parallel with a semaphore-based worker pool.
+   */
+  private async evaluateParallel(proposals: Proposal[], concurrency = 3): Promise<Evaluation[]> {
+    const results: Evaluation[] = new Array(proposals.length);
+    let next = 0;
+    const workers = Array.from({ length: Math.min(concurrency, proposals.length) }, async () => {
+      while (next < proposals.length) {
+        const i = next++;
+        const proposal = proposals[i];
+        this.bus.emit('agent:status', {
+          agent: 'analyzer',
+          status: 'evaluating',
+          detail: `Evaluating "${proposal.title}" (${i + 1}/${proposals.length})`,
+          timestamp: Date.now(),
+        });
+        results[i] = await this.analyzer.evaluateProposal(proposal);
+        this.bus.emit('agent:status', {
+          agent: 'analyzer',
+          status: 'evaluated',
+          detail: `"${proposal.title}" scored ${results[i].overallScore}/10`,
+          timestamp: Date.now(),
+        });
+      }
+    });
+    await Promise.all(workers);
+    return results;
+  }
+
   async makeDecision(
     evaluations: Evaluation[],
     budget: number,
     userInstruction?: string,
   ): Promise<DecisionSummary> {
+    this.emitThinking('considering', `Reviewing ${evaluations.length} proposals with $${budget} USDC budget`);
+
+    // Include historical context from memory
+    if (this.memory) {
+      const recentDecisions = this.memory.getRecentDecisions(10);
+      if (recentDecisions.length > 0) {
+        const stats = this.memory.getStats();
+        this.emitThinking('considering',
+          `Drawing on ${stats.totalDecisions} past decisions (avg score: ${stats.avgScore}/10). Last ${recentDecisions.length} decisions inform this round.`);
+      }
+    }
+
     try {
-      return await this.makeClaudeDecision(evaluations, budget, userInstruction);
+      const decision = await this.makeClaudeDecision(evaluations, budget, userInstruction);
+      const funded = decision.allocations.filter(a => a.action === 'fund');
+      const rejected = decision.allocations.filter(a => a.action === 'reject');
+      this.emitThinking('concluding',
+        `Funding ${funded.length} project(s) for $${decision.totalAllocated} USDC, rejecting ${rejected.length}. ${decision.summary}`);
+      return decision;
     } catch {
-      return this.makeFallbackDecision(evaluations, budget);
+      this.emitThinking('weighing', `Claude API unavailable — using score-threshold heuristic for $${budget} budget`);
+      const decision = this.makeFallbackDecision(evaluations, budget);
+      this.emitThinking('concluding', `Heuristic decision: funded ${decision.allocations.filter(a => a.action === 'fund').length} projects`);
+      return decision;
     }
   }
 
   /**
-   * Call Claude API with tool_use to produce a structured funding decision.
+   * Multi-round Claude deliberation:
+   * Round 1 (Triage): Categorize proposals as clear_fund, clear_reject, needs_deep_dive
+   * Round 2 (Deep-dive): For borderline proposals, ask Analyzer for additional analysis
+   * Round 3 (Final): Make final decision with all gathered info
    */
   private async makeClaudeDecision(
     evaluations: Evaluation[],
@@ -273,10 +337,58 @@ export class GovernanceAgent extends BaseAgent {
 
     const instruction = userInstruction || 'Fund the best proposals based on scores.';
 
-    // Convert Zod schema to JSON Schema using Zod v4 native method
-    const jsonSchema = z.toJSONSchema(FundingDecisionSchema, {
-      target: 'draft-07',
-    });
+    // === Round 1: Triage ===
+    this.emitThinking('considering', `Round 1/3: Triaging ${evaluations.length} proposals into clear-fund, clear-reject, and needs-deep-dive`);
+
+    let deepDiveContext = '';
+    try {
+      const triageJsonSchema = z.toJSONSchema(TriageSchema, { target: 'draft-07' });
+      const triageResponse = await this.client.messages.create({
+        model,
+        max_tokens: 1024,
+        system: 'You are a funding governance agent. Triage proposals into three categories: clear_fund (obviously good), clear_reject (obviously bad), needs_deep_dive (borderline, needs more analysis).',
+        messages: [{ role: 'user', content: `Budget: $${budget} USDC\nInstruction: ${instruction}\n\nProposals:\n${evaluationSummary}` }],
+        tools: [{ name: 'submit_triage', description: 'Submit triage categorizations', input_schema: triageJsonSchema as Anthropic.Tool.InputSchema }],
+        tool_choice: { type: 'tool' as const, name: 'submit_triage' },
+      });
+
+      const triageBlock = triageResponse.content.find(b => b.type === 'tool_use');
+      if (triageBlock && triageBlock.type === 'tool_use') {
+        const triage = TriageSchema.parse(triageBlock.input);
+        const deepDive = triage.categorizations.filter(c => c.category === 'needs_deep_dive');
+        const clearFund = triage.categorizations.filter(c => c.category === 'clear_fund');
+        const clearReject = triage.categorizations.filter(c => c.category === 'clear_reject');
+
+        this.emitThinking('weighing',
+          `Triage: ${clearFund.length} clear-fund, ${clearReject.length} clear-reject, ${deepDive.length} needs-deep-dive`);
+
+        // === Round 2: Deep-dive ===
+        if (deepDive.length > 0 && this.messenger) {
+          this.emitThinking('weighing', `Round 2/3: Deep-diving ${deepDive.length} borderline proposals via inter-agent communication`);
+
+          for (const item of deepDive) {
+            try {
+              const additionalAnalysis = await this.messenger.ask('governance', 'analyzer',
+                `Provide additional analysis for "${item.proposalTitle}" — it scored borderline. What are the key risks and opportunities?`,
+                { proposalId: item.proposalId, proposalTitle: item.proposalTitle });
+              deepDiveContext += `\n\nDeep-dive for "${item.proposalTitle}":\n${additionalAnalysis}`;
+            } catch {
+              // Continue without deep-dive data
+            }
+          }
+        } else if (deepDive.length > 0) {
+          this.emitThinking('weighing', `Round 2/3: ${deepDive.length} proposals need deep-dive but no messenger available — proceeding with existing data`);
+        }
+      }
+    } catch {
+      // Triage failed — proceed directly to final decision
+      this.emitThinking('weighing', 'Triage round skipped — proceeding directly to final decision');
+    }
+
+    // === Round 3: Final Decision ===
+    this.emitThinking('weighing', `Round 3/3: Making final funding decision with all gathered information`);
+
+    const jsonSchema = z.toJSONSchema(FundingDecisionSchema, { target: 'draft-07' });
 
     const response = await this.client.messages.create({
       model,
@@ -298,6 +410,7 @@ export class GovernanceAgent extends BaseAgent {
             `User instruction: ${instruction}\n\n` +
             `Budget: $${budget} USDC\n\n` +
             `Proposal evaluations:\n${evaluationSummary}\n\n` +
+            (deepDiveContext ? `Additional deep-dive analysis:\n${deepDiveContext}\n\n` : '') +
             `Follow my instructions exactly. Total funded must be <= $${budget}.`,
         },
       ],

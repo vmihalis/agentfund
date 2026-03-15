@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchAgents, fetchTreasury, fetchPayments, fetchProposals } from '@/lib/api';
+import { fetchActivity, type ActivityEntry } from '@/lib/activity';
 import type { AgentInfo, TreasuryData, PaymentRecord, PipelineProposal } from '@/lib/types';
 import { AgentStatusBar } from '@/components/AgentStatusBar';
 import { VoiceWidget } from '@/components/VoiceWidget';
 import { ProposalPipeline } from '@/components/ProposalPipeline';
 import { ActivityFeed } from '@/components/ActivityFeed';
 import { FinancePanel } from '@/components/FinancePanel';
+import { DeliberationView } from '@/components/DeliberationView';
 
 export default function Home() {
   const [agents, setAgents] = useState<AgentInfo[]>([]);
@@ -16,6 +18,7 @@ export default function Home() {
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [proposals, setProposals] = useState<PipelineProposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activityEntries, setActivityEntries] = useState<ActivityEntry[]>([]);
 
   const refreshAll = useCallback(() => {
     fetchTreasury().then(setTreasury);
@@ -39,6 +42,28 @@ export default function Home() {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Poll activity for deliberation view
+  useEffect(() => {
+    let lastTs = 0;
+
+    async function poll() {
+      const entries = await fetchActivity(lastTs);
+      if (entries.length > 0) {
+        setActivityEntries(prev => [...prev, ...entries].slice(-200));
+        lastTs = Math.max(...entries.map(e => e.timestamp));
+      }
+    }
+
+    poll();
+    const interval = setInterval(poll, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check if deliberation is active (governance thinking events present)
+  const hasDeliberation = activityEntries.some(
+    e => e.type === 'thinking' && e.agent === 'governance' && (e.message.includes('Round') || e.message.includes('Triaging'))
+  );
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl bg-gray-950 p-4 md:p-8">
@@ -69,9 +94,12 @@ export default function Home() {
 
       {/* Two-column layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        {/* Left column: Command + Proposals */}
+        {/* Left column: Command + Deliberation + Proposals */}
         <div className="space-y-6 lg:col-span-3">
           <VoiceWidget onCommandSent={refreshAll} />
+          {hasDeliberation && (
+            <DeliberationView entries={activityEntries} />
+          )}
           <ProposalPipeline proposals={proposals} />
         </div>
 

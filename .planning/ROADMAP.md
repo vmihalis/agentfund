@@ -120,11 +120,11 @@ Plans:
   2. Speaking "find new grant proposals" or "analyze this proposal" or "fund this project" or "check treasury" triggers the corresponding real agent action through Governance routing
   3. Voice-triggered actions produce real on-chain transactions (not just text responses) -- the same actions that work via API also work via voice
   4. Every voice command has a text-input fallback that produces identical results, protecting the demo if audio fails at the venue
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
+- [ ] 07-01-PLAN.md — VoiceCommandRouter core, text parser, Express voice server with text fallback and signed-URL endpoints
+- [ ] 07-02-PLAN.md — ElevenLabs client tools integration, voice session helper, full pipeline integration test
 
 ### Phase 8: Frontend Dashboard & Sybil Resistance
 **Goal**: A Next.js dashboard visualizes all agent activity, treasury state, and proposals, with Human Passport gating proposal submission
@@ -168,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 3. Scout Agent | 1/1 | Complete   | 2026-03-14 |
 | 4. Proposal Analyzer Agent | 1/1 | Complete   | 2026-03-14 |
 | 5. Treasury Manager Agent | 2/2 | Complete   | 2026-03-14 |
-| 6. x402 Agent Payment Economy | 1/2 | In progress | - |
+| 6. x402 Agent Payment Economy | 2/2 | Complete   | 2026-03-14 |
 | 7. Voice Command Interface | 0/2 | Not started | - |
 | 8. Frontend Dashboard & Sybil Resistance | 0/3 | Not started | - |
 | 9. End-to-End Demo Integration | 0/1 | Not started | - |

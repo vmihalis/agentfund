@@ -52,9 +52,9 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Voice Interface
 
-- [ ] **VOICE-01**: ElevenLabs Conversational AI agent configured with custom system prompt for treasury command center
+- [x] **VOICE-01**: ElevenLabs Conversational AI agent configured with custom system prompt for treasury command center
 - [x] **VOICE-02**: Client tools map voice commands to agent actions (findProposals, analyzeProposal, fundProject, checkTreasury)
-- [ ] **VOICE-03**: Voice interactions trigger real on-chain agent actions (not just text responses)
+- [x] **VOICE-03**: Voice interactions trigger real on-chain agent actions (not just text responses)
 - [x] **VOICE-04**: Text-input fallback for all voice commands (protects demo if audio fails)
 
 ### Sybil Resistance
@@ -145,9 +145,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAY-04 | Phase 6 | Complete |
 | SCOUT-04 | Phase 6 | Complete |
 | ANLZ-04 | Phase 6 | Complete |
-| VOICE-01 | Phase 7 | Pending |
+| VOICE-01 | Phase 7 | Complete |
 | VOICE-02 | Phase 7 | Complete |
-| VOICE-03 | Phase 7 | Pending |
+| VOICE-03 | Phase 7 | Complete |
 | VOICE-04 | Phase 7 | Complete |
 | GOV-03 | Phase 7 | Complete |
 | DASH-01 | Phase 8 | Pending |

@@ -64,11 +64,11 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Frontend Dashboard
 
-- [ ] **DASH-01**: Next.js dashboard showing registered agent identities with on-chain verification links
-- [ ] **DASH-02**: Dashboard displays treasury balance, LP positions, and yield performance
+- [x] **DASH-01**: Next.js dashboard showing registered agent identities with on-chain verification links
+- [x] **DASH-02**: Dashboard displays treasury balance, LP positions, and yield performance
 - [ ] **DASH-03**: Dashboard shows proposal pipeline (submitted, evaluating, approved, funded)
 - [ ] **DASH-04**: Dashboard includes voice command center (ElevenLabs widget)
-- [ ] **DASH-05**: Dashboard shows x402 payment history between agents
+- [x] **DASH-05**: Dashboard shows x402 payment history between agents
 
 ### Demo & Integration
 
@@ -150,11 +150,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VOICE-03 | Phase 7 | Complete |
 | VOICE-04 | Phase 7 | Complete |
 | GOV-03 | Phase 7 | Complete |
-| DASH-01 | Phase 8 | Pending |
-| DASH-02 | Phase 8 | Pending |
+| DASH-01 | Phase 8 | Complete |
+| DASH-02 | Phase 8 | Complete |
 | DASH-03 | Phase 8 | Pending |
 | DASH-04 | Phase 8 | Pending |
-| DASH-05 | Phase 8 | Pending |
+| DASH-05 | Phase 8 | Complete |
 | SYBIL-01 | Phase 8 | Pending |
 | SYBIL-02 | Phase 8 | Pending |
 | DEMO-01 | Phase 9 | Pending |

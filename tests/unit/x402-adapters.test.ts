@@ -129,6 +129,30 @@ describe('X402ScoutAdapter', () => {
     await expect(adapter.discoverProposals('test'))
       .rejects.toThrow('Scout request failed with status 404');
   });
+
+  it('lastTxSignature is null initially', () => {
+    expect(adapter.lastTxSignature).toBeNull();
+  });
+
+  it('lastTxSignature is set when response includes txSignature', async () => {
+    mockPaidFetch.mockResolvedValue(
+      makeOkResponse({ proposals: mockProposals, txSignature: 'tx123' }),
+    );
+
+    await adapter.discoverProposals('solana grants');
+
+    expect(adapter.lastTxSignature).toBe('tx123');
+  });
+
+  it('lastTxSignature is null when response has no txSignature', async () => {
+    mockPaidFetch.mockResolvedValue(
+      makeOkResponse({ proposals: mockProposals }),
+    );
+
+    await adapter.discoverProposals('solana grants');
+
+    expect(adapter.lastTxSignature).toBeNull();
+  });
 });
 
 // --- X402AnalyzerAdapter Tests ---
@@ -186,5 +210,29 @@ describe('X402AnalyzerAdapter', () => {
 
     await expect(adapter.evaluateProposal(mockProposals[0]))
       .rejects.toThrow('Analyzer request failed with status 400');
+  });
+
+  it('lastTxSignature is null initially', () => {
+    expect(adapter.lastTxSignature).toBeNull();
+  });
+
+  it('lastTxSignature is set when response includes txSignature', async () => {
+    mockPaidFetch.mockResolvedValue(
+      makeOkResponse({ evaluation: mockEvaluation, txSignature: 'tx456' }),
+    );
+
+    await adapter.evaluateProposal(mockProposals[0]);
+
+    expect(adapter.lastTxSignature).toBe('tx456');
+  });
+
+  it('lastTxSignature is null when response has no txSignature', async () => {
+    mockPaidFetch.mockResolvedValue(
+      makeOkResponse({ evaluation: mockEvaluation }),
+    );
+
+    await adapter.evaluateProposal(mockProposals[0]);
+
+    expect(adapter.lastTxSignature).toBeNull();
   });
 });

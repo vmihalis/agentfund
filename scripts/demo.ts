@@ -183,6 +183,24 @@ async function main() {
     connection,
     usdcMint: getActiveUsdcMint(),
     maxPaymentUsdc: 10000,
+    onPayment: (event) => {
+      // Emit x402 payment events to the activity feed
+      if (event.stage === 'paying') {
+        bus.emit('agent:status', {
+          agent: 'governance',
+          status: 'x402-paying',
+          message: `Paying ${event.amountUSDC} USDC via x402 on Solana`,
+          timestamp: Date.now(),
+        });
+      } else if (event.stage === 'verified') {
+        bus.emit('agent:status', {
+          agent: 'governance',
+          status: 'x402-paid',
+          message: `x402 payment confirmed: ${event.amountUSDC} USDC on-chain`,
+          timestamp: Date.now(),
+        });
+      }
+    },
   });
 
   // Step 6-7: Create x402 adapters

@@ -26,32 +26,47 @@ interface PipelineStep {
 
 /** Map activity entries to human-readable pipeline steps */
 function activityToStep(entry: ActivityEntry): PipelineStep | null {
-  const map: Record<string, { icon: string; label: string }> = {
-    'status:initialized': { icon: '⚡', label: 'Agent initialized' },
-    'status:funding': { icon: '💰', label: 'Executing transfer' },
-    'status:funded': { icon: '✅', label: 'Transfer complete' },
-  };
+  // Scout-specific status events (Unbrowse + Claude)
+  if (entry.type === 'status' && entry.agent === 'scout') {
+    const msg = entry.message || '';
+    if (msg.startsWith('Searching'))
+      return { id: entry.id, icon: '🔍', label: 'Scout searching...', detail: msg, timestamp: entry.timestamp };
+    if (msg.startsWith('Scraping'))
+      return { id: entry.id, icon: '🌐', label: 'Unbrowse scraping web data', detail: msg, timestamp: entry.timestamp };
+    if (msg.startsWith('Scraped'))
+      return { id: entry.id, icon: '✅', label: 'Web data received', detail: msg, timestamp: entry.timestamp };
+    if (msg.includes('structuring'))
+      return { id: entry.id, icon: '🧠', label: 'Claude AI structuring proposals', detail: 'Converting raw web data into typed proposals', timestamp: entry.timestamp };
+    if (msg.startsWith('Structured'))
+      return { id: entry.id, icon: '✅', label: msg, timestamp: entry.timestamp };
+    if (msg.includes('discovering'))
+      return { id: entry.id, icon: '🤖', label: 'Claude AI discovering proposals', detail: 'Using ecosystem knowledge', timestamp: entry.timestamp };
+    if (msg.startsWith('Discovered'))
+      return { id: entry.id, icon: '✅', label: msg, timestamp: entry.timestamp };
+    if (msg.includes('unavailable') || msg.includes('failed'))
+      return { id: entry.id, icon: '⚠️', label: 'Unbrowse fallback', detail: msg, timestamp: entry.timestamp };
+  }
 
   // Pipeline steps
   if (entry.type === 'step') {
     const step = entry.detail?.step as string;
     const status = entry.detail?.status as string;
     if (step === 'discover' && status === 'started')
-      return { id: entry.id, icon: '🔍', label: 'Scout discovering proposals...', detail: 'Paying Scout via x402', timestamp: entry.timestamp };
+      return { id: entry.id, icon: '🔍', label: 'Scout discovering proposals...', detail: 'Paying Scout 0.001 USDC via x402', timestamp: entry.timestamp };
     if (step === 'discover' && status === 'completed')
       return { id: entry.id, icon: '✅', label: 'Proposals discovered', detail: `${(entry.detail?.count as number) || ''} found`, timestamp: entry.timestamp };
     if (step === 'evaluate' && status === 'started')
-      return { id: entry.id, icon: '🧠', label: 'Analyzer evaluating proposal...', detail: 'Paying Analyzer via x402', timestamp: entry.timestamp };
+      return { id: entry.id, icon: '🧠', label: 'Analyzer evaluating proposal...', detail: 'Paying Analyzer 0.002 USDC via x402', timestamp: entry.timestamp };
     if (step === 'evaluate' && status === 'completed')
       return { id: entry.id, icon: '✅', label: 'Evaluation complete', timestamp: entry.timestamp };
     if (step === 'decide' && status === 'started')
-      return { id: entry.id, icon: '⚖️', label: 'Governance making decision...', detail: 'Claude AI reasoning', timestamp: entry.timestamp };
+      return { id: entry.id, icon: '⚖️', label: 'Governance deciding...', detail: 'Claude AI reasoning about allocations', timestamp: entry.timestamp };
     if (step === 'decide' && status === 'completed')
       return { id: entry.id, icon: '✅', label: 'Decision made', timestamp: entry.timestamp };
     if (step === 'fund' && status === 'started')
-      return { id: entry.id, icon: '💸', label: 'Treasury funding project...', detail: 'SPL token transfer on Solana', timestamp: entry.timestamp };
+      return { id: entry.id, icon: '💸', label: 'Treasury funding on-chain...', detail: 'SPL token transfer on Solana devnet', timestamp: entry.timestamp };
     if (step === 'fund' && status === 'completed')
-      return { id: entry.id, icon: '✅', label: 'Funding complete', detail: entry.detail?.signature as string, timestamp: entry.timestamp };
+      return { id: entry.id, icon: '✅', label: 'Funded on-chain', detail: entry.detail?.signature as string, timestamp: entry.timestamp };
   }
 
   // Decision events
@@ -64,16 +79,55 @@ function activityToStep(entry: ActivityEntry): PipelineStep | null {
     return { id: entry.id, icon: '🎉', label: 'Project funded on-chain', detail: entry.txSignature ? `tx: ${entry.txSignature.slice(0, 8)}...` : undefined, timestamp: entry.timestamp };
   }
 
-  // Status events
-  const key = `${entry.type}:${entry.message?.split(' ')[0]?.toLowerCase()}`;
-  const mapped = map[key];
-  if (mapped) {
-    return { id: entry.id, icon: mapped.icon, label: mapped.label, detail: entry.message, timestamp: entry.timestamp };
-  }
+  // Status events from agents
+  if (entry.type === 'status') {
+    const msg = entry.message || '';
+    const agent = entry.agent || '';
 
-  // Generic status
-  if (entry.type === 'status' && entry.agent) {
-    return { id: entry.id, icon: '⚙️', label: `${entry.agent}: ${entry.message}`, timestamp: entry.timestamp };
+    // x402 payment events
+    if (msg.includes('x402')) {
+      if (msg.includes('Paying'))
+        return { id: entry.id, icon: '💳', label: msg, detail: 'Real USDC transfer on Solana devnet', timestamp: entry.timestamp };
+      if (msg.includes('confirmed'))
+        return { id: entry.id, icon: '✅', label: msg, timestamp: entry.timestamp };
+    }
+
+    // Scout events
+    if (agent === 'scout') {
+      if (msg.includes('Scraping'))
+        return { id: entry.id, icon: '🌐', label: 'Unbrowse scraping web data', detail: msg, timestamp: entry.timestamp };
+      if (msg.includes('Found') || msg.includes('from live'))
+        return { id: entry.id, icon: '✅', label: msg, timestamp: entry.timestamp };
+      if (msg.includes('Claude AI'))
+        return { id: entry.id, icon: '🧠', label: msg, timestamp: entry.timestamp };
+    }
+
+    // Analyzer events
+    if (agent === 'analyzer') {
+      if (msg.includes('Evaluating'))
+        return { id: entry.id, icon: '🧠', label: msg, timestamp: entry.timestamp };
+      if (msg.includes('scored'))
+        return { id: entry.id, icon: '📊', label: msg, timestamp: entry.timestamp };
+    }
+
+    // Governance events
+    if (agent === 'governance') {
+      if (msg.includes('deciding'))
+        return { id: entry.id, icon: '⚖️', label: msg, timestamp: entry.timestamp };
+    }
+
+    // Treasury events
+    if (msg.includes('funding') || msg.includes('Executing'))
+      return { id: entry.id, icon: '💰', label: `Transferring funds on-chain`, detail: msg, timestamp: entry.timestamp };
+    if (msg.includes('funded'))
+      return { id: entry.id, icon: '✅', label: `Transfer complete`, detail: msg, timestamp: entry.timestamp };
+
+    // Skip noisy init messages
+    if (msg.includes('ready') || msg.includes('initialized')) return null;
+
+    // Generic agent status
+    if (agent)
+      return { id: entry.id, icon: '⚙️', label: `${agent}: ${msg}`, timestamp: entry.timestamp };
   }
 
   return null;

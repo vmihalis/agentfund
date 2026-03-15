@@ -62,17 +62,21 @@ export class ScoutAgent extends BaseAgent implements IScoutAgent {
 
     for (const target of GRANT_TARGETS) {
       try {
+        console.log(`[Scout] Unbrowse: scraping ${target.url}...`);
+        this.emitStatus('unbrowse-scraping', `Scraping ${target.url} via Unbrowse`);
         const raw = await this.unbrowseClient.resolveIntent(
           `${query} ${target.intent}`,
           target.url,
         );
         const text = JSON.stringify(raw).slice(0, 3000);
         rawWebData.push(`[${target.url}]: ${text}`);
-        this.emitStatus('unbrowse-resolved', `Got data from ${target.url}`);
+        console.log(`[Scout] Unbrowse: got ${text.length} chars from ${target.url}`);
+        this.emitStatus('unbrowse-resolved', `Scraped data from ${target.url}`);
       } catch (err) {
+        console.log(`[Scout] Unbrowse: failed for ${target.url}: ${err instanceof Error ? err.message : String(err)}`);
         this.emitStatus(
           'unbrowse-unavailable',
-          `Failed for ${target.url}: ${err instanceof Error ? err.message : String(err)}`,
+          `${target.url}: ${err instanceof Error ? err.message : String(err)}`,
         );
       }
     }
@@ -80,13 +84,17 @@ export class ScoutAgent extends BaseAgent implements IScoutAgent {
     // Use Claude to structure the raw web data into proposals
     if (rawWebData.length > 0 && this.anthropic) {
       try {
+        console.log(`[Scout] Claude: structuring ${rawWebData.length} web sources into proposals...`);
+        this.emitStatus('ai-structuring', `Claude AI structuring ${rawWebData.length} web sources into proposals`);
         const proposals = await this.structureWithClaude(query, rawWebData);
         if (proposals.length > 0) {
           this.cache = proposals;
-          this.emitStatus('ai-structured', `Structured ${proposals.length} proposals from web data`);
+          console.log(`[Scout] Claude: structured ${proposals.length} proposals`);
+          this.emitStatus('ai-structured', `Structured ${proposals.length} proposals from live web data`);
           return proposals;
         }
       } catch (err) {
+        console.log(`[Scout] Claude structuring failed: ${err instanceof Error ? err.message : String(err)}`);
         this.emitStatus(
           'ai-fallback',
           `Claude structuring failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -94,13 +102,16 @@ export class ScoutAgent extends BaseAgent implements IScoutAgent {
       }
     }
 
-    // Layer 2: If no Unbrowse data, try Claude with just the query (generates from knowledge)
+    // Layer 2: If no Unbrowse data, try Claude with just the query
     if (this.anthropic) {
       try {
+        console.log('[Scout] Claude: discovering proposals from AI knowledge...');
+        this.emitStatus('ai-discovering', 'Claude AI discovering proposals from ecosystem knowledge');
         const proposals = await this.discoverWithClaude(query);
         if (proposals.length > 0) {
           this.cache = proposals;
-          this.emitStatus('ai-discovered', `Claude discovered ${proposals.length} proposals`);
+          console.log(`[Scout] Claude: discovered ${proposals.length} proposals`);
+          this.emitStatus('ai-discovered', `Discovered ${proposals.length} proposals via AI`);
           return proposals;
         }
       } catch {

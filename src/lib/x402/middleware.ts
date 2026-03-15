@@ -56,7 +56,6 @@ export function x402Middleware(config: X402Config) {
       const decoded = Buffer.from(xPayment, 'base64').toString('utf-8');
       const proof: PaymentProof = JSON.parse(decoded);
 
-      console.log('[x402-middleware] Verifying payment...');
       const result = await verifyAndSettlePayment(
         config.connection,
         proof.payload.serializedTransaction,
@@ -65,19 +64,17 @@ export function x402Middleware(config: X402Config) {
       );
 
       if (!result.valid) {
-        console.log('[x402-middleware] Payment FAILED:', result.error);
         return res.status(402).json({
           error: result.error ?? 'Payment verification failed',
           ...paymentRequirements,
         });
       }
-      console.log('[x402-middleware] Payment verified:', result.signature);
+      // Payment verified, continue to handler
 
       // Attach signature to request for downstream handlers
       (req as any).x402Signature = result.signature;
       next();
     } catch (err) {
-      console.log('[x402-middleware] Exception:', err instanceof Error ? err.message : err);
       return res.status(402).json({
         error: err instanceof Error ? err.message : 'Payment processing error',
         ...paymentRequirements,

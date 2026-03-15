@@ -54,6 +54,15 @@ export interface VerifyResult {
   error?: string;
 }
 
+/** Callback for x402 payment lifecycle events. */
+export interface X402PaymentEvent {
+  stage: 'paying' | 'verified' | 'failed';
+  recipient: string;
+  amountUSDC: number;
+  txSignature?: string;
+  error?: string;
+}
+
 /** Options for the client-side wrapFetch payment wrapper. */
 export interface WrapFetchOptions {
   /** Agent keypair used to sign payment transactions. */
@@ -64,4 +73,6 @@ export interface WrapFetchOptions {
   usdcMint: PublicKey;
   /** Maximum payment in base units. Throws if exceeded. */
   maxPaymentUsdc?: number;
+  /** Optional callback for payment lifecycle events. */
+  onPayment?: (event: X402PaymentEvent) => void;
 }

@@ -106,7 +106,21 @@ export class GovernanceAgent extends BaseAgent {
       detail: { query: request.query },
     });
 
+    this.bus.emit('agent:status', {
+      agent: 'scout',
+      status: 'discovering',
+      message: `Scraping web data via Unbrowse + structuring with Claude AI`,
+      timestamp: Date.now(),
+    });
+
     const proposals = await this.scout.discoverProposals(request.query);
+
+    this.bus.emit('agent:status', {
+      agent: 'scout',
+      status: 'discovered',
+      message: `Found ${proposals.length} proposals from live web data`,
+      timestamp: Date.now(),
+    });
 
     this.bus.emit('pipeline:step', {
       step: 'discover',
@@ -137,15 +151,30 @@ export class GovernanceAgent extends BaseAgent {
 
     // Step 2: Evaluate each proposal
     const evaluations: Evaluation[] = [];
-    for (const proposal of proposals) {
+    for (let i = 0; i < proposals.length; i++) {
+      const proposal = proposals[i];
       this.bus.emit('pipeline:step', {
         step: 'evaluate',
         status: 'started',
         detail: { proposal: proposal.title },
       });
 
+      this.bus.emit('agent:status', {
+        agent: 'analyzer',
+        status: 'evaluating',
+        message: `Evaluating "${proposal.title}" with Claude AI (${i + 1}/${proposals.length})`,
+        timestamp: Date.now(),
+      });
+
       const evaluation = await this.analyzer.evaluateProposal(proposal);
       evaluations.push(evaluation);
+
+      this.bus.emit('agent:status', {
+        agent: 'analyzer',
+        status: 'evaluated',
+        message: `"${proposal.title}" scored ${evaluation.overallScore}/10`,
+        timestamp: Date.now(),
+      });
 
       this.bus.emit('pipeline:step', {
         step: 'evaluate',
@@ -155,6 +184,13 @@ export class GovernanceAgent extends BaseAgent {
     }
 
     // Step 3: Make funding decision (Claude API or fallback)
+    this.bus.emit('agent:status', {
+      agent: 'governance',
+      status: 'deciding',
+      message: `Claude AI deciding funding allocations for ${evaluations.length} evaluated proposals`,
+      timestamp: Date.now(),
+    });
+
     const decision = await this.makeDecision(evaluations, request.budget);
 
     this.bus.emit('pipeline:decision', {

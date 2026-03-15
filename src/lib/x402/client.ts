@@ -37,11 +37,11 @@ export function wrapFetchWithPayment(
       return response;
     }
 
-    console.log('[x402-client] Got 402, attempting payment...');
-
     // Parse payment requirements from 402 response
     const requirements: PaymentRequirements = await response.json();
-    console.log('[x402-client] Payment required:', JSON.stringify(requirements.payment));
+    const recipientName = requirements.payment.recipientWallet.slice(0, 8);
+    console.log(`[x402-client] Paying ${requirements.payment.amountUSDC} USDC to ${recipientName}...`);
+    options.onPayment?.({ stage: 'paying', recipient: requirements.payment.recipientWallet, amountUSDC: requirements.payment.amountUSDC });
     const { tokenAccount, amount } = requirements.payment;
 
     // Safety cap check
@@ -92,9 +92,7 @@ export function wrapFetchWithPayment(
       JSON.stringify(paymentProof),
     ).toString('base64');
 
-    console.log('[x402-client] Tx signed, retrying with X-Payment header...');
-
-    // Retry with payment
+    // Retry with payment proof
     const retryResponse = await baseFetch(input, {
       ...init,
       headers: {
@@ -102,7 +100,14 @@ export function wrapFetchWithPayment(
         'X-Payment': xPaymentHeader,
       },
     });
-    console.log('[x402-client] Retry response:', retryResponse.status);
+
+    if (retryResponse.ok) {
+      console.log(`[x402-client] Payment accepted (${requirements.payment.amountUSDC} USDC)`);
+      options.onPayment?.({ stage: 'verified', recipient: requirements.payment.recipientWallet, amountUSDC: requirements.payment.amountUSDC });
+    } else {
+      console.log(`[x402-client] Payment rejected: ${retryResponse.status}`);
+      options.onPayment?.({ stage: 'failed', recipient: requirements.payment.recipientWallet, amountUSDC: requirements.payment.amountUSDC, error: `HTTP ${retryResponse.status}` });
+    }
     return retryResponse;
   };
 }

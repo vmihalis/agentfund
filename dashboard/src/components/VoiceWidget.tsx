@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import type { VoiceResult } from '@/lib/types';
 import { fetchSignedUrl, sendCommand } from '@/lib/api';
+import { createBrowserClientTools } from '@/lib/voice-client-tools';
 
 type Tab = 'voice' | 'text';
 
@@ -25,7 +26,10 @@ export function VoiceWidget({
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const clientTools = useMemo(() => createBrowserClientTools(sendCommand), []);
+
   const conversation = useConversation({
+    clientTools,
     onMessage: ({ message, source }: { message: string; source: string }) => {
       setMessages((prev) => [
         ...prev,
@@ -36,6 +40,9 @@ export function VoiceWidget({
       const msg = error instanceof Error ? error.message : 'Voice connection failed';
       setVoiceError(msg);
       setTab('text');
+    },
+    onUnhandledClientToolCall: ({ toolName }: { toolName: string }) => {
+      console.warn('[VoiceWidget] Unhandled client tool:', toolName);
     },
   });
 

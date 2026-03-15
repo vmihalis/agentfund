@@ -10,6 +10,9 @@ import type { IScoutAgent } from '../types.js';
 import type { Proposal } from '../../types/proposals.js';
 
 export class X402ScoutAdapter implements IScoutAgent {
+  /** Last x402 payment transaction signature from the most recent discoverProposals call. */
+  public lastTxSignature: string | null = null;
+
   constructor(
     private readonly baseUrl: string,
     private readonly paidFetch: typeof fetch,
@@ -23,7 +26,8 @@ export class X402ScoutAdapter implements IScoutAgent {
       throw new Error(`Scout request failed with status ${response.status}`);
     }
 
-    const body = (await response.json()) as { proposals: Proposal[] };
+    const body = (await response.json()) as { proposals: Proposal[]; txSignature?: string };
+    this.lastTxSignature = body.txSignature ?? null;
     return body.proposals;
   }
 }

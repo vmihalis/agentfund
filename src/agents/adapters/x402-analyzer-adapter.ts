@@ -10,6 +10,9 @@ import type { IAnalyzerAgent } from '../types.js';
 import type { Proposal, Evaluation } from '../../types/proposals.js';
 
 export class X402AnalyzerAdapter implements IAnalyzerAgent {
+  /** Last x402 payment transaction signature from the most recent evaluateProposal call. */
+  public lastTxSignature: string | null = null;
+
   constructor(
     private readonly baseUrl: string,
     private readonly paidFetch: typeof fetch,
@@ -26,7 +29,8 @@ export class X402AnalyzerAdapter implements IAnalyzerAgent {
       throw new Error(`Analyzer request failed with status ${response.status}`);
     }
 
-    const body = (await response.json()) as { evaluation: Evaluation };
+    const body = (await response.json()) as { evaluation: Evaluation; txSignature?: string };
+    this.lastTxSignature = body.txSignature ?? null;
     return body.evaluation;
   }
 }

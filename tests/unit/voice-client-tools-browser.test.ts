@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { createBrowserClientTools } from '../../dashboard/src/components/VoiceWidget';
+import { createBrowserClientTools } from '../../dashboard/src/lib/voice-client-tools';
 
 describe('createBrowserClientTools', () => {
   const mockSendCommand = vi.fn();

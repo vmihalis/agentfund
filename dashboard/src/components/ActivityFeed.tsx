@@ -65,48 +65,48 @@ export function ActivityFeed() {
 
   if (sorted.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-6 text-center text-gray-500">
+      <div className="rounded-lg border border-gray-800 bg-gray-900 p-4 text-center text-xs text-gray-500">
         No activity yet. Run a pipeline command to see agent events.
       </div>
     );
   }
 
   return (
-    <div className="max-h-96 overflow-y-auto rounded-lg border border-gray-800 bg-gray-900">
-      <ul className="divide-y divide-gray-800">
+    <div className="max-h-80 overflow-y-auto rounded-lg border border-gray-800 bg-gray-900">
+      <ul className="divide-y divide-gray-800/50">
         {sorted.map((entry) => (
-          <li key={entry.id} className="flex items-start gap-3 px-4 py-3">
+          <li key={entry.id} className="flex items-start gap-2 px-3 py-2">
             {/* Type badge */}
             <span
-              className={`mt-0.5 inline-block rounded px-2 py-0.5 text-xs font-medium text-white ${TYPE_COLORS[entry.type] ?? 'bg-gray-600'}`}
+              className={`mt-0.5 inline-block shrink-0 rounded px-1.5 py-0.5 text-xs font-medium text-white ${TYPE_COLORS[entry.type] ?? 'bg-gray-600'}`}
             >
               {entry.type}
             </span>
 
             {/* Content */}
             <div className="min-w-0 flex-1">
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-1.5">
                 {entry.agent && (
-                  <span className="text-sm font-medium text-cyan-400">
+                  <span className="text-xs font-medium text-cyan-400">
                     {entry.agent}
                   </span>
                 )}
-                <span className="text-sm text-gray-300">{entry.message}</span>
+                <span className="text-xs text-gray-300 truncate">{entry.message}</span>
               </div>
               {entry.txSignature && (
                 <a
                   href={`https://solscan.io/tx/${entry.txSignature}?cluster=devnet`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-block text-xs text-cyan-500 hover:text-cyan-400"
+                  className="text-xs text-cyan-500 hover:text-cyan-400"
                 >
-                  View on Solscan
+                  tx ↗
                 </a>
               )}
             </div>
 
             {/* Timestamp */}
-            <span className="whitespace-nowrap text-xs text-gray-500">
+            <span className="shrink-0 text-xs text-gray-600">
               {relativeTime(entry.timestamp)}
             </span>
           </li>

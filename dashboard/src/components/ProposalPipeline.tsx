@@ -61,11 +61,11 @@ export function ProposalPipeline({
 }) {
   if (proposals.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-gray-900 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-white">
+      <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
+        <h2 className="mb-2 text-sm font-semibold text-white">
           Proposal Pipeline
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-xs text-gray-500">
           No proposals in the pipeline yet.
         </p>
       </div>
@@ -79,28 +79,27 @@ export function ProposalPipeline({
   }));
 
   return (
-    <div className="rounded-lg border border-gray-800 bg-gray-900 p-6">
-      <h2 className="mb-4 text-xl font-semibold text-white">
-        Proposal Pipeline
-      </h2>
-
-      {/* Stage Summary */}
-      <div className="mb-4 flex gap-3 overflow-x-auto">
-        {stageCounts.map((s) => (
-          <div
-            key={s.key}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 ${s.bg}`}
-          >
-            <span className={`text-xs font-medium ${s.color}`}>
-              {s.label}
-            </span>
-            <span className="text-xs text-gray-500">{s.count}</span>
-          </div>
-        ))}
+    <div className="rounded-lg border border-gray-800 bg-gray-900">
+      {/* Header with stage counts inline */}
+      <div className="flex items-center justify-between border-b border-gray-800 px-4 py-2.5">
+        <h2 className="text-sm font-semibold text-white">
+          Proposal Pipeline
+        </h2>
+        <div className="flex gap-2">
+          {stageCounts.map((s) => (
+            <div
+              key={s.key}
+              className={`flex items-center gap-1 rounded px-2 py-0.5 ${s.bg}`}
+            >
+              <span className={`text-xs ${s.color}`}>{s.label}</span>
+              <span className="text-xs text-gray-500">{s.count}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Proposal List */}
-      <div className="space-y-3">
+      <div className="divide-y divide-gray-800/50">
         {proposals
           .sort((a, b) => b.updatedAt - a.updatedAt)
           .map((proposal) => {
@@ -108,16 +107,16 @@ export function ProposalPipeline({
             return (
               <div
                 key={proposal.id}
-                className={`rounded-md border-l-2 ${stageConfig.border} bg-gray-950 p-4`}
+                className={`border-l-2 ${stageConfig.border} px-4 py-3`}
               >
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-medium text-white">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h3 className="text-sm font-medium text-white truncate">
                       {proposal.title}
                     </h3>
                     <StageBadge stage={proposal.stage} />
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 shrink-0">
                     <StageProgress current={proposal.stage} />
                     <span className="text-xs text-gray-500">
                       {formatTime(proposal.updatedAt)}
@@ -125,15 +124,15 @@ export function ProposalPipeline({
                   </div>
                 </div>
                 {proposal.evaluation && (
-                  <div className="mt-2 flex items-center gap-3 text-xs text-gray-400">
+                  <div className="mt-1.5 flex items-center gap-2 text-xs text-gray-400">
                     <span>
                       Score:{' '}
                       <span className="font-medium text-gray-300">
                         {proposal.evaluation.overallScore}/10
                       </span>
                     </span>
-                    <span className="text-gray-600">|</span>
-                    <span>{proposal.evaluation.reasoning}</span>
+                    <span className="text-gray-700">|</span>
+                    <span className="truncate">{proposal.evaluation.reasoning}</span>
                   </div>
                 )}
               </div>

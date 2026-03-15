@@ -4,12 +4,11 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchAgents, fetchTreasury, fetchPayments, fetchProposals } from '@/lib/api';
 import type { AgentInfo, TreasuryData, PaymentRecord, PipelineProposal } from '@/lib/types';
-import { AgentCard } from '@/components/AgentCard';
-import { TreasuryPanel } from '@/components/TreasuryPanel';
-import { PaymentHistory } from '@/components/PaymentHistory';
+import { AgentStatusBar } from '@/components/AgentStatusBar';
 import { VoiceWidget } from '@/components/VoiceWidget';
 import { ProposalPipeline } from '@/components/ProposalPipeline';
 import { ActivityFeed } from '@/components/ActivityFeed';
+import { FinancePanel } from '@/components/FinancePanel';
 
 export default function Home() {
   const [agents, setAgents] = useState<AgentInfo[]>([]);
@@ -42,11 +41,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl bg-gray-950 p-6 md:p-10">
-      <header className="mb-10 flex items-center justify-between">
+    <main className="mx-auto min-h-screen max-w-7xl bg-gray-950 p-4 md:p-8">
+      {/* Header */}
+      <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">AgentFund Dashboard</h1>
-          <p className="mt-1 text-gray-400">
+          <h1 className="text-2xl font-bold text-white">AgentFund</h1>
+          <p className="text-xs text-gray-500">
             Autonomous AI Treasury Management
           </p>
         </div>
@@ -58,54 +58,34 @@ export default function Home() {
         </Link>
       </header>
 
-      {/* Agent Identities */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-200">
-          Agent Identities
-        </h2>
+      {/* Agent Status Bar */}
+      <section className="mb-6">
         {loading && agents.length === 0 ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-36 animate-pulse rounded-lg border border-gray-800 bg-gray-900"
-              />
-            ))}
-          </div>
+          <div className="h-12 animate-pulse rounded-lg border border-gray-800 bg-gray-900" />
         ) : (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {agents.map((agent) => (
-              <AgentCard key={agent.role} agent={agent} />
-            ))}
-          </div>
+          <AgentStatusBar agents={agents} />
         )}
       </section>
 
-      {/* Voice Command Center */}
-      <section className="mb-10">
-        <VoiceWidget onCommandSent={refreshAll} />
-      </section>
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        {/* Left column: Command + Proposals */}
+        <div className="space-y-6 lg:col-span-3">
+          <VoiceWidget onCommandSent={refreshAll} />
+          <ProposalPipeline proposals={proposals} />
+        </div>
 
-      {/* Activity Feed */}
-      <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-200">Agent Activity</h2>
-        <ActivityFeed />
-      </section>
-
-      {/* Proposal Pipeline */}
-      <section className="mb-10">
-        <ProposalPipeline proposals={proposals} />
-      </section>
-
-      {/* Treasury Status */}
-      <section className="mb-10">
-        <TreasuryPanel data={treasury} />
-      </section>
-
-      {/* Payment History */}
-      <section>
-        <PaymentHistory payments={payments} />
-      </section>
+        {/* Right column: Activity + Finance */}
+        <div className="space-y-6 lg:col-span-2">
+          <div>
+            <h2 className="mb-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              Live Activity
+            </h2>
+            <ActivityFeed />
+          </div>
+          <FinancePanel treasury={treasury} payments={payments} />
+        </div>
+      </div>
     </main>
   );
 }

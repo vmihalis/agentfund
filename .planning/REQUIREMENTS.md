@@ -23,9 +23,9 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Scout Agent
 
-- [ ] **SCOUT-01**: Scout agent discovers grant proposals and funding opportunities via Unbrowse intent resolution
-- [ ] **SCOUT-02**: Scout calls Unbrowse `/v1/intent/resolve` with natural language intents for grant platform data
-- [ ] **SCOUT-03**: Scout returns structured proposal data (title, description, amount, team info) to Governance Agent
+- [x] **SCOUT-01**: Scout agent discovers grant proposals and funding opportunities via Unbrowse intent resolution
+- [x] **SCOUT-02**: Scout calls Unbrowse `/v1/intent/resolve` with natural language intents for grant platform data
+- [x] **SCOUT-03**: Scout returns structured proposal data (title, description, amount, team info) to Governance Agent
 - [x] **SCOUT-04**: Scout exposes x402-gated endpoint for paid data discovery services
 
 ### Proposal Analyzer
@@ -128,9 +128,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GOV-01 | Phase 2 | Complete |
 | GOV-02 | Phase 2 | Complete |
 | GOV-04 | Phase 2 | Complete |
-| SCOUT-01 | Phase 3, 10 | Pending |
-| SCOUT-02 | Phase 3, 10 | Pending |
-| SCOUT-03 | Phase 3, 10 | Pending |
+| SCOUT-01 | Phase 3, 10 | Complete |
+| SCOUT-02 | Phase 3, 10 | Complete |
+| SCOUT-03 | Phase 3, 10 | Complete |
 | ANLZ-01 | Phase 4 | Complete |
 | ANLZ-02 | Phase 4 | Complete |
 | ANLZ-03 | Phase 4 | Complete |

@@ -3,3 +3,4 @@ dist/
 keys/
 .env
 *.js.map
+.next/

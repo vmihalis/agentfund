@@ -9,6 +9,7 @@ import { TreasuryPanel } from '@/components/TreasuryPanel';
 import { PaymentHistory } from '@/components/PaymentHistory';
 import { VoiceWidget } from '@/components/VoiceWidget';
 import { ProposalPipeline } from '@/components/ProposalPipeline';
+import { ActivityFeed } from '@/components/ActivityFeed';
 
 export default function Home() {
   const [agents, setAgents] = useState<AgentInfo[]>([]);
@@ -73,6 +74,12 @@ export default function Home() {
       {/* Voice Command Center */}
       <section className="mb-10">
         <VoiceWidget onCommandSent={refreshProposals} />
+      </section>
+
+      {/* Activity Feed */}
+      <section className="mb-10">
+        <h2 className="mb-4 text-xl font-semibold text-gray-200">Agent Activity</h2>
+        <ActivityFeed />
       </section>
 
       {/* Proposal Pipeline */}

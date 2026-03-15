@@ -29,7 +29,12 @@ import type {
 } from '../types/proposals.js';
 import type { AgentEventBus } from '../events/event-types.js';
 import { DEVNET_USDC_MINT } from '../lib/solana/index.js';
-import { DlmmClient } from '../lib/meteora/dlmm-client.js';
+
+// Lazy-load DlmmClient to avoid crashing when @meteora-ag/dlmm has ESM compat issues
+async function loadDlmmClient() {
+  const { DlmmClient } = await import('../lib/meteora/dlmm-client.js');
+  return DlmmClient;
+}
 
 /** Cached addresses.json data */
 interface AddressesData {
@@ -185,6 +190,7 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
     yAmount: number,
   ): Promise<TransactionResult> {
     try {
+      const DlmmClient = await loadDlmmClient();
       const dlmmClient = new DlmmClient(this.connection, 'devnet');
       let poolAddress = this.loadDlmmPoolAddress();
 
@@ -234,6 +240,7 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
         return { success: false, error: 'No DLMM pool configured' };
       }
 
+      const DlmmClient = await loadDlmmClient();
       const dlmmClient = new DlmmClient(this.connection, 'devnet');
       const result = await dlmmClient.removeLiquidity(
         new PublicKey(poolAddress),
@@ -266,6 +273,7 @@ export class TreasuryAgent extends BaseAgent implements ITreasuryAgent {
         return [];
       }
 
+      const DlmmClient = await loadDlmmClient();
       const dlmmClient = new DlmmClient(this.connection, 'devnet');
       const positions = await dlmmClient.getPositions(
         new PublicKey(poolAddress),

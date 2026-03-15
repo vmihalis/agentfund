@@ -37,8 +37,11 @@ export function wrapFetchWithPayment(
       return response;
     }
 
+    console.log('[x402-client] Got 402, attempting payment...');
+
     // Parse payment requirements from 402 response
     const requirements: PaymentRequirements = await response.json();
+    console.log('[x402-client] Payment required:', JSON.stringify(requirements.payment));
     const { tokenAccount, amount } = requirements.payment;
 
     // Safety cap check
@@ -89,13 +92,17 @@ export function wrapFetchWithPayment(
       JSON.stringify(paymentProof),
     ).toString('base64');
 
+    console.log('[x402-client] Tx signed, retrying with X-Payment header...');
+
     // Retry with payment
-    return baseFetch(input, {
+    const retryResponse = await baseFetch(input, {
       ...init,
       headers: {
         ...((init?.headers as Record<string, string>) ?? {}),
         'X-Payment': xPaymentHeader,
       },
     });
+    console.log('[x402-client] Retry response:', retryResponse.status);
+    return retryResponse;
   };
 }

@@ -23,7 +23,8 @@ export class X402ScoutAdapter implements IScoutAgent {
     const response = await this.paidFetch(url);
 
     if (!response.ok) {
-      throw new Error(`Scout request failed with status ${response.status}`);
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(`Scout request failed with status ${response.status}: ${errorBody}`);
     }
 
     const body = (await response.json()) as { proposals: Proposal[]; txSignature?: string };

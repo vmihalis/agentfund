@@ -27,7 +27,7 @@ import { createVoiceServer } from '../src/voice/voice-server.js';
 import { wrapFetchWithPayment } from '../src/lib/x402/client.js';
 import { getWeb3Keypair } from '../src/lib/keys.js';
 import { getConnection } from '../src/lib/solana/connection.js';
-import { DEVNET_USDC_MINT } from '../src/lib/solana/token-accounts.js';
+import { getActiveUsdcMint } from '../src/lib/solana/token-accounts.js';
 
 const SCOUT_PORT = 4001;
 const ANALYZER_PORT = 4002;
@@ -181,7 +181,7 @@ async function main() {
   const paidFetch = wrapFetchWithPayment(fetch, {
     keypair: govKeypair,
     connection,
-    usdcMint: DEVNET_USDC_MINT,
+    usdcMint: getActiveUsdcMint(),
     maxPaymentUsdc: 10000,
   });
 
@@ -247,6 +247,9 @@ async function main() {
   console.log('  http://localhost:3000');
   console.log('');
   console.log('Press Ctrl-C to stop all servers.\n');
+
+  // Keep the process alive while servers are running
+  setInterval(() => {}, 1 << 30);
 }
 
 function shutdown() {

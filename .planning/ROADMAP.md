@@ -136,12 +136,12 @@ Plans:
   3. Dashboard renders the proposal pipeline with status progression: submitted, evaluating, approved, funded
   4. Dashboard includes the ElevenLabs voice command widget and shows x402 payment history between agents
   5. Proposal submission page requires Human Passport verification (humanity score >= 20) before a user can submit -- unverified users are blocked
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
-- [ ] 08-03: TBD
+- [ ] 08-01-PLAN.md — Next.js workspace scaffold, API routes, agent cards, treasury panel, payment history
+- [ ] 08-02-PLAN.md — Voice command widget (ElevenLabs) and proposal pipeline visualization
+- [ ] 08-03-PLAN.md — Human Passport sybil resistance gating proposal submission
 
 ### Phase 9: End-to-End Demo Integration
 **Goal**: The complete demo flow works reliably from voice command through all agents to on-chain verification, rehearsed and ready for judges

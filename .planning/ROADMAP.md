@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: x402 Agent Payment Economy** - Micropayment flows gating agent service endpoints (completed 2026-03-14)
 - [ ] **Phase 7: Voice Command Interface** - ElevenLabs conversational AI with agent action triggers
 - [x] **Phase 8: Frontend Dashboard & Sybil Resistance** - Next.js monitoring dashboard and Human Passport gate (completed 2026-03-15)
-- [ ] **Phase 9: End-to-End Demo Integration** - Full pipeline verification and demo rehearsal
+- [x] **Phase 9: End-to-End Demo Integration** - Full pipeline verification and demo rehearsal (completed 2026-03-15)
 
 ## Phase Details
 
@@ -154,8 +154,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — x402 HTTP adapters for Scout/Analyzer, activity log module, unit tests
-- [ ] 09-02-PLAN.md — Demo startup script, dashboard activity feed, end-to-end integration test
+- [x] 09-01-PLAN.md — x402 HTTP adapters for Scout/Analyzer, activity log module, unit tests
+- [x] 09-02-PLAN.md — Demo startup script, dashboard activity feed, end-to-end integration test
 
 ## Progress
 
@@ -172,4 +172,4 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 6. x402 Agent Payment Economy | 2/2 | Complete   | 2026-03-14 |
 | 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
-| 9. End-to-End Demo Integration | 0/2 | Not started | - |
+| 9. End-to-End Demo Integration | 2/2 | Complete   | 2026-03-15 |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-03-15T04:07:37Z"
-last_activity: 2026-03-14 -- Completed Plan 09-01 (x402 Agent Adapters & Activity Log)
+stopped_at: Completed 09-02-PLAN.md
+last_updated: "2026-03-15T04:14:06Z"
+last_activity: 2026-03-15 -- Completed Plan 09-02 (Demo Startup, Activity Feed & E2E Test)
 progress:
   total_phases: 9
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 17
-  completed_plans: 16
-  percent: 94
+  completed_plans: 17
+  percent: 100
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Autonomous AI agents that coordinate real funding decisions on Solana -- registered on-chain, paying each other for services, and explaining their reasoning to humans.
-**Current focus:** Phase 9 in progress -- End-to-End Demo Integration (1 of 2 plans done). Next: Plan 09-02
+**Current focus:** All 9 phases complete -- project ready for hackathon demo
 
 ## Current Position
 
 Phase: 9 of 9 (End-to-End Demo Integration)
-Plan: 1 of 2 in current phase
-Status: Plan 09-01 Complete
-Last activity: 2026-03-14 -- Completed Plan 09-01 (x402 Agent Adapters & Activity Log)
+Plan: 2 of 2 in current phase
+Status: Phase 09 Complete -- All plans done
+Last activity: 2026-03-15 -- Completed Plan 09-02 (Demo Startup, Activity Feed & E2E Test)
 
-Progress: [█████████░] 94%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 6min
-- Total execution time: 1.45 hours
+- Total plans completed: 17
+- Average duration: 5.6min
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -51,10 +51,10 @@ Progress: [█████████░] 94%
 | 06 | 2 | 11min | 5.5min |
 | 07 | 2 | 9min | 4.5min |
 | 08 | 3 | 13min | 4.3min |
-| 09 | 1 | 3min | 3min |
+| 09 | 2 | 6min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 07-02 (4min), 08-01 (6min), 08-02 (3min), 08-03 (4min), 09-01 (3min)
+- Last 5 plans: 08-01 (6min), 08-02 (3min), 08-03 (4min), 09-01 (3min), 09-02 (3min)
 - Trend: steady
 
 *Updated after each plan completion*
@@ -74,6 +74,7 @@ Progress: [█████████░] 94%
 | Phase 08 P02 | 3min | 2 tasks | 12 files |
 | Phase 08 P03 | 4min | 1 tasks | 10 files |
 | Phase 09 P01 | 3min | 2 tasks | 5 files |
+| Phase 09 P02 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -135,6 +136,9 @@ Recent decisions affecting current work:
 - [Phase 08]: [08-03]: shouldAllowSubmission extracted as pure function in passport-utils.ts for unit testing without React component rendering
 - [Phase 09]: [09-01]: Adapters accept paidFetch as constructor param (not wrapFetchWithPayment directly) for testability and flexibility
 - [Phase 09]: [09-01]: Activity log uses Date.now() for pipeline events (no timestamp in payload) vs event.timestamp for agent events
+- [Phase 09]: [09-02]: Activity feed uses 2-second polling (not WebSocket) for demo simplicity
+- [Phase 09]: [09-02]: Demo script adds /api/activity endpoint directly on voice server Express app for unified server
+- [Phase 09]: [09-02]: E2e tests use stub agents with mocked keys/connection for CI-friendly execution
 
 ### Pending Todos
 
@@ -148,6 +152,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T04:07:37Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-03-15T04:14:06Z
+Stopped at: Completed 09-02-PLAN.md -- All phases complete
 Resume file: None

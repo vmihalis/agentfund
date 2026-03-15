@@ -38,3 +38,27 @@ export interface PaymentRecord {
   txSignature: string;
   txUrl: string;
 }
+
+/** Pipeline stage a proposal can be in. */
+export type PipelineStage = 'submitted' | 'evaluating' | 'approved' | 'funded';
+
+/** A proposal moving through the funding pipeline. */
+export interface PipelineProposal {
+  id: string;
+  title: string;
+  stage: PipelineStage;
+  updatedAt: number;
+  evaluation?: {
+    overallScore: number;
+    recommendation: string;
+    reasoning: string;
+  };
+}
+
+/** Result from a voice/text command. */
+export interface VoiceResult {
+  success: boolean;
+  intent: string;
+  message: string;
+  data?: unknown;
+}

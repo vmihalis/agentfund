@@ -21,6 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Voice Command Interface** - ElevenLabs conversational AI with agent action triggers
 - [x] **Phase 8: Frontend Dashboard & Sybil Resistance** - Next.js monitoring dashboard and Human Passport gate (completed 2026-03-15)
 - [x] **Phase 9: End-to-End Demo Integration** - Full pipeline verification and demo rehearsal (completed 2026-03-15)
+- [ ] **Phase 10: Devnet Bootstrap & Missing Verification** - Fund deployer, execute on-chain scripts, verify Scout Agent
+- [ ] **Phase 11: Live Dashboard Wiring** - Wire voice clientTools, x402 payment signatures, and live proposal pipeline
 
 ## Phase Details
 
@@ -157,6 +159,31 @@ Plans:
 - [x] 09-01-PLAN.md — x402 HTTP adapters for Scout/Analyzer, activity log module, unit tests
 - [x] 09-02-PLAN.md — Demo startup script, dashboard activity feed, end-to-end integration test
 
+### Phase 10: Devnet Bootstrap & Missing Verification
+**Goal**: All on-chain agent state exists on devnet and all Phase 3 requirements are formally verified
+**Depends on**: Phase 1, Phase 3, Phase 6
+**Requirements**: IDENT-01, IDENT-02, IDENT-03, IDENT-04, SCOUT-01, SCOUT-02, SCOUT-03, PAY-02
+**Gap Closure:** Closes requirement gaps from v1.0 audit (devnet faucet + missing verification)
+**Success Criteria** (what must be TRUE):
+  1. Deployer wallet is funded and fund-wallets.ts completes successfully for all 4 agent wallets
+  2. register-agents.ts creates 4 MPL Core NFTs in a collection on Solana devnet with AgentIdentityV1 PDAs
+  3. verify-agents.ts confirms all 4 agents are registered and verifiable via PDA derivation
+  4. Phase 3 VERIFICATION.md exists and confirms SCOUT-01, SCOUT-02, SCOUT-03 are satisfied
+  5. PAY-02 integration test runs without skip (funded ATAs available)
+**Plans**: 0 plans
+
+### Phase 11: Live Dashboard Wiring
+**Goal**: Voice commands, x402 payments, and governance pipeline outcomes flow through to the dashboard in real-time
+**Depends on**: Phase 7, Phase 8, Phase 9
+**Requirements**: VOICE-02, VOICE-03, GOV-03, PAY-02, DASH-03, DASH-05
+**Gap Closure:** Closes integration and flow gaps from v1.0 audit
+**Success Criteria** (what must be TRUE):
+  1. VoiceWidget.tsx passes clientTools to useConversation/startSession — ElevenLabs voice tool calls trigger real agent actions
+  2. X402ScoutAdapter and X402AnalyzerAdapter preserve txSignature from x402 payment responses
+  3. Dashboard /api/payments returns live x402 payment data (not just static demo data)
+  4. Governance pipeline outcomes update proposals-store stages; mapPipelineStage() is wired and consumed
+**Plans**: 0 plans
+
 ## Progress
 
 **Execution Order:**
@@ -173,3 +200,5 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
 | 9. End-to-End Demo Integration | 2/2 | Complete   | 2026-03-15 |
+| 10. Devnet Bootstrap & Missing Verification | 0/0 | Pending | - |
+| 11. Live Dashboard Wiring | 0/0 | Pending | - |

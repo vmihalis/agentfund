@@ -9,23 +9,23 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Agent Identity
 
-- [x] **IDENT-01**: 4 AI agents registered on-chain via Metaplex Agent Registry (MPL Core NFT + AgentIdentityV1 PDA each)
-- [x] **IDENT-02**: Each agent has its own Solana keypair, funded wallet, and Associated Token Account for devnet USDC
-- [x] **IDENT-03**: Agent identities verifiable by any third party via PDA derivation and AppData plugin inspection
-- [x] **IDENT-04**: MPL Core NFT collection created for AgentFund agent group
+- [ ] **IDENT-01**: 4 AI agents registered on-chain via Metaplex Agent Registry (MPL Core NFT + AgentIdentityV1 PDA each)
+- [ ] **IDENT-02**: Each agent has its own Solana keypair, funded wallet, and Associated Token Account for devnet USDC
+- [ ] **IDENT-03**: Agent identities verifiable by any third party via PDA derivation and AppData plugin inspection
+- [ ] **IDENT-04**: MPL Core NFT collection created for AgentFund agent group
 
 ### Agent Payments
 
 - [x] **PAY-01**: x402 micropayment flow between agents using Corbits/Faremeter SDK (402 response -> payment -> content)
-- [x] **PAY-02**: At least one agent-to-agent x402 payment with real on-chain USDC transfer on devnet
+- [ ] **PAY-02**: At least one agent-to-agent x402 payment with real on-chain USDC transfer on devnet
 - [x] **PAY-03**: x402 server middleware gating agent service endpoints (returns 402 with payment requirements)
 - [x] **PAY-04**: x402 client wrapper (wrapFetch) enabling agents to automatically pay for peer services
 
 ### Scout Agent
 
-- [x] **SCOUT-01**: Scout agent discovers grant proposals and funding opportunities via Unbrowse intent resolution
-- [x] **SCOUT-02**: Scout calls Unbrowse `/v1/intent/resolve` with natural language intents for grant platform data
-- [x] **SCOUT-03**: Scout returns structured proposal data (title, description, amount, team info) to Governance Agent
+- [ ] **SCOUT-01**: Scout agent discovers grant proposals and funding opportunities via Unbrowse intent resolution
+- [ ] **SCOUT-02**: Scout calls Unbrowse `/v1/intent/resolve` with natural language intents for grant platform data
+- [ ] **SCOUT-03**: Scout returns structured proposal data (title, description, amount, team info) to Governance Agent
 - [x] **SCOUT-04**: Scout exposes x402-gated endpoint for paid data discovery services
 
 ### Proposal Analyzer
@@ -121,16 +121,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| IDENT-01 | Phase 1 | Complete |
-| IDENT-02 | Phase 1 | Complete |
-| IDENT-03 | Phase 1 | Complete |
-| IDENT-04 | Phase 1 | Complete |
+| IDENT-01 | Phase 1, 10 | Pending |
+| IDENT-02 | Phase 1, 10 | Pending |
+| IDENT-03 | Phase 1, 10 | Pending |
+| IDENT-04 | Phase 1, 10 | Pending |
 | GOV-01 | Phase 2 | Complete |
 | GOV-02 | Phase 2 | Complete |
 | GOV-04 | Phase 2 | Complete |
-| SCOUT-01 | Phase 3 | Complete |
-| SCOUT-02 | Phase 3 | Complete |
-| SCOUT-03 | Phase 3 | Complete |
+| SCOUT-01 | Phase 3, 10 | Pending |
+| SCOUT-02 | Phase 3, 10 | Pending |
+| SCOUT-03 | Phase 3, 10 | Pending |
 | ANLZ-01 | Phase 4 | Complete |
 | ANLZ-02 | Phase 4 | Complete |
 | ANLZ-03 | Phase 4 | Complete |
@@ -140,7 +140,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TREAS-04 | Phase 5 | Complete |
 | TREAS-05 | Phase 5 | Complete |
 | PAY-01 | Phase 6 | Complete |
-| PAY-02 | Phase 6 | Complete |
+| PAY-02 | Phase 6, 10, 11 | Pending |
 | PAY-03 | Phase 6 | Complete |
 | PAY-04 | Phase 6 | Complete |
 | SCOUT-04 | Phase 6 | Complete |
@@ -164,6 +164,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 **Coverage:**
 - v1 requirements: 39 total
 - Mapped to phases: 39
+- Complete: 31
+- Pending (gap closure): 8
 - Unmapped: 0
 
 ---

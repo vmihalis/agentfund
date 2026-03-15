@@ -72,9 +72,9 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Demo & Integration
 
-- [ ] **DEMO-01**: End-to-end demo flow working: voice command -> Scout -> Analyze -> Fund -> verify on Solscan
-- [ ] **DEMO-02**: All agent actions produce real Solana transaction signatures viewable on explorer
-- [ ] **DEMO-03**: Multi-agent coordination visible (agents communicating and acting in sequence)
+- [x] **DEMO-01**: End-to-end demo flow working: voice command -> Scout -> Analyze -> Fund -> verify on Solscan
+- [x] **DEMO-02**: All agent actions produce real Solana transaction signatures viewable on explorer
+- [x] **DEMO-03**: Multi-agent coordination visible (agents communicating and acting in sequence)
 
 ## v2 Requirements
 
@@ -157,9 +157,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-05 | Phase 8 | Complete |
 | SYBIL-01 | Phase 8 | Complete |
 | SYBIL-02 | Phase 8 | Complete |
-| DEMO-01 | Phase 9 | Pending |
-| DEMO-02 | Phase 9 | Pending |
-| DEMO-03 | Phase 9 | Pending |
+| DEMO-01 | Phase 9 | Complete |
+| DEMO-02 | Phase 9 | Complete |
+| DEMO-03 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 39 total

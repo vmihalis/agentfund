@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 08-03-PLAN.md
-last_updated: "2026-03-15T01:28:36.295Z"
-last_activity: 2026-03-14 -- Completed Plan 08-03 (Human Passport sybil resistance)
+status: in-progress
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-15T04:07:37Z"
+last_activity: 2026-03-14 -- Completed Plan 09-01 (x402 Agent Adapters & Activity Log)
 progress:
   total_phases: 9
   completed_phases: 8
-  total_plans: 15
-  completed_plans: 15
-  percent: 100
+  total_plans: 17
+  completed_plans: 16
+  percent: 94
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Autonomous AI agents that coordinate real funding decisions on Solana -- registered on-chain, paying each other for services, and explaining their reasoning to humans.
-**Current focus:** Phase 8 complete -- Frontend Dashboard & Sybil Resistance (3 of 3 plans done). Next: Phase 9
+**Current focus:** Phase 9 in progress -- End-to-End Demo Integration (1 of 2 plans done). Next: Plan 09-02
 
 ## Current Position
 
-Phase: 8 of 9 (Frontend Dashboard & Sybil Resistance)
-Plan: 3 of 3 in current phase
-Status: Phase 08 Complete
-Last activity: 2026-03-14 -- Completed Plan 08-03 (Human Passport sybil resistance)
+Phase: 9 of 9 (End-to-End Demo Integration)
+Plan: 1 of 2 in current phase
+Status: Plan 09-01 Complete
+Last activity: 2026-03-14 -- Completed Plan 09-01 (x402 Agent Adapters & Activity Log)
 
-Progress: [██████████] 100%
+Progress: [█████████░] 94%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 6min
-- Total execution time: 1.4 hours
+- Total execution time: 1.45 hours
 
 **By Phase:**
 
@@ -51,9 +51,10 @@ Progress: [██████████] 100%
 | 06 | 2 | 11min | 5.5min |
 | 07 | 2 | 9min | 4.5min |
 | 08 | 3 | 13min | 4.3min |
+| 09 | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (5min), 07-02 (4min), 08-01 (6min), 08-02 (3min), 08-03 (4min)
+- Last 5 plans: 07-02 (4min), 08-01 (6min), 08-02 (3min), 08-03 (4min), 09-01 (3min)
 - Trend: steady
 
 *Updated after each plan completion*
@@ -72,6 +73,7 @@ Progress: [██████████] 100%
 | Phase 08 P01 | 6min | 2 tasks | 23 files |
 | Phase 08 P02 | 3min | 2 tasks | 12 files |
 | Phase 08 P03 | 4min | 1 tasks | 10 files |
+| Phase 09 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -131,6 +133,8 @@ Recent decisions affecting current work:
 - [Phase 08]: [08-03]: Dynamic import for @human.tech/passport-embed to avoid SSR issues -- widget loaded client-side only via useEffect
 - [Phase 08]: [08-03]: Module-level any-typed refs for dynamically imported PassportScoreWidget to avoid TypeScript strict mode incompatibility
 - [Phase 08]: [08-03]: shouldAllowSubmission extracted as pure function in passport-utils.ts for unit testing without React component rendering
+- [Phase 09]: [09-01]: Adapters accept paidFetch as constructor param (not wrapFetchWithPayment directly) for testability and flexibility
+- [Phase 09]: [09-01]: Activity log uses Date.now() for pipeline events (no timestamp in payload) vs event.timestamp for agent events
 
 ### Pending Todos
 
@@ -144,6 +148,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T01:22:42.522Z
-Stopped at: Completed 08-03-PLAN.md
+Last session: 2026-03-15T04:07:37Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None

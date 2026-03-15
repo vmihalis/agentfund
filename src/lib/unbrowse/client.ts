@@ -9,7 +9,7 @@ export class UnbrowseClient {
   private readonly baseUrl: string;
   private readonly timeoutMs: number;
 
-  constructor(baseUrl = 'http://localhost:6969', timeoutMs = 15000) {
+  constructor(baseUrl = 'http://localhost:6969', timeoutMs = 90000) {
     this.baseUrl = baseUrl;
     this.timeoutMs = timeoutMs;
   }
@@ -36,13 +36,15 @@ export class UnbrowseClient {
         headers['Authorization'] = `Bearer ${apiKey}`;
       }
 
+      // Strip trailing slashes — Unbrowse returns "Invalid URL" with them
+      const cleanUrl = targetUrl?.replace(/\/+$/, '');
+
       const res = await fetch(`${this.baseUrl}/v1/intent/resolve`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
           intent,
-          params: targetUrl ? { url: targetUrl } : undefined,
-          context: targetUrl ? { url: targetUrl } : undefined,
+          context: cleanUrl ? { url: cleanUrl } : undefined,
         }),
         signal: controller.signal,
       });

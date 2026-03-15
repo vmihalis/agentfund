@@ -29,12 +29,12 @@ export interface GrantTarget {
 /** Default grant platform targets for Solana ecosystem discovery. */
 export const GRANT_TARGETS: GrantTarget[] = [
   {
-    url: 'https://solana.org/grants',
-    intent: 'find active Solana Foundation grant programs and funded projects',
+    url: 'https://earn.superteam.fun',
+    intent: 'list available grants with titles, descriptions, and amounts',
   },
   {
-    url: 'https://earn.superteam.fun/grants/',
-    intent: 'list available Superteam grants with amounts and descriptions',
+    url: 'https://solana.org/grants',
+    intent: 'find active Solana Foundation grant programs and funded projects',
   },
   {
     url: 'https://dorahacks.io/grant/solana-1/buidl',

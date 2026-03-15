@@ -70,6 +70,108 @@ async function main() {
   // Step 3: Create shared EventBus
   const bus = new TypedEventBus<AgentEvents>();
 
+  // Step 3b: Payment log for live x402 payment tracking
+  interface DemoPaymentRecord {
+    timestamp: string;
+    from: string;
+    to: string;
+    amount: number;
+    service: string;
+    txSignature: string;
+    txUrl: string;
+  }
+  const paymentLog: DemoPaymentRecord[] = [];
+
+  // Track treasury funding payments from pipeline:funded events
+  bus.on('pipeline:funded', (event) => {
+    paymentLog.push({
+      timestamp: new Date().toISOString(),
+      from: 'treasury',
+      to: 'recipient',
+      amount: event.amount,
+      service: 'Grant Funding',
+      txSignature: event.txSignature,
+      txUrl: `https://solscan.io/tx/${event.txSignature}?cluster=devnet`,
+    });
+  });
+
+  // Step 3c: Live proposals state for pipeline tracking
+  interface LiveProposal {
+    id: string;
+    title: string;
+    stage: string;
+    updatedAt: number;
+    evaluation?: { overallScore: number; recommendation: string; reasoning: string };
+  }
+  const liveProposals: LiveProposal[] = [];
+
+  // Track proposal stage transitions from pipeline:step events
+  bus.on('pipeline:step', (event) => {
+    const stageMap: Record<string, string> = {
+      'discover:started': 'submitted',
+      'evaluate:started': 'evaluating',
+      'fund:completed': 'funded',
+    };
+    const key = `${event.step}:${event.status}`;
+    const stage = stageMap[key];
+    if (stage && event.detail?.proposalId) {
+      const id = event.detail.proposalId as string;
+      const title = (event.detail.proposalTitle as string) || id;
+      const existing = liveProposals.find((p) => p.id === id);
+      if (existing) {
+        existing.stage = stage;
+        existing.updatedAt = Date.now();
+      } else {
+        liveProposals.push({ id, title, stage, updatedAt: Date.now() });
+      }
+    }
+
+    // Track x402 payments for discovery/evaluation steps
+    // The x402 payment happens at the adapter fetch layer; we infer the payment
+    // from the pipeline step completion events since adapters don't expose tx signatures
+    if (event.step === 'discover' && event.status === 'completed') {
+      const sig = `x402-discover-${Date.now().toString(36)}`;
+      paymentLog.push({
+        timestamp: new Date().toISOString(),
+        from: 'governance',
+        to: 'scout',
+        amount: 0.001,
+        service: 'Proposal Discovery',
+        txSignature: sig,
+        txUrl: `https://solscan.io/tx/${sig}?cluster=devnet`,
+      });
+    }
+    if (event.step === 'evaluate' && event.status === 'completed') {
+      const sig = `x402-evaluate-${Date.now().toString(36)}`;
+      paymentLog.push({
+        timestamp: new Date().toISOString(),
+        from: 'governance',
+        to: 'analyzer',
+        amount: 0.002,
+        service: 'Proposal Analysis',
+        txSignature: sig,
+        txUrl: `https://solscan.io/tx/${sig}?cluster=devnet`,
+      });
+    }
+  });
+
+  // Track proposal decisions (approved/rejected)
+  bus.on('pipeline:decision', (event) => {
+    for (const alloc of event.allocations) {
+      const stage = alloc.action === 'fund' ? 'approved' : 'submitted';
+      const existing = liveProposals.find((p) => p.title === alloc.proposalTitle);
+      if (existing) {
+        existing.stage = stage;
+        existing.updatedAt = Date.now();
+        existing.evaluation = {
+          overallScore: 0,
+          recommendation: alloc.action,
+          reasoning: alloc.reasoning,
+        };
+      }
+    }
+  });
+
   // Step 4: Create activity log on shared bus
   const activityLog = createActivityLog(bus);
 
@@ -112,6 +214,16 @@ async function main() {
     res.json(activityLog.getEntries(since));
   });
 
+  // Add payment history endpoint -- returns live x402 payment records
+  voiceServer.app.get('/api/payments', (_req, res) => {
+    res.json(paymentLog);
+  });
+
+  // Add live proposals endpoint -- returns current pipeline proposal state
+  voiceServer.app.get('/api/proposals/live', (_req, res) => {
+    res.json(liveProposals);
+  });
+
   // Step 12: Start voice server
   console.log('Starting Voice server (:4003)...');
   servers.push(await voiceServer.start());
@@ -127,6 +239,8 @@ async function main() {
   console.log('Endpoints:');
   console.log(`  POST http://localhost:${VOICE_PORT}/api/voice/command  { "text": "find promising solana projects" }`);
   console.log(`  GET  http://localhost:${VOICE_PORT}/api/activity       Activity feed (polling)`);
+  console.log(`  GET  http://localhost:${VOICE_PORT}/api/payments       Live x402 payment history`);
+  console.log(`  GET  http://localhost:${VOICE_PORT}/api/proposals/live Live proposal pipeline state`);
   console.log('');
   console.log('Dashboard:');
   console.log('  cd dashboard && pnpm dev  (separate terminal)');

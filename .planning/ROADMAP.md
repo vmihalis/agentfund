@@ -139,9 +139,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Next.js workspace scaffold, API routes, agent cards, treasury panel, payment history
-- [ ] 08-02-PLAN.md — Voice command widget (ElevenLabs) and proposal pipeline visualization
-- [ ] 08-03-PLAN.md — Human Passport sybil resistance gating proposal submission
+- [x] 08-01-PLAN.md — Next.js workspace scaffold, API routes, agent cards, treasury panel, payment history
+- [x] 08-02-PLAN.md — Voice command widget (ElevenLabs) and proposal pipeline visualization
+- [x] 08-03-PLAN.md — Human Passport sybil resistance gating proposal submission
 
 ### Phase 9: End-to-End Demo Integration
 **Goal**: The complete demo flow works reliably from voice command through all agents to on-chain verification, rehearsed and ready for judges
@@ -151,10 +151,11 @@ Plans:
   1. The full demo flow executes end-to-end: voice command triggers Scout discovery via Unbrowse, Analyzer evaluates with Claude, Governance decides, Treasury funds on-chain, and the result is verifiable on Solscan
   2. Every agent action in the demo produces a real Solana transaction signature that can be clicked through to a block explorer
   3. Multi-agent coordination is visible during the demo -- observers can see agents communicating, making decisions, and acting in sequence through the dashboard activity feed
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
+- [ ] 09-01-PLAN.md — x402 HTTP adapters for Scout/Analyzer, activity log module, unit tests
+- [ ] 09-02-PLAN.md — Demo startup script, dashboard activity feed, end-to-end integration test
 
 ## Progress
 
@@ -171,4 +172,4 @@ Phases execute in numeric order: 1 -> 2 -> 3/4/5 (parallel) -> 6 -> 7 -> 8 -> 9
 | 6. x402 Agent Payment Economy | 2/2 | Complete   | 2026-03-14 |
 | 7. Voice Command Interface | 1/2 | In progress | - |
 | 8. Frontend Dashboard & Sybil Resistance | 3/3 | Complete   | 2026-03-15 |
-| 9. End-to-End Demo Integration | 0/1 | Not started | - |
+| 9. End-to-End Demo Integration | 0/2 | Not started | - |

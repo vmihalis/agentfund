@@ -59,8 +59,8 @@ Requirements for hackathon submission. Each maps to roadmap phases.
 
 ### Sybil Resistance
 
-- [ ] **SYBIL-01**: Human Passport Embed component gating proposal submission page
-- [ ] **SYBIL-02**: Users must verify humanity (score >= 20) before submitting proposals
+- [x] **SYBIL-01**: Human Passport Embed component gating proposal submission page
+- [x] **SYBIL-02**: Users must verify humanity (score >= 20) before submitting proposals
 
 ### Frontend Dashboard
 
@@ -155,8 +155,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-03 | Phase 8 | Complete |
 | DASH-04 | Phase 8 | Complete |
 | DASH-05 | Phase 8 | Complete |
-| SYBIL-01 | Phase 8 | Pending |
-| SYBIL-02 | Phase 8 | Pending |
+| SYBIL-01 | Phase 8 | Complete |
+| SYBIL-02 | Phase 8 | Complete |
 | DEMO-01 | Phase 9 | Pending |
 | DEMO-02 | Phase 9 | Pending |
 | DEMO-03 | Phase 9 | Pending |

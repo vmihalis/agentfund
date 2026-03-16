@@ -1,5 +1,7 @@
 # AgentFund
 
+🏆 **Winner — ElevenLabs Voice Challenge (Bonus Track) @ [Intelligence at the Frontier Hackathon](https://luma.com/ftchack-sf-2026?tk=uu6rjB), March 2025**
+
 **Autonomous AI agents coordinating real funding on Solana**
 
 A multi-agent treasury system where four Claude-powered AI agents discover, evaluate, and fund projects entirely on-chain. Agents pay each other for services via x402 micropayments, hold verified identities on the Metaplex Agent Registry, and execute real SOL/USDC transfers on Solana devnet — no human in the loop.
